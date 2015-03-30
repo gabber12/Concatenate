@@ -1,3 +1,0 @@
-# Concatenate
-Android App
-# Concatenate
