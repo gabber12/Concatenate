@@ -1,5 +1,10 @@
 package com.iplay.concatenate;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.model.GameRequestContent;
+import com.facebook.share.widget.GameRequestDialog;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -8,6 +13,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -46,6 +52,10 @@ public class HomeActivity extends Activity {
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
+
+    GameRequestDialog requestDialog;
+    CallbackManager callbackManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,11 +127,42 @@ public class HomeActivity extends Activity {
         findViewById(R.id.host_game).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(),OpponentChooser.class);
-                startActivity(in);
+                GameRequestContent content = new GameRequestContent.Builder()
+                        .setMessage("Come play this level with me")
+                        .build();
+                requestDialog.show(content);
+            }
+        });
+
+
+        callbackManager = CallbackManager.Factory.create();
+
+        requestDialog = new GameRequestDialog(this);
+        requestDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
+            public void onSuccess(GameRequestDialog.Result result) {
+                String id = result.getRequestId();
+
+                Log.d("Error", "hello" + id);
+            }
+
+            public void onCancel() {
+                Log.d("Error", "hello1");
+            }
+
+            public void onError(FacebookException error) {
+                Log.d("Error", "hello2");
             }
         });
     }
+
+
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

@@ -1,13 +1,21 @@
 package com.iplay.concatenate;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -41,16 +49,26 @@ public class FullscreenActivity extends Activity {
      * The flags to pass to {@link SystemUiHider#getInstance}.
      */
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
-
+    private AccessToken token;
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
-
+    private LoginButton loginButton;
     public static final boolean IS_SOCIAL = true;
+    CallbackManager callbackManager;
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if(token != null) {
+//            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+//            startActivity(in);
+//        }
+//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        token = null;
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
 
@@ -111,11 +129,34 @@ public class FullscreenActivity extends Activity {
                 }
             }
         });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions("user_friends");
+
+
+        callbackManager = CallbackManager.Factory.create();
+
+        // Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                token = loginResult.getAccessToken();
+                Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(in);
+                Log.d("", "Succccess");
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d("", "Cancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Log.d("", "Error");
+            }
+        });
     }
 
     @Override
@@ -128,7 +169,11 @@ public class FullscreenActivity extends Activity {
         delayedHide(100);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the
      * system UI. This is to prevent the jarring behavior of controls going away
