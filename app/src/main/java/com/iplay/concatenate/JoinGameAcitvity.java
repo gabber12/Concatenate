@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -133,7 +134,7 @@ public class JoinGameAcitvity extends Activity {
             new OnMessage() {
                 public void run(OrtcClient sender, String channel,
                                 String message) {
-                    invites.add(message);
+                    Log.d("Hello message", ""); invites.add(message);
                 }
         });
 

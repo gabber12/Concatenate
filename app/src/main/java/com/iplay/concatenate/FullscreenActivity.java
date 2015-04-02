@@ -139,7 +139,6 @@ public class FullscreenActivity extends Activity {
 
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
             public void onSuccess(LoginResult loginResult) {
                 token = loginResult.getAccessToken();
                 Intent in = new Intent(getApplicationContext(), HomeActivity.class);
@@ -154,7 +153,8 @@ public class FullscreenActivity extends Activity {
 
             @Override
             public void onError(FacebookException exception) {
-                Log.d("", "Error");
+                Log.d("",  "");
+                exception.printStackTrace();
             }
         });
     }

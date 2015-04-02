@@ -47,6 +47,12 @@
             android:label="@string/title_activity_join_game_acitvity"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        <activity
+            android:name=".HostGameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_host_game"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
     </application>
 
 </manifest>

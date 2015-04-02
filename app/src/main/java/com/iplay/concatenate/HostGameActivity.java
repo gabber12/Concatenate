@@ -13,9 +13,20 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -24,7 +35,7 @@ import android.view.View;
  *
  * @see SystemUiHider
  */
-public class HomeActivity extends Activity {
+public class HostGameActivity extends Activity {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -52,15 +63,13 @@ public class HomeActivity extends Activity {
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
-
-
-
-
+    GameRequestDialog requestDialog;
+    CallbackManager callbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_host_game);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
@@ -123,29 +132,66 @@ public class HomeActivity extends Activity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-        findViewById(R.id.host_game).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), HostGameActivity.class);
-                startActivity(in);
+        callbackManager = CallbackManager.Factory.create();
+        requestDialog = new GameRequestDialog(this);
+        final Activity that = this;
+        requestDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
+
+            public void onSuccess(GameRequestDialog.Result result) {
+                String id = result.getRequestId();
+
+                Log.d("Error", "hello" + id);
+                final Timer t = new Timer();
+                final long startTime = System.currentTimeMillis();
+
+                t.scheduleAtFixedRate(new TimerTask() {
+
+
+
+                    @Override
+                    public void run() {
+                        that.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView dummy_text = (TextView) findViewById(R.id.fullscreen_content);
+                                Log.d("", "" + System.currentTimeMillis());
+                                long left = (30 * 1000 - System.currentTimeMillis() + startTime);
+                                if(  left <=0 ){
+                                    t.cancel();
+                                    left = 0;
+                                    Toast t = Toast.makeText(getApplicationContext(), "No one joind your game :(", Toast.LENGTH_LONG);
+                                    t.show();
+                                }
+                                dummy_text.setText("" + Math.round(left/100.0) + "ms left!!");
+
+                            }
+                        });
+
+                    }
+                }, new Long(0), new Long(100));
+            }
+
+            public void onCancel() {
+                Log.d("Error", "hello1");
+            }
+
+            public void onError(FacebookException error) {
+                Log.d("Error", "hello2");
             }
         });
 
-        findViewById(R.id.join_game).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), JoinGameAcitvity.class);
-                startActivity(in);
-            }
-        });
+        GameRequestContent content = new GameRequestContent.Builder()
+                .setMessage("Come play this level with me")
+                .build();
+        requestDialog.show(content);
+
 
     }
 
-
-
-
-
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -172,8 +218,6 @@ public class HomeActivity extends Activity {
             return false;
         }
     };
-
-
 
     Handler mHideHandler = new Handler();
     Runnable mHideRunnable = new Runnable() {
