@@ -7,5 +7,6 @@
     <string name="facebook_app_id">799834596763168</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_opponent_chooser">OpponentChooser</string>
+    <string name="title_activity_join_game_acitvity">JoinGameAcitvity</string>
 
 </resources>
