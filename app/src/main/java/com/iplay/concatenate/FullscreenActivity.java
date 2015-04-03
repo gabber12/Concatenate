@@ -136,7 +136,7 @@ public class FullscreenActivity extends Activity {
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("user_friends");
         String text = loginButton.getText().toString();
-        if(text.contains("Log in")) {
+        if(text.contains("Log out")) {
             Intent in = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(in);
         }
