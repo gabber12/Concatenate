@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ibt.ortc.extensibility.OrtcClient;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -138,7 +140,7 @@ public class HostGameActivity extends Activity {
         requestDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
 
             public void onSuccess(GameRequestDialog.Result result) {
-                String id = result.getRequestId();
+                final String id = result.getRequestId();
 
                 Log.d("Error", "hello" + id);
                 final Timer t = new Timer();
@@ -150,6 +152,9 @@ public class HostGameActivity extends Activity {
 
                     @Override
                     public void run() {
+                        OrtcClient client = ORTCUtil.getClient();
+                        String payload = "";
+                        client.send("host_game_"+id, payload);
                         that.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -161,8 +166,10 @@ public class HostGameActivity extends Activity {
                                     left = 0;
                                     Toast t = Toast.makeText(getApplicationContext(), "No one joind your game :(", Toast.LENGTH_LONG);
                                     t.show();
+
                                 }
-                                dummy_text.setText("" + Math.round(left/100.0) + "ms left!!");
+
+                                dummy_text.setText("" + Math.round(left/100.0)/10.0 + "s left!!");
 
                             }
                         });

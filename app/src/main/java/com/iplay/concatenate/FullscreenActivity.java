@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import ibt.ortc.extensibility.OrtcClient;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -133,8 +135,11 @@ public class FullscreenActivity extends Activity {
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("user_friends");
-
-
+        String text = loginButton.getText().toString();
+        if(text.contains("Log in")) {
+            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(in);
+        }
         callbackManager = CallbackManager.Factory.create();
 
         // Callback registration
@@ -144,6 +149,8 @@ public class FullscreenActivity extends Activity {
                 Intent in = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(in);
                 Log.d("", "Succccess");
+                OrtcClient client = ORTCUtil.getClient();
+
             }
 
             @Override

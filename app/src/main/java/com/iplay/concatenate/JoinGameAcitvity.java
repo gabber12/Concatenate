@@ -4,15 +4,26 @@ import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ibt.ortc.extensibility.OnMessage;
 import ibt.ortc.extensibility.OrtcClient;
@@ -24,6 +35,8 @@ import ibt.ortc.extensibility.OrtcClient;
  *
  * @see SystemUiHider
  */
+
+
 public class JoinGameAcitvity extends Activity {
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -48,15 +61,67 @@ public class JoinGameAcitvity extends Activity {
      */
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 
+    public MyAdapter ma;
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
 
+    public class MyAdapter extends BaseAdapter {
+        private ConcurrentLinkedQueue mData;
+        private LayoutInflater mInflater;
+        public MyAdapter(Context mContext,  ConcurrentLinkedQueue<String> data) {
+            mData = data;
+            mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount() {
+            return mData.size();
+        }
+
+        @Override
+        public String getItem(int position) {
+            ConcurrentLinkedQueue<String> temp = new ConcurrentLinkedQueue<String>(mData);
+            while(position > 0 && temp.size() > 0) {
+                temp.poll();
+                position--;
+            }
+
+
+            return (String) temp.poll();
+        }
+
+        @Override
+        public long getItemId(int position) {
+            // TODO implement you own logic with ID
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final View result;
+
+            if (convertView == null) {
+
+                result = mInflater.from(parent.getContext()).inflate(R.layout.inviteentitylayout, parent, false);
+            } else {
+                result = convertView;
+            }
+
+            String item = getItem(position);
+            System.out.println("Item = "+ item);
+            // TODO replace findViewById by ViewHolder
+            ((TextView) result.findViewById(R.id.listViewItem)).setText(item);
+
+            return result;
+        }
+    }
+
 
 
     private static String channel="/join_game/";
-    List<String> invites;
+    ConcurrentLinkedQueue<String> invites;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,25 +191,30 @@ public class JoinGameAcitvity extends Activity {
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
         //Add id to channel
-        invites = new ArrayList<String>();
 
-        OrtcClient client = ORTCUtil.getClient("[Replace with FBID]");
-
-        client.subscribe(channel, true,
-            new OnMessage() {
-                public void run(OrtcClient sender, String channel,
-                                String message) {
-                    Log.d("Hello message", ""); invites.add(message);
-                }
-        });
-
+        OrtcClient client = ORTCUtil.getClient();
 
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        invites = Invites.getInvitations();
 
+        ListView inviteView =(ListView) findViewById(R.id.invitesView);
+        try {
+            ma = new MyAdapter(getApplicationContext(), invites);
+            inviteView.setAdapter(ma);
+
+
+
+            invites.add("Not So much");
+            ma.notifyDataSetChanged();
+            invites.add("Hello");
+            ma.notifyDataSetChanged();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.

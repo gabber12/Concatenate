@@ -25,7 +25,7 @@ import ibt.ortc.extensibility.OrtcFactory;
 public  class ORTCUtil {
     private static final boolean defaultNeedsAuthentication = false;
 
-    private static OrtcClient client;
+    private static OrtcClient client = null;
     private static int reconnectingTries = 0;
     private static final int RESULT_SETTINGS = 1;
 
@@ -35,20 +35,18 @@ public  class ORTCUtil {
     private static String authToken;
     private static String connectionMetadata;
     private static boolean isCluster = true;
-    private static String channel;
-    private static String id;
 
     public static void init() {
         server = "http://ortc-developers.realtime.co/server/2.1/";
         appKey = "NMRZDS";
-        channel = "host_game_"+id;
         privateKey = "HPr4bQwJUssL";
         authToken = "poll_token";
         connectionMetadata = "AndroidConnMeta";
 
     }
-    public static OrtcClient getClient(String devId) {
-        id = devId;
+
+    public static OrtcClient getClient() {
+        if(client != null) return client;
         init();
 
         try {

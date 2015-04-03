@@ -27,6 +27,23 @@
                 android:layout_weight="1" android:text="@string/dummy_button" />
 
         </LinearLayout>
+
+        <TextView
+            android:layout_width="@dimen/dialog_fixed_width_major"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Invites"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal|top"
+            android:height="150dp"
+            android:nestedScrollingEnabled="true"
+             />
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="467dp"
+            android:layout_gravity="center"
+            android:textAlignment="4" android:id="@+id/invitesView"/>
     </FrameLayout>
 
 </FrameLayout>
