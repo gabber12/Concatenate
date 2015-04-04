@@ -10,4 +10,6 @@
     <string name="title_activity_join_game_acitvity">JoinGameAcitvity</string>
     <string name="title_activity_host_game">HostGameActivity</string>
 
+    <string name="title_activity_game_play">GamePlayActivity</string>
+
 </resources>
