@@ -170,6 +170,7 @@ public class HostGameActivity extends Activity {
         Bundle params = new Bundle();
         params.putString("message", "I just smashed " +
                 " friends! Can you beat it?");
+        params.putInt("max_recipients", 1);
         showDialogWithoutNotificationBar("apprequests", params);
 
 //        callbackManager = CallbackManager.Factory.create();

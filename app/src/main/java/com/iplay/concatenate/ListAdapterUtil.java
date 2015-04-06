@@ -40,10 +40,20 @@ public class ListAdapterUtil {
     }
     public static ConcurrentLinkedQueue getQueue() {
         if ( queue == null) {
-            queue = new ConcurrentLinkedQueue();
+            queue = new ConcurrentLinkedQueue<Invite>();
         }
 
         return queue;
+    }
+    public static void removeInviteById(String Id){
+        ConcurrentLinkedQueue tmp = new ConcurrentLinkedQueue();
+        Invite[] ins = (Invite[])queue.toArray();
+        queue.clear();
+        for(int i = ins.length - 1; i >= 0; i--) {
+            if( !( Id.equalsIgnoreCase(ins[i].getMessage()) ) )
+                queue.add(ins[i]);
+        }
+
     }
 
 }

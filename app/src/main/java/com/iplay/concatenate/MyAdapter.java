@@ -13,7 +13,7 @@ import com.iplay.concatenate.R;
 public class MyAdapter extends BaseAdapter {
     private ConcurrentLinkedQueue mData;
     private LayoutInflater mInflater;
-    public MyAdapter(Context mContext,  ConcurrentLinkedQueue<String> data) {
+    public MyAdapter(Context mContext,  ConcurrentLinkedQueue<Invite> data) {
         mData = data;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
