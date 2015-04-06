@@ -1,10 +1,6 @@
 package com.iplay.concatenate;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.share.model.GameRequestContent;
-import com.facebook.share.widget.GameRequestDialog;
+
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -16,6 +12,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -138,7 +136,9 @@ public class HomeActivity extends Activity {
                 startActivity(in);
             }
         });
-
+        ConcurrentLinkedQueue qu = ListAdapterUtil.getQueue();
+        qu.add("String");
+        ListAdapterUtil.getAdapter(getApplicationContext()).notifyDataSetChanged();
     }
 
 

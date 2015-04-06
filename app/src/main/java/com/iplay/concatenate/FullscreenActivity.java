@@ -1,12 +1,14 @@
 package com.iplay.concatenate;
 
 import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.LoginButton;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -19,6 +21,15 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import ibt.ortc.extensibility.OnConnected;
+import ibt.ortc.extensibility.OnMessage;
 import ibt.ortc.extensibility.OrtcClient;
 
 
@@ -58,8 +69,12 @@ public class FullscreenActivity extends Activity {
     private SystemUiHider mSystemUiHider;
     private LoginButton loginButton;
     public static final boolean IS_SOCIAL = true;
-    CallbackManager callbackManager;
 
+    private UiLifecycleHelper fbUiLifecycleHelper;
+
+    public UiLifecycleHelper getFbUiLifecycleHelper() {
+        return fbUiLifecycleHelper;
+    }
 //    @Override
 //    protected void onResume() {
 //        super.onResume();
@@ -69,10 +84,61 @@ public class FullscreenActivity extends Activity {
 //        }
 //    }
     @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        fbUiLifecycleHelper.onSaveInstanceState(outState);
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         token = null;
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        fbUiLifecycleHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                // Add code here to accommodate session changes
+                if(state.isOpened()) {
+                    System.out.println("session" + session.getAccessToken());
+                    Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+
+                                @Override
+                                public void onCompleted(GraphUser user, Response response) {
+
+                                    if (user != null) {
+                                        try {
+                                            System.out.println("Graph Inner Json" + user.getInnerJSONObject().get("id"));
+                                            final String userId = (String)user.getInnerJSONObject().get("id");
+
+                                            OrtcClient cli = ORTCUtil.getClient();
+                                            cli.onConnected = new OnConnected() {
+                                                @Override
+                                                public void run(OrtcClient ortcClient) {
+                                                    System.out.println("Connected to ORTC");
+                                                    ortcClient.subscribe("host_game" + userId, true, new OnMessage() {
+                                                        @Override
+                                                        public void run(OrtcClient ortcClient, String s, String s2) {
+                                                            ConcurrentLinkedQueue q = ListAdapterUtil.getQueue();
+                                                            q.add(s);
+                                                            System.out.println("Message recieved");
+                                                        }
+                                                    });
+                                                }
+                                            };
+
+                                        } catch(Exception e){
+
+                                        }
+                                    }
+                                }
+                            });
+
+                            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(in);
+
+
+                }
+            }
+        });
+        fbUiLifecycleHelper.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_fullscreen);
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
@@ -135,35 +201,15 @@ public class FullscreenActivity extends Activity {
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("user_friends");
+        loginButton.setReadPermissions(Arrays.asList("basic_info", "user_status", "email"));
         String text = loginButton.getText().toString();
-        if(text.contains("Log out")) {
-            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
-            startActivity(in);
-        }
-        callbackManager = CallbackManager.Factory.create();
+        System.out.println(text);
+
 
         // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            public void onSuccess(LoginResult loginResult) {
-                token = loginResult.getAccessToken();
-                Intent in = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(in);
-                Log.d("", "Succccess");
-                OrtcClient client = ORTCUtil.getClient();
 
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d("", "Cancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                Log.d("",  "");
-                exception.printStackTrace();
-            }
-        });
+        OrtcClient cli =  ORTCUtil.getClient();
+        
     }
 
     @Override
@@ -177,9 +223,15 @@ public class FullscreenActivity extends Activity {
     }
 
     @Override
+    protected void onResume(){
+        super.onResume();
+        fbUiLifecycleHelper.onResume();
+
+    }
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
     }
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the

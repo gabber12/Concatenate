@@ -35,7 +35,7 @@ public  class ORTCUtil {
     private static String authToken;
     private static String connectionMetadata;
     private static boolean isCluster = true;
-
+    public static String UserID = "";
     public static void init() {
         server = "http://ortc-developers.realtime.co/server/2.1/";
         appKey = "NMRZDS";
@@ -58,6 +58,7 @@ public  class ORTCUtil {
 
             client = factory.createClient();
 
+
             //client.setApplicationContext(getApplicationContext());
             //client.setGoogleProjectId("your_google_project_id");
 
@@ -66,12 +67,6 @@ public  class ORTCUtil {
 
         if (client != null) {
             try {
-                client.onConnected = new OnConnected() {
-
-                    public void run(final OrtcClient sender) {
-
-                    }
-                };
 
                 client.onDisconnected = new OnDisconnected() {
 

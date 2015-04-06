@@ -10,11 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -48,6 +46,7 @@ public class JoinGameAcitvity extends Activity {
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
      * user interaction before hiding the system UI.
      */
+
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
     /**
@@ -67,57 +66,6 @@ public class JoinGameAcitvity extends Activity {
      */
     private SystemUiHider mSystemUiHider;
 
-    public class MyAdapter extends BaseAdapter {
-        private ConcurrentLinkedQueue mData;
-        private LayoutInflater mInflater;
-        public MyAdapter(Context mContext,  ConcurrentLinkedQueue<String> data) {
-            mData = data;
-            mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return mData.size();
-        }
-
-        @Override
-        public String getItem(int position) {
-            ConcurrentLinkedQueue<String> temp = new ConcurrentLinkedQueue<String>(mData);
-            while(position > 0 && temp.size() > 0) {
-                temp.poll();
-                position--;
-            }
-
-
-            return (String) temp.poll();
-        }
-
-        @Override
-        public long getItemId(int position) {
-            // TODO implement you own logic with ID
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            final View result;
-
-            if (convertView == null) {
-
-                result = mInflater.from(parent.getContext()).inflate(R.layout.inviteentitylayout, parent, false);
-            } else {
-                result = convertView;
-            }
-
-            String item = getItem(position);
-            System.out.println("Item = "+ item);
-            // TODO replace findViewById by ViewHolder
-            ((TextView) result.findViewById(R.id.listViewItem)).setText(item);
-
-            return result;
-        }
-    }
-
 
 
     private static String channel="/join_game/";
@@ -130,7 +78,6 @@ public class JoinGameAcitvity extends Activity {
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
-
         // Set up an instance of SystemUiHider to control the system UI for
         // this activity.
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
@@ -193,25 +140,23 @@ public class JoinGameAcitvity extends Activity {
         //Add id to channel
 
         OrtcClient client = ORTCUtil.getClient();
+        ListView inviteView = (ListView)findViewById(R.id.invitesView);
+
 
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        invites = Invites.getInvitations();
+        invites = ListAdapterUtil.getQueue();
 
         ListView inviteView =(ListView) findViewById(R.id.invitesView);
         try {
-            ma = new MyAdapter(getApplicationContext(), invites);
+            ma = ListAdapterUtil.getAdapter(getApplicationContext());
             inviteView.setAdapter(ma);
 
-
-
-            invites.add("Not So much");
             ma.notifyDataSetChanged();
-            invites.add("Hello");
-            ma.notifyDataSetChanged();
+
         } catch(Exception e) {
             e.printStackTrace();
         }

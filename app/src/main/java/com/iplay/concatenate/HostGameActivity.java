@@ -1,10 +1,11 @@
 package com.iplay.concatenate;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
+
 import com.facebook.FacebookException;
-import com.facebook.share.model.GameRequestContent;
-import com.facebook.share.widget.GameRequestDialog;
+
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.Session;
+import com.facebook.widget.WebDialog;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -17,14 +18,18 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,11 +37,11 @@ import ibt.ortc.extensibility.OrtcClient;
 
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
+* An example full-screen activity that shows and hides the system UI (i.e.
+* status bar and navigation/system bar) with user interaction.
+*
+* @see SystemUiHider
+*/
 public class HostGameActivity extends Activity {
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -65,8 +70,35 @@ public class HostGameActivity extends Activity {
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
-    GameRequestDialog requestDialog;
-    CallbackManager callbackManager;
+    private WebDialog dialog;
+    private void showDialogWithoutNotificationBar(String action, Bundle params){
+        System.out.println(Session.getActiveSession().getAccessToken());
+        dialog = new WebDialog.Builder(HostGameActivity.this, Session.getActiveSession(), action, params).
+                setOnCompleteListener(new WebDialog.OnCompleteListener() {
+                    @Override
+                    public void onComplete(Bundle values, FacebookException error) {
+                        if (error != null && !(error instanceof FacebookOperationCanceledException)) {
+
+                        }
+                        if(values != null)
+                            System.out.println("to=>,"+ values.toString());
+
+                        String userID = values.getString("to[0]");
+                        dialog = null;
+                        OrtcClient cli = ORTCUtil.getClient();
+                        cli.send("host_game"+userID, "hello");
+
+                    }
+                }).build();
+
+        Window dialog_window = dialog.getWindow();
+        dialog_window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+
+        dialog.show();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,70 +166,80 @@ public class HostGameActivity extends Activity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-        callbackManager = CallbackManager.Factory.create();
-        requestDialog = new GameRequestDialog(this);
-        final Activity that = this;
-        requestDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
 
-            public void onSuccess(GameRequestDialog.Result result) {
-                final String id = result.getRequestId();
+        Bundle params = new Bundle();
+        params.putString("message", "I just smashed " +
+                " friends! Can you beat it?");
+        showDialogWithoutNotificationBar("apprequests", params);
 
-                Log.d("Error", "hello" + id);
-                final Timer t = new Timer();
-                final long startTime = System.currentTimeMillis();
+//        callbackManager = CallbackManager.Factory.create();
+//        requestDialog = new GameRequestDialog(this);
+//
+//        final Activity that = this;
+//        content = new GameRequestContent.Builder()
+//                .setMessage("Come play this level with me")
+//                .build();
+//        System.out.println(content.getData());
+//        requestDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
+//
+//            public void onSuccess(GameRequestDialog.Result result) {
+//                String str = content.getTo();
+//                System.out.println(content.getData());
+//                final String id = result.getRequestId();
+//                System.out.println(">>>>"+id);
+//                Log.d("Error", "hello" + id);
+//                final Timer t = new Timer();
+//                final long startTime = System.currentTimeMillis();
+//
+//                t.scheduleAtFixedRate(new TimerTask() {
+//
+//
+//
+//                    @Override
+//                    public void run() {
+//                        OrtcClient client = ORTCUtil.getClient();
+//                        String payload = "";
+//                        client.send("host_game_"+id, payload);
+//                        that.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                TextView dummy_text = (TextView) findViewById(R.id.fullscreen_content);
+//                                Log.d("", "" + System.currentTimeMillis());
+//                                long left = (30 * 1000 - System.currentTimeMillis() + startTime);
+//                                if(  left <=0 ){
+//                                    t.cancel();
+//                                    left = 0;
+//                                    Toast t = Toast.makeText(getApplicationContext(), "No one joind your game :(", Toast.LENGTH_LONG);
+//                                    t.show();
+//
+//                                }
+//
+//                                dummy_text.setText("" + Math.round(left/100.0)/10.0 + "s left!!");
+//
+//                            }
+//                        });
+//
+//                    }
+//                }, new Long(0), new Long(100));
+//            }
+//
+//            public void onCancel() {
+//                Log.d("Error", "hello1");
+//            }
+//
+//            public void onError(FacebookException error) {
+//                Log.d("Error", "hello2");
+//            }
+//        });
 
-                t.scheduleAtFixedRate(new TimerTask() {
 
 
-
-                    @Override
-                    public void run() {
-                        OrtcClient client = ORTCUtil.getClient();
-                        String payload = "";
-                        client.send("host_game_"+id, payload);
-                        that.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView dummy_text = (TextView) findViewById(R.id.fullscreen_content);
-                                Log.d("", "" + System.currentTimeMillis());
-                                long left = (30 * 1000 - System.currentTimeMillis() + startTime);
-                                if(  left <=0 ){
-                                    t.cancel();
-                                    left = 0;
-                                    Toast t = Toast.makeText(getApplicationContext(), "No one joind your game :(", Toast.LENGTH_LONG);
-                                    t.show();
-
-                                }
-
-                                dummy_text.setText("" + Math.round(left/100.0)/10.0 + "s left!!");
-
-                            }
-                        });
-
-                    }
-                }, new Long(0), new Long(100));
-            }
-
-            public void onCancel() {
-                Log.d("Error", "hello1");
-            }
-
-            public void onError(FacebookException error) {
-                Log.d("Error", "hello2");
-            }
-        });
-
-        GameRequestContent content = new GameRequestContent.Builder()
-                .setMessage("Come play this level with me")
-                .build();
-        requestDialog.show(content);
 
 
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
