@@ -155,12 +155,6 @@ public class GamePlayActivity extends Activity {
         client = ORTCUtil.getClient();
         final String channel = "user_channel_" + user1;
 
-        try {
-            new BackgroundURLRequest().execute("subscribe_user/", user1);
-        } catch ( Exception e ) {
-            e.printStackTrace();
-        }
-
         bt = (Button) findViewById(R.id.Button01);
         lv = (ListView) findViewById(R.id.listView1);
         et = (EditText) findViewById(R.id.EditText01);
@@ -192,41 +186,41 @@ public class GamePlayActivity extends Activity {
             }
         });
 
-        while ( true ) {
-            if ( !client.getIsConnected() ) {
-                try {
-                    Thread.sleep(100);
-                } catch( Exception e ) {
-                    Log.d("sleep", e.getMessage());
-                }
-                continue;
-            }
-            client.subscribe(channel, true,
-                    new OnMessage() {
-                        public void run(OrtcClient sender, String channel, String message) {
-                            final String subscribedChannel = channel;
-                            final String messageReceived = message;
-                            Log.d("pubsub",String.format("Message on channel %s: %s", subscribedChannel, messageReceived));
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        JSONParser jsonParser = new JSONParser();
-                                        JSONObject jsonObject = (JSONObject) jsonParser.parse(messageReceived);
-                                        addListItem((String)jsonObject.get("gameWord"));
-                                        if ( ((Long)jsonObject.get("typeFlag")) == 6) {
-                                            addListItem("---- Game Over ----");
-                                        }
-                                    } catch ( Exception e ) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
-                    });
-            break;
-        }
+//        while ( true ) {
+//            if ( !client.getIsConnected() ) {
+//                try {
+//                    Thread.sleep(100);
+//                } catch( Exception e ) {
+//                    Log.d("sleep", e.getMessage());
+//                }
+//                continue;
+//            }
+//            client.subscribe(channel, true,
+//                    new OnMessage() {
+//                        public void run(OrtcClient sender, String channel, String message) {
+//                            final String subscribedChannel = channel;
+//                            final String messageReceived = message;
+//                            Log.d("pubsub",String.format("Message on channel %s: %s", subscribedChannel, messageReceived));
+//
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    try {
+//                                        JSONParser jsonParser = new JSONParser();
+//                                        JSONObject jsonObject = (JSONObject) jsonParser.parse(messageReceived);
+//                                        addListItem((String)jsonObject.get("gameWord"));
+//                                        if ( ((Long)jsonObject.get("typeFlag")) == 6) {
+//                                            addListItem("---- Game Over ----");
+//                                        }
+//                                    } catch ( Exception e ) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    });
+//            break;
+//        }
 
     }
 
@@ -307,52 +301,3 @@ public class GamePlayActivity extends Activity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 }
-
-
-class BackgroundURLRequest extends AsyncTask<String, Integer, String> {
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
-
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
-        final String SERVER_BASE = "http://ec2-52-5-1-195.compute-1.amazonaws.com:8000/";
-
-        try {
-            String relativeURL = params[0];
-            String message = params[1];
-            HttpPost post = new HttpPost(SERVER_BASE + relativeURL);
-            StringEntity se = new StringEntity(message);
-            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            post.setEntity(se);
-            HttpResponse response = httpClient.execute(post);
-
-            InputStream is = response.getEntity().getContent();
-
-            if (is != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                is.close();
-
-                return sb.toString();
-            }
-        } catch (Exception e) {
-            Log.e("log_tag", "Error converting result " + e.toString());
-        }
-        return "error";
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-    }
-}
-

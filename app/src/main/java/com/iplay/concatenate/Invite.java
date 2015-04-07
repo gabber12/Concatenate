@@ -14,8 +14,6 @@ public class Invite {
         this.message = message;
     }
 
-
-
     public String getSenderId() {
         return senderId;
     }
@@ -26,7 +24,7 @@ public class Invite {
 
     public Invite(){}
     public Invite(String message, String senderId){
-        message = message;
-        senderId = senderId;
+        this.message = message;
+        this.senderId = senderId;
     }
 }

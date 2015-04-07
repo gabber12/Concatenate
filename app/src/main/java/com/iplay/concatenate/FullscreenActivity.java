@@ -9,11 +9,13 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,9 +23,20 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -105,27 +118,25 @@ public class FullscreenActivity extends Activity {
 
                                     if (user != null) {
                                         try {
+
                                             System.out.println("Graph Inner Json" + user.getInnerJSONObject().get("id"));
                                             final String userId = (String)user.getInnerJSONObject().get("id");
+                                            CommonUtils.userId = userId;
+
+                                            new BackgroundURLRequest().execute("subscribe_user/", userId);
 
                                             OrtcClient cli = ORTCUtil.getClient();
                                             cli.onConnected = new OnConnected() {
                                                 @Override
                                                 public void run(OrtcClient ortcClient) {
                                                     System.out.println("Connected to ORTC");
-                                                    ortcClient.subscribe("host_game" + userId, true, new OnMessage() {
-                                                        @Override
-                                                        public void run(OrtcClient ortcClient, String s, String s2) {
-                                                            ConcurrentLinkedQueue q = ListAdapterUtil.getQueue();
-                                                            q.add(s);
-                                                            System.out.println("Message recieved");
-                                                        }
-                                                    });
+                                                    ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(userId), true,
+                                                            new SubscribeCallbackHandler(getApplicationContext()));
                                                 }
                                             };
 
                                         } catch(Exception e){
-
+                                            e.printStackTrace();
                                         }
                                     }
                                 }
@@ -263,5 +274,53 @@ public class FullscreenActivity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+}
+
+
+class BackgroundURLRequest extends AsyncTask<String, Integer, String> {
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
+
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
+        final String SERVER_BASE = "http://ec2-52-5-1-195.compute-1.amazonaws.com:8000/";
+
+        try {
+            String relativeURL = params[0];
+            String message = params[1];
+            HttpPost post = new HttpPost(SERVER_BASE + relativeURL);
+            StringEntity se = new StringEntity(message);
+            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            post.setEntity(se);
+            HttpResponse response = httpClient.execute(post);
+
+            InputStream is = response.getEntity().getContent();
+
+            if (is != null) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                is.close();
+
+                return sb.toString();
+            }
+        } catch (Exception e) {
+            Log.e("log_tag", "Error converting result " + e.toString());
+        }
+        return "error";
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
     }
 }

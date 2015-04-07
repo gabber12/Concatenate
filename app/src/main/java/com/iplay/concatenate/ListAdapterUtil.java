@@ -31,7 +31,7 @@ import ibt.ortc.extensibility.OrtcClient;
 public class ListAdapterUtil {
     public static MyAdapter ma = null;
     public static ConcurrentLinkedQueue queue;    
-    public static MyAdapter getAdapter(Context ctx  ){
+    public static MyAdapter getAdapter(Context ctx){
         
         if(ma == null){
             ma = new MyAdapter(ctx, ListAdapterUtil.getQueue());

@@ -1,0 +1,107 @@
+package com.iplay.concatenate;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+
+import com.iplay.concatenate.common.CommonUtils;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.text.ParseException;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import ibt.ortc.extensibility.OnMessage;
+import ibt.ortc.extensibility.OrtcClient;
+
+/**
+ * Created by divanshu on 06/04/15.
+ */
+public class SubscribeCallbackHandler implements OnMessage {
+    private Context ctx;
+    public SubscribeCallbackHandler(Context ctx) {
+        this.ctx = ctx;
+    }
+    @Override
+    public void run(OrtcClient sender, String channel, String message) {
+        ConcurrentLinkedQueue joinGame = ListAdapterUtil.getQueue();
+        MyAdapter ma = ListAdapterUtil.getAdapter(ctx);
+        ma.notifyDataSetChanged();
+
+        final String subscribedChannel = channel;
+        final String messageReceived = message;
+        Log.d("pubsub", String.format("Message on channel %s: %s", subscribedChannel, messageReceived));
+
+        try {
+            JSONParser jsonParser = new JSONParser();
+            final JSONObject jsonObject = (JSONObject) jsonParser.parse(messageReceived);
+
+            // Handle all the cases here!
+            switch (((int) jsonObject.get("typeFlag"))) {
+
+                case 1:
+                    joinGame.add( new Invite((String)jsonObject.get("fromUser"), "I challenge you !") );
+                    ma.notifyDataSetChanged();
+                    final Timer t = new Timer();
+                    final long startTime = System.currentTimeMillis();
+                    t.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+
+                            long left = (30 * 1000 - System.currentTimeMillis() + startTime);
+                            double timeLeft = Math.round(left/100.0)/10.0;
+                            if ( timeLeft <= 0.0 ) {
+                                t.cancel();
+                                ListAdapterUtil.removeInviteById( (String)jsonObject.get("fromUser") );
+                                MyAdapter ma = ListAdapterUtil.getAdapter(null);
+                                ma.notifyDataSetChanged(); // is it okay to make this final ?
+                            }
+
+                        }
+                    }, new Long(0), new Long(100));
+                    break;
+                case 2:
+                    // ignoring accept of invite
+                    break;
+                case 3:
+                    ListAdapterUtil.removeInviteById( (String) jsonObject.get("fromUser") );
+                    ma.notifyDataSetChanged();
+                    break;
+                case 4:
+                    String against = (String) jsonObject.get("fromUser");
+                    if ( against.equals(CommonUtils.userId) ) against = (String) jsonObject.get("toUser");
+                    String gameWord = (String) jsonObject.get("gameWord");
+                    String gameId = (String) jsonObject.get("gameId");
+                    String userTurn = (String) jsonObject.get("userTurn");
+                    Intent in = new Intent(ctx, GamePlayActivity.class);
+                    in.putExtra("gameWord", gameWord);
+                    in.putExtra("gameId", gameWord);
+                    in.putExtra("userTurn", userTurn);
+                    ctx.startActivity(in);
+                    break;
+                case 5:
+                    // TODO: add a new word received during game
+                    break;
+                case 6:
+                    // TODO: game over request
+                    break;
+
+            }
+        } catch ( Exception pe ) {
+            System.out.println("Error while parsing: " + pe.getMessage());
+        }
+
+        joinGame.add(message);
+
+
+        System.out.println("Message recieved");
+    }
+
+
+
+}

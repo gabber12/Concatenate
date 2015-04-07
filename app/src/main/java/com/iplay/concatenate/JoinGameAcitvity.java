@@ -1,5 +1,6 @@
 package com.iplay.concatenate;
 
+import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -13,9 +14,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +73,7 @@ public class JoinGameAcitvity extends Activity {
 
 
     private static String channel="/join_game/";
-    ConcurrentLinkedQueue<String> invites;
+    ConcurrentLinkedQueue<Invite> invites;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,8 +143,26 @@ public class JoinGameAcitvity extends Activity {
 
         //Add id to channel
 
-        OrtcClient client = ORTCUtil.getClient();
-        ListView inviteView = (ListView)findViewById(R.id.invitesView);
+        final OrtcClient client = ORTCUtil.getClient();
+        final ListView inviteView = (ListView)findViewById(R.id.invitesView);
+
+        inviteView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Object object = inviteView.getItemAtPosition(position);
+                Invite invite = (Invite) object;//As you are using Default String Adapter
+
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("typeFlag", 2);
+                    jsonObject.put("fromUser", CommonUtils.userId);
+                    jsonObject.put("toUser", invite.getSenderId());
+                    client.send(invite.getSenderId(), jsonObject.toString());
+                } catch (Exception e) {
+                    Log.e("json", "error while generating a json file and sending to server");
+                }
+            }
+        });
 
 
     }

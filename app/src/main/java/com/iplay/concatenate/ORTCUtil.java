@@ -35,7 +35,6 @@ public  class ORTCUtil {
     private static String authToken;
     private static String connectionMetadata;
     private static boolean isCluster = true;
-    public static String UserID = "";
     public static void init() {
         server = "http://ortc-developers.realtime.co/server/2.1/";
         appKey = "NMRZDS";

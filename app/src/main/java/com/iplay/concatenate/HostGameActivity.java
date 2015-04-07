@@ -6,6 +6,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
 import com.facebook.widget.WebDialog;
+import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -23,6 +24,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
@@ -83,10 +86,18 @@ public class HostGameActivity extends Activity {
                         if(values != null)
                             System.out.println("to=>,"+ values.toString());
 
-                        String userID = values.getString("to[0]");
+                        String opponentId = values.getString("to[0]");
                         dialog = null;
-                        OrtcClient cli = ORTCUtil.getClient();
-                        cli.send("host_game"+userID, "hello");
+                        OrtcClient client = ORTCUtil.getClient();
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("typeFlag", 1);
+                            jsonObject.put("toUser", opponentId);
+                            jsonObject.put("fromUser", CommonUtils.userId);
+                            client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                        } catch ( JSONException je ) {
+                            System.out.println("Unable to encode json: " + je.getMessage());
+                        }
 
                     }
                 }).build();
