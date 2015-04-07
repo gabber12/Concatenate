@@ -5,29 +5,24 @@ import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import ibt.ortc.extensibility.OnMessage;
 import ibt.ortc.extensibility.OrtcClient;
 
 
@@ -70,13 +65,12 @@ public class JoinGameAcitvity extends Activity {
      */
     private SystemUiHider mSystemUiHider;
 
-
-
     private static String channel="/join_game/";
-    ConcurrentLinkedQueue<Invite> invites;
+    ConcurrentLinkedQueue<InviteModel> inviteModels;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("invite_recieved"));
 
         setContentView(R.layout.activity_join_game_acitvity);
 
@@ -150,14 +144,14 @@ public class JoinGameAcitvity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Object object = inviteView.getItemAtPosition(position);
-                Invite invite = (Invite) object;//As you are using Default String Adapter
+                InviteModel inviteModel = (InviteModel) object;//As you are using Default String Adapter
 
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("typeFlag", 2);
                     jsonObject.put("fromUser", CommonUtils.userId);
-                    jsonObject.put("toUser", invite.getSenderId());
-                    client.send(invite.getSenderId(), jsonObject.toString());
+                    jsonObject.put("toUser", inviteModel.getSenderId());
+                    client.send(inviteModel.getSenderId(), jsonObject.toString());
                 } catch (Exception e) {
                     Log.e("json", "error while generating a json file and sending to server");
                 }
@@ -167,10 +161,21 @@ public class JoinGameAcitvity extends Activity {
 
     }
 
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("sender_id");
+            Log.d("receiver", "Got message: " + message);
+            inviteModels.add( new InviteModel(message,"Accept the challenge?") );
+            ListAdapterUtil.getAdapter(getApplicationContext()).notifyDataSetChanged();
+        }
+    };
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        invites = ListAdapterUtil.getQueue();
+        inviteModels = ListAdapterUtil.getQueue();
 
         ListView inviteView =(ListView) findViewById(R.id.invitesView);
         try {
@@ -219,5 +224,12 @@ public class JoinGameAcitvity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 }

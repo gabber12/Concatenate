@@ -105,6 +105,10 @@ public class FullscreenActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         token = null;
         super.onCreate(savedInstanceState);
+
+        ListAdapterUtil.getQueue();
+        ListAdapterUtil.getAdapter(getApplicationContext());
+
         fbUiLifecycleHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
@@ -126,14 +130,16 @@ public class FullscreenActivity extends Activity {
                                             new BackgroundURLRequest().execute("subscribe_user/", userId);
 
                                             OrtcClient cli = ORTCUtil.getClient();
+
                                             cli.onConnected = new OnConnected() {
                                                 @Override
                                                 public void run(OrtcClient ortcClient) {
                                                     System.out.println("Connected to ORTC");
-                                                    ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(userId), true,
+                                                    ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
                                                             new SubscribeCallbackHandler(getApplicationContext()));
                                                 }
                                             };
+                                            ORTCUtil.connect();
 
                                         } catch(Exception e){
                                             e.printStackTrace();

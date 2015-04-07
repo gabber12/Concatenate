@@ -136,9 +136,9 @@ public class HomeActivity extends Activity {
                 startActivity(in);
             }
         });
-        ConcurrentLinkedQueue qu = ListAdapterUtil.getQueue();
-        qu.add("String");
-        ListAdapterUtil.getAdapter(getApplicationContext()).notifyDataSetChanged();
+//        ConcurrentLinkedQueue qu = ListAdapterUtil.getQueue();
+//        qu.add("String");
+//        ListAdapterUtil.getAdapter(getApplicationContext()).notifyDataSetChanged();
     }
 
 

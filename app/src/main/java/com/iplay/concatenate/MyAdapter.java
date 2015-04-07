@@ -7,13 +7,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
-import com.iplay.concatenate.R;
-
 
 public class MyAdapter extends BaseAdapter {
-    private ConcurrentLinkedQueue mData;
+    private ConcurrentLinkedQueue<InviteModel> mData;
     private LayoutInflater mInflater;
-    public MyAdapter(Context mContext,  ConcurrentLinkedQueue<Invite> data) {
+    public MyAdapter(Context mContext,  ConcurrentLinkedQueue<InviteModel> data) {
         mData = data;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -24,15 +22,17 @@ public class MyAdapter extends BaseAdapter {
     }
 
     @Override
-    public String getItem(int position) {
-        ConcurrentLinkedQueue<String> temp = new ConcurrentLinkedQueue<String>(mData);
-        while(position > 0 && temp.size() > 0) {
-            temp.poll();
+    public InviteModel getItem(int position) {
+
+        ConcurrentLinkedQueue<InviteModel> tempQ = new ConcurrentLinkedQueue<InviteModel>(mData);
+        InviteModel m = new InviteModel();
+        while(position >= 0 && tempQ.size() > 0) {
+            System.out.println(tempQ.peek());
+            m = tempQ.poll();
             position--;
         }
 
-
-        return (String) temp.poll();
+        return m;
     }
 
     @Override
@@ -43,19 +43,20 @@ public class MyAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        System.out.println("Pos: " + position);
         final View result;
 
         if (convertView == null) {
 
-            result = mInflater.from(parent.getContext()).inflate(R.layout.inviteentitylayout, parent, false);
+            result = LayoutInflater.from(parent.getContext()).inflate(R.layout.inviteentitylayout, parent, false);
         } else {
             result = convertView;
         }
 
-        String item = getItem(position);
-        System.out.println("Item = "+ item);
+        InviteModel item = getItem(position);
+        System.out.println("Item = "+ item.getSenderId() + " " + position);
         // TODO replace findViewById by ViewHolder
-        ((TextView) result.findViewById(R.id.listViewItem)).setText(item);
+        ((TextView) result.findViewById(R.id.listViewItem)).setText(item.getSenderId());
 
         return result;
     }

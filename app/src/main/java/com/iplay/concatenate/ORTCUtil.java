@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import com.iplay.concatenate.common.CommonUtils;
+
 import java.util.HashMap;
 
 import ibt.ortc.api.ChannelPermissions;
@@ -22,7 +24,7 @@ import ibt.ortc.extensibility.OrtcFactory;
 /**
  * Created by gabber12 on 02/04/15.
  */
-public  class ORTCUtil {
+public class ORTCUtil {
     private static final boolean defaultNeedsAuthentication = false;
 
     private static OrtcClient client = null;
@@ -46,8 +48,12 @@ public  class ORTCUtil {
 
     public static OrtcClient getClient() {
         if(client != null) return client;
-        init();
 
+        if ( CommonUtils.userId == null ) {
+            System.out.println("FB user id not available yet. Returning null client.");
+            return null;
+        }
+        init();
         try {
             Ortc ortc = new Ortc();
 
@@ -112,7 +118,16 @@ public  class ORTCUtil {
                     }
                 };
 
-                connect();
+//                client.onConnected = new OnConnected() {
+//                    @Override
+//                    public void run(OrtcClient ortcClient) {
+//                        System.out.println("Connected to ORTC");
+//                        ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
+//                                new SubscribeCallbackHandler(getApplicationContext()));
+//                    }
+//                };
+
+//                connect();
             } catch (Exception e) {
             }
 
@@ -122,7 +137,7 @@ public  class ORTCUtil {
     }
 
 
-    private static void connect() {
+    public static void connect() {
 
 
         if (defaultNeedsAuthentication) {

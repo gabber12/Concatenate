@@ -5,7 +5,7 @@ package com.iplay.concatenate.common;
  */
 public class CommonUtils {
 
-    public static String userId;
+    public static String userId = null;
 
     public static String getChannelNameFromUserID(String id) {
         return "user_channel_" + id;

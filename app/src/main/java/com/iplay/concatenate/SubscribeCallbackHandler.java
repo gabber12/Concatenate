@@ -3,6 +3,7 @@ package com.iplay.concatenate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -30,8 +31,7 @@ public class SubscribeCallbackHandler implements OnMessage {
     @Override
     public void run(OrtcClient sender, String channel, String message) {
         ConcurrentLinkedQueue joinGame = ListAdapterUtil.getQueue();
-        MyAdapter ma = ListAdapterUtil.getAdapter(ctx);
-        ma.notifyDataSetChanged();
+//        MyAdapter ma = ListAdapterUtil.getAdapter(ctx);
 
         final String subscribedChannel = channel;
         final String messageReceived = message;
@@ -42,35 +42,38 @@ public class SubscribeCallbackHandler implements OnMessage {
             final JSONObject jsonObject = (JSONObject) jsonParser.parse(messageReceived);
 
             // Handle all the cases here!
-            switch (((int) jsonObject.get("typeFlag"))) {
+            switch (((int)(long)jsonObject.get("typeFlag"))) {
 
                 case 1:
-                    joinGame.add( new Invite((String)jsonObject.get("fromUser"), "I challenge you !") );
-                    ma.notifyDataSetChanged();
-                    final Timer t = new Timer();
-                    final long startTime = System.currentTimeMillis();
-                    t.scheduleAtFixedRate(new TimerTask() {
-                        @Override
-                        public void run() {
-
-                            long left = (30 * 1000 - System.currentTimeMillis() + startTime);
-                            double timeLeft = Math.round(left/100.0)/10.0;
-                            if ( timeLeft <= 0.0 ) {
-                                t.cancel();
-                                ListAdapterUtil.removeInviteById( (String)jsonObject.get("fromUser") );
-                                MyAdapter ma = ListAdapterUtil.getAdapter(null);
-                                ma.notifyDataSetChanged(); // is it okay to make this final ?
-                            }
-
-                        }
-                    }, new Long(0), new Long(100));
+                    Intent intent = new Intent("invite_recieved");
+                    intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
+                    LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
+//                    joinGame.add( new InviteModel((String)jsonObject.get("fromUser"), "I challenge you !") );
+//                    ma.notifyDataSetChanged();
+//                    final Timer t = new Timer();
+//                    final long startTime = System.currentTimeMillis();
+//                    t.scheduleAtFixedRate(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//
+//                            long left = (30 * 1000 - System.currentTimeMillis() + startTime);
+//                            double timeLeft = Math.round(left/100.0)/10.0;
+//                            if ( timeLeft <= 0.0 ) {
+//                                t.cancel();
+//                                ListAdapterUtil.removeInviteById( (String)jsonObject.get("fromUser") );
+//                                MyAdapter ma = ListAdapterUtil.getAdapter(null);
+//                                ma.notifyDataSetChanged(); // is it okay to make this final ?
+//                            }
+//
+//                        }
+//                    }, new Long(0), new Long(100));
                     break;
                 case 2:
                     // ignoring accept of invite
                     break;
                 case 3:
                     ListAdapterUtil.removeInviteById( (String) jsonObject.get("fromUser") );
-                    ma.notifyDataSetChanged();
+//                    ma.notifyDataSetChanged();
                     break;
                 case 4:
                     String against = (String) jsonObject.get("fromUser");
