@@ -143,6 +143,8 @@ public class JoinGameAcitvity extends Activity {
         inviteView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                System.out.println("Clicked on position : " + position);
+
                 Object object = inviteView.getItemAtPosition(position);
                 InviteModel inviteModel = (InviteModel) object;//As you are using Default String Adapter
 
@@ -151,7 +153,8 @@ public class JoinGameAcitvity extends Activity {
                     jsonObject.put("typeFlag", 2);
                     jsonObject.put("fromUser", CommonUtils.userId);
                     jsonObject.put("toUser", inviteModel.getSenderId());
-                    client.send(inviteModel.getSenderId(), jsonObject.toString());
+                    System.out.println(jsonObject.toString());
+                    client.send(CommonUtils.getChannelNameFromUserID(inviteModel.getSenderId()), jsonObject.toString());
                 } catch (Exception e) {
                     Log.e("json", "error while generating a json file and sending to server");
                 }
@@ -165,9 +168,9 @@ public class JoinGameAcitvity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            String message = intent.getStringExtra("sender_id");
-            Log.d("receiver", "Got message: " + message);
-            inviteModels.add( new InviteModel(message,"Accept the challenge?") );
+            String senderId = intent.getStringExtra("sender_id");
+            Log.d("receiver", "Got message: " + senderId);
+            inviteModels.add( new InviteModel(senderId,"Accept the challenge?") );
             ListAdapterUtil.getAdapter(getApplicationContext()).notifyDataSetChanged();
         }
     };

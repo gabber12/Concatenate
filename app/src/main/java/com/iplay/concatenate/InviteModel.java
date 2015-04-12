@@ -24,11 +24,11 @@ public class InviteModel {
     }
 
     public InviteModel(){ senderId = ""; message="";}
-    public InviteModel(String message, String senderId){
+    public InviteModel(String senderId, String message){
         this.message = message;
         this.senderId = senderId;
     }
     public String toString() {
-        return "this is shit";
+        return senderId;
     }
 }

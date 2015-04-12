@@ -79,12 +79,17 @@ public class SubscribeCallbackHandler implements OnMessage {
                     String against = (String) jsonObject.get("fromUser");
                     if ( against.equals(CommonUtils.userId) ) against = (String) jsonObject.get("toUser");
                     String gameWord = (String) jsonObject.get("gameWord");
-                    String gameId = (String) jsonObject.get("gameId");
-                    String userTurn = (String) jsonObject.get("userTurn");
+                    int gameId = (int)(long) jsonObject.get("gameId");
+//                    String userTurn = (String) jsonObject.get("userTurn");
+                    if ( ctx == null ) {
+                        System.out.println("context is null.");
+                    }
+                    System.out.flush();
                     Intent in = new Intent(ctx, GamePlayActivity.class);
                     in.putExtra("gameWord", gameWord);
-                    in.putExtra("gameId", gameWord);
-                    in.putExtra("userTurn", userTurn);
+                    in.putExtra("gameId", gameId);
+                    in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    in.putExtra("userTurn", userTurn);
                     ctx.startActivity(in);
                     break;
                 case 5:

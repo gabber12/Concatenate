@@ -51,6 +51,7 @@ public class MyAdapter extends BaseAdapter {
 
         InviteModel item = (InviteModel)getItem(position);
         System.out.println("Item = "+ item.getSenderId() + " " + position);
+        System.out.flush();
         // TODO replace findViewById by ViewHolder
         ((TextView) result.findViewById(R.id.listViewItem)).setText(item.getSenderId());
 

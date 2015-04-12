@@ -307,6 +307,8 @@ class BackgroundURLRequest extends AsyncTask<String, Integer, String> {
         HttpClient httpClient = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
         final String SERVER_BASE = "http://ec2-52-4-64-120.compute-1.amazonaws.com:8000/";
+
+        final String SERVER_BASE = "http://ec2-52-4-64-120.compute-1.amazonaws.com:8000/";
         try {
             String relativeURL = params[0];
             String message = params[1];
