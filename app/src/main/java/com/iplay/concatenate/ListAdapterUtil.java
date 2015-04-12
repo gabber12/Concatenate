@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ListAdapterUtil {
     public static MyAdapter ma = null;
-    public static ConcurrentLinkedQueue queue;    
+    public static ConcurrentLinkedQueue<InviteModel> queue;
     public static MyAdapter getAdapter(Context ctx){
         
         if(ma == null){
@@ -16,7 +16,7 @@ public class ListAdapterUtil {
         }
         return ma;
     }
-    public static ConcurrentLinkedQueue getQueue() {
+    public static ConcurrentLinkedQueue<InviteModel> getQueue() {
         if ( queue == null) {
             queue = new ConcurrentLinkedQueue<InviteModel>();
         }

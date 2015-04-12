@@ -30,7 +30,7 @@ public class SubscribeCallbackHandler implements OnMessage {
     }
     @Override
     public void run(OrtcClient sender, String channel, String message) {
-        ConcurrentLinkedQueue joinGame = ListAdapterUtil.getQueue();
+        ConcurrentLinkedQueue<InviteModel> joinGame = ListAdapterUtil.getQueue();
 //        MyAdapter ma = ListAdapterUtil.getAdapter(ctx);
 
         final String subscribedChannel = channel;
@@ -99,7 +99,6 @@ public class SubscribeCallbackHandler implements OnMessage {
             System.out.println("Error while parsing: " + pe.getMessage());
         }
 
-        joinGame.add(message);
 
 
         System.out.println("Message recieved");

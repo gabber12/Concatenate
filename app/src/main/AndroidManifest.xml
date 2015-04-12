@@ -35,7 +35,6 @@
             android:label="@string/title_activity_home"
             android:theme="@style/FullscreenTheme" >
         </activity>
-
         <activity
             android:name=".JoinGameAcitvity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -57,6 +56,12 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.iplay.concatenate.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".LeaderboardActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_leaderboard"
+            android:theme="@style/FullscreenTheme" >
         </activity>
     </application>
 

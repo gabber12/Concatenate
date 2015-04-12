@@ -2,6 +2,7 @@ package com.iplay.concatenate;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import android.view.LayoutInflater;
@@ -24,15 +25,10 @@ public class MyAdapter extends BaseAdapter {
     @Override
     public InviteModel getItem(int position) {
 
-        ConcurrentLinkedQueue<InviteModel> tempQ = new ConcurrentLinkedQueue<InviteModel>(mData);
-        InviteModel m = new InviteModel();
-        while(position >= 0 && tempQ.size() > 0) {
-            System.out.println(tempQ.peek());
-            m = tempQ.poll();
-            position--;
-        }
+        InviteModel[] a = mData.toArray(new InviteModel[mData.size()]);
 
-        return m;
+
+        return a[position];
     }
 
     @Override
@@ -53,7 +49,7 @@ public class MyAdapter extends BaseAdapter {
             result = convertView;
         }
 
-        InviteModel item = getItem(position);
+        InviteModel item = (InviteModel)getItem(position);
         System.out.println("Item = "+ item.getSenderId() + " " + position);
         // TODO replace findViewById by ViewHolder
         ((TextView) result.findViewById(R.id.listViewItem)).setText(item.getSenderId());

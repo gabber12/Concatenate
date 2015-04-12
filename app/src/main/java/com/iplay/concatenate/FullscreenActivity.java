@@ -9,11 +9,13 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.facebook.widget.ProfilePictureView;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,6 +24,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -101,6 +104,8 @@ public class FullscreenActivity extends Activity {
         super.onSaveInstanceState(outState);
         fbUiLifecycleHelper.onSaveInstanceState(outState);
     }
+    private ProfilePictureView userImage;
+    private TextView welcomeTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         token = null;
@@ -117,39 +122,42 @@ public class FullscreenActivity extends Activity {
                     System.out.println("session" + session.getAccessToken());
                     Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 
-                                @Override
-                                public void onCompleted(GraphUser user, Response response) {
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
 
-                                    if (user != null) {
-                                        try {
+                            if (user != null) {
+                                try {
 
-                                            System.out.println("Graph Inner Json" + user.getInnerJSONObject().get("id"));
-                                            final String userId = (String)user.getInnerJSONObject().get("id");
-                                            CommonUtils.userId = userId;
+                                    System.out.println("Graph Inner Json" + user.getInnerJSONObject().get("id"));
+                                    final String userId = (String)user.getInnerJSONObject().get("id");
+                                    CommonUtils.userId = userId;
+                                    CircularProfilePicView pic = ((CircularProfilePicView)findViewById(R.id.userImage));
+                                    pic.setProfileId(userId);
+                                    pic.setCropped(true);
 
-                                            new BackgroundURLRequest().execute("subscribe_user/", userId);
+                                    new BackgroundURLRequest().execute("subscribe_user/", userId);
 
-                                            OrtcClient cli = ORTCUtil.getClient();
+                                    OrtcClient cli = ORTCUtil.getClient();
 
-                                            cli.onConnected = new OnConnected() {
-                                                @Override
-                                                public void run(OrtcClient ortcClient) {
-                                                    System.out.println("Connected to ORTC");
-                                                    ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
-                                                            new SubscribeCallbackHandler(getApplicationContext()));
-                                                }
-                                            };
-                                            ORTCUtil.connect();
-
-                                        } catch(Exception e){
-                                            e.printStackTrace();
-                                        }
-                                    }
+                                    cli.onConnected = new OnConnected() {
+                                                  @Override
+                                                  public void run(OrtcClient ortcClient) {
+                                            System.out.println("Connected to ORTC");
+                                            ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
+                                                    new SubscribeCallbackHandler(getApplicationContext()));
                                 }
-                            });
+                            };
+                                    ORTCUtil.connect();
+                                    Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+                                    in.putExtra("userId", userId);
+                                    startActivity(in);
+                                } catch(Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
 
-                            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(in);
 
 
                 }
@@ -213,15 +221,16 @@ public class FullscreenActivity extends Activity {
                     mSystemUiHider.show();
                 }
             }
+
         });
+
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("user_friends");
-        loginButton.setReadPermissions(Arrays.asList("basic_info", "user_status", "email"));
+        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
         String text = loginButton.getText().toString();
         System.out.println(text);
-
+        CommonUtils.setLoginButton(loginButton);
 
         // Callback registration
 
@@ -245,11 +254,13 @@ public class FullscreenActivity extends Activity {
         fbUiLifecycleHelper.onResume();
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
     }
+
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the
      * system UI. This is to prevent the jarring behavior of controls going away
@@ -295,8 +306,7 @@ class BackgroundURLRequest extends AsyncTask<String, Integer, String> {
 
         HttpClient httpClient = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
-        final String SERVER_BASE = "http://ec2-52-5-1-195.compute-1.amazonaws.com:8000/";
-
+        final String SERVER_BASE = "http://ec2-52-4-64-120.compute-1.amazonaws.com:8000/";
         try {
             String relativeURL = params[0];
             String message = params[1];

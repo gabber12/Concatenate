@@ -1,10 +1,15 @@
 package com.iplay.concatenate;
 
 
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +18,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -120,12 +126,34 @@ public class HomeActivity extends Activity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.dummy_button).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Session session = Session.getActiveSession();
+                if (session == null || !session.isOpened()) {
+                    return false;
+                }
+
+
+                Request scoresGraphPathRequest = Request.newGraphPathRequest(session,
+                        R.string.facebook_app_id + "/scores",
+                        new Request.Callback() {
+                            @Override
+                            public void onCompleted(Response response) {
+
+                            }
+
+
+                        });
+                return false;
+            }
+            });
         findViewById(R.id.host_game).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), HostGameActivity.class);
                 startActivity(in);
+
             }
         });
 
@@ -136,11 +164,19 @@ public class HomeActivity extends Activity {
                 startActivity(in);
             }
         });
+
+        findViewById(R.id.leaderboard).setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), LeaderboardActivity.class);
+                in.putExtra("userId", getIntent().getExtras().getString("userId"));
+                startActivity(in);
+            }
+        });
 //        ConcurrentLinkedQueue qu = ListAdapterUtil.getQueue();
 //        qu.add("String");
 //        ListAdapterUtil.getAdapter(getApplicationContext()).notifyDataSetChanged();
     }
-
 
 
 

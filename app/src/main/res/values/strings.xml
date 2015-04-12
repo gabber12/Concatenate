@@ -9,7 +9,11 @@
     <string name="title_activity_opponent_chooser">OpponentChooser</string>
     <string name="title_activity_join_game_acitvity">JoinGameAcitvity</string>
     <string name="title_activity_host_game">HostGameActivity</string>
-
     <string name="title_activity_game_play">GamePlayActivity</string>
+    <string name="title_activity_leaderboard">LeaderboardActivity</string>
+    <string name="dialog_no">Cancel</string>
+    <string name="dialog_yes">Ok</string>
+    <string name="publish_scores_dialog_title">Permissions for Storing score.</string>
+    <string name="publish_scores_dialog_message">Please Provide Acces to publish message</string>
 
 </resources>
