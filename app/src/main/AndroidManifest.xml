@@ -63,6 +63,17 @@
             android:label="@string/title_activity_leaderboard"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        <activity
+            android:name=".MainGameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_main_game"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/FullscreenTheme"
+            android:windowSoftInputMode="stateAlwaysVisible" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.iplay.concatenate.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

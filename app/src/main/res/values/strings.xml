@@ -16,4 +16,6 @@
     <string name="publish_scores_dialog_title">Permissions for Storing score.</string>
     <string name="publish_scores_dialog_message">Please Provide Acces to publish message</string>
 
+    <string name="title_activity_main_game">MainGameActivity</string>
+
 </resources>

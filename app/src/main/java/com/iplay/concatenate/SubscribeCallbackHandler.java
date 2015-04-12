@@ -77,23 +77,26 @@ public class SubscribeCallbackHandler implements OnMessage {
                     break;
                 case 4:
                     String against = (String) jsonObject.get("fromUser");
-                    if ( against.equals(CommonUtils.userId) ) against = (String) jsonObject.get("toUser");
+                    if ( against.equals(CommonUtils.userId) )
+                        against = (String) jsonObject.get("toUser");
                     String gameWord = (String) jsonObject.get("gameWord");
                     int gameId = (int)(long) jsonObject.get("gameId");
-//                    String userTurn = (String) jsonObject.get("userTurn");
-                    if ( ctx == null ) {
-                        System.out.println("context is null.");
-                    }
-                    System.out.flush();
-                    Intent in = new Intent(ctx, GamePlayActivity.class);
-                    in.putExtra("gameWord", gameWord);
-                    in.putExtra("gameId", gameId);
+                    String userTurn = (String) jsonObject.get("userTurn");
+                    Intent in = new Intent(ctx, MainGameActivity.class);
+                    in.putExtra("game_word", gameWord);
+                    in.putExtra("game_id", gameId);
+                    in.putExtra("user_turn", userTurn);
+                    in.putExtra("against_user", against);
                     in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                    in.putExtra("userTurn", userTurn);
                     ctx.startActivity(in);
                     break;
                 case 5:
-                    // TODO: add a new word received during game
+                    intent = new Intent("gameword_recieved");
+                    intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
+                    intent.putExtra("game_id", (int)(long) jsonObject.get("gameId") );
+                    intent.putExtra("game_word", (String)jsonObject.get("gameWord") );
+                    LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     break;
                 case 6:
                     // TODO: game over request
@@ -103,9 +106,6 @@ public class SubscribeCallbackHandler implements OnMessage {
         } catch ( Exception pe ) {
             System.out.println("Error while parsing: " + pe.getMessage());
         }
-
-
-
         System.out.println("Message recieved");
     }
 

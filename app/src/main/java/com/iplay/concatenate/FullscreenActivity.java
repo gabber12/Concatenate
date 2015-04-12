@@ -41,6 +41,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -235,6 +236,23 @@ public class FullscreenActivity extends Activity {
         // Callback registration
 
         OrtcClient cli =  ORTCUtil.getClient();
+
+        // Adding dictionary words to store in a static hash set
+
+        if ( CommonUtils.words == null ) {
+            CommonUtils.words = new HashSet<>();
+            InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.dict);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            try {
+                String line = reader.readLine();
+                while (line != null) {
+                    CommonUtils.words.add( line.toUpperCase() );
+                    line = reader.readLine();
+                }
+            } catch ( Exception e) {
+                System.out.println("error while reading from dictionary of words.");
+            }
+        }
         
     }
 
