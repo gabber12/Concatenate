@@ -228,7 +228,7 @@ public class FullscreenActivity extends Activity {
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
+        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions", "read_friendlists"));
         String text = loginButton.getText().toString();
         System.out.println(text);
         CommonUtils.setLoginButton(loginButton);

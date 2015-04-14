@@ -1,7 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:background="#0099cc"
-    tools:context="com.iplay.concatenate.HomeActivity">
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    tools:context="com.iplay.concatenate.HomeActivity" android:weightSum="7">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -9,57 +11,39 @@
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-    <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#33b5e5"
-        android:textStyle="bold" android:textSize="50sp" android:gravity="center"
-        android:text="@string/dummy_content" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Quick Match"
+    <com.iplay.concatenate.common.RoundedImageView
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:src="@drawable/white1"
+        android:layout_gravity="center"
         android:id="@+id/quick_game"
-        android:layout_marginTop="170dp"
-        android:layout_gravity="center_horizontal|top" />
+        android:layout_marginTop="22dp"
+        android:layout_weight="2"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Join Game"
+    <com.iplay.concatenate.common.RoundedImageView
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:src="@drawable/white1"
+        android:layout_gravity="center"
         android:id="@+id/join_game"
-        android:layout_gravity="center" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="HostGame"
+        android:layout_marginTop="22dp"
+        android:layout_weight="2"/>
+    <com.iplay.concatenate.common.RoundedImageView
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:src="@drawable/white1"
+        android:layout_gravity="center"
         android:id="@+id/host_game"
-        android:layout_marginBottom="170dp"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_marginTop="22dp"
+        android:layout_weight="2"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Leaderboard"
+
+    <com.iplay.concatenate.common.RoundedImageView
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:src="@drawable/white1"
         android:id="@+id/leaderboard"
-        android:layout_marginBottom="120dp"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_margin="22dp"
+        android:layout_weight="1"/>
 
-    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <LinearLayout android:id="@+id/fullscreen_content_controls" style="?metaButtonBarStyle"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay" android:orientation="horizontal"
-            tools:ignore="UselessParent">
-
-            <Button android:id="@+id/dummy_button" style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:text="@string/dummy_button" />
-
-
-
-        </LinearLayout>
-    </FrameLayout>
-
-</FrameLayout>
+</LinearLayout>

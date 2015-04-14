@@ -74,6 +74,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.iplay.concatenate.HomeActivity" />
         </activity>
+        <activity
+            android:name=".InviteFriends"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_invite_friends"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
     </application>
 
 </manifest>

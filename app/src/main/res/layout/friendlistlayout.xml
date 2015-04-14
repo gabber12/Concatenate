@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="4">
+    <com.iplay.concatenate.CircularProfilePicView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/profile_pic"></com.iplay.concatenate.CircularProfilePicView>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:layout_marginRight="10dp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:id="@+id/profile_name"/>
+</LinearLayout>

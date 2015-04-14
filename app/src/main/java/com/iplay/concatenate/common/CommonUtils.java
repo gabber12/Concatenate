@@ -1,8 +1,11 @@
 package com.iplay.concatenate.common;
 
+import android.util.Pair;
+
 import com.facebook.FacebookGraphObjectException;
 import com.facebook.widget.LoginButton;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,6 +15,7 @@ public class CommonUtils {
 
     public static String userId = null;
 
+    public static List<Pair<String, String>> friendArrayList ;
     public static String getChannelNameFromUserID(String id) {
         return "user_channel_" + id;
     }
