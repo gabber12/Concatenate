@@ -16,6 +16,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +42,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ibt.ortc.extensibility.OrtcClient;
 
@@ -159,20 +163,53 @@ public class InviteFriends extends Activity {
                         if (error != null && !(error instanceof FacebookOperationCanceledException)) {
 
                         }
-                        if(values != null)
-                            System.out.println("to=>,"+ values.toString());
+                        if(values != null) {
+                            System.out.println("to=>," + values.toString());
 
-                        String opponentId = values.getString("to[0]");
-                        dialog = null;
-                        OrtcClient client = ORTCUtil.getClient();
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("typeFlag", 1);
-                            jsonObject.put("toUser", opponentId);
-                            jsonObject.put("fromUser", CommonUtils.userId);
-                            client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
-                        } catch ( JSONException je ) {
-                            System.out.println("Unable to encode json: " + je.getMessage());
+                            final String opponentId = values.getString("to[0]");
+                            dialog = null;
+                            final OrtcClient client = ORTCUtil.getClient();
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("typeFlag", 1);
+                                jsonObject.put("toUser", opponentId);
+                                jsonObject.put("fromUser", CommonUtils.userId);
+                                client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                            } catch (JSONException je) {
+                                System.out.println("Unable to encode json: " + je.getMessage());
+                            }
+                            CommonUtils.waitingFor = opponentId;
+                            CommonUtils.hostGameTimer = new Timer();
+                            final long startTime = System.currentTimeMillis();
+                            CommonUtils.hostGameTimer.scheduleAtFixedRate(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    InviteFriends.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            long left = (30 * 1000 - System.currentTimeMillis() + startTime);
+                                            if (left <= 0) {
+                                                CommonUtils.hostGameTimer.cancel();
+                                                try {
+                                                    JSONObject jsonObject = new JSONObject();
+                                                    jsonObject.put("typeFlag", 3);
+                                                    jsonObject.put("toUser", opponentId);
+                                                    jsonObject.put("fromUser", CommonUtils.userId);
+                                                    client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                                                } catch (JSONException je) {
+                                                    System.out.println("Unable to encode json: " + je.getMessage());
+                                                }
+                                                CommonUtils.waitingFor = null;
+                                                Toast toast = Toast.makeText(getApplicationContext(), "Opponent did not join. :(", Toast.LENGTH_LONG);
+                                                toast.show();
+                                                Intent intent = new Intent(InviteFriends.this, HomeActivity.class);
+                                                InviteFriends.this.startActivity(intent);
+                                            }
+                                        }
+                                    });
+                                }
+                            }, new Long(0), new Long(200));
+
                         }
 
                     }

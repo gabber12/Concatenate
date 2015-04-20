@@ -21,7 +21,8 @@
         android:layout_height="0dp"
         android:weightSum="2"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -30,6 +31,7 @@
             <com.iplay.concatenate.CircularProfilePicView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:layout_marginLeft="15dp"
                 android:id ="@+id/profile_pic"
                 android:layout_gravity="left"
                 ></com.iplay.concatenate.CircularProfilePicView>
@@ -47,6 +49,7 @@
                 app:carbon_rippleColor="@color/carbon_white"
                 android:scaleType="centerCrop"
                 android:layout_gravity="right"
+                android:layout_marginRight="15dp"
                 />
         </LinearLayout>
     </LinearLayout>
@@ -58,8 +61,8 @@
         android:gravity="center"
         >
     <carbon.widget.ImageActionButton
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:src="@drawable/quick_game_icon"
         android:id="@+id/quick_game"
         app:carbon_rippleColor="@color/carbon_white"
@@ -76,8 +79,8 @@
         android:gravity="center"
         >
     <carbon.widget.ImageActionButton
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:src="@drawable/host_game_icon"
         android:id="@+id/host_game"
         app:carbon_rippleColor="@color/carbon_white"
@@ -94,8 +97,8 @@
         android:gravity="center"
         >
     <carbon.widget.ImageActionButton
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:src="@drawable/join_game_icon"
         android:id="@+id/join_game"
         app:carbon_rippleColor="@color/carbon_white"
