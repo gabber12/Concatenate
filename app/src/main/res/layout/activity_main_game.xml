@@ -8,7 +8,7 @@
          TextureView, etc. -->
     <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
         android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#33b5e5"
-        android:textStyle="bold" android:textSize="50sp" android:gravity="center"
+        android:textStyle="bold" android:textSize="60sp" android:gravity="center"
         android:text="@string/dummy_content" />
 
     <RelativeLayout
@@ -23,6 +23,56 @@
             android:gravity="center"
             android:layout_centerVertical="true">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical"
+                android:layout_above="@+id/LinearLayoutWords"
+                android:layout_marginBottom="20dp" >
+
+                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_height="wrap_content" android:orientation="horizontal"
+                    android:layout_width="match_parent" android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+                    <TextView
+                        android:id="@+id/myscore"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/enter_word_background_black"
+                        android:layout_alignParentLeft="true"
+                        android:text="Score: 000"
+                        android:textSize="22sp"
+                        android:textColor="#000000"
+                        android:padding="5dp">
+                    </TextView>
+                    <ProgressBar
+                        android:id="@+id/progressBarTimeout"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="false"
+                        android:max="20000"
+                        android:progress="20000"
+                        android:padding="5dp"
+                        android:progressDrawable="@drawable/circular_progress_bar" />
+                    <TextView
+                        android:id="@+id/yourscore"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/enter_word_background_black"
+                        android:layout_alignParentRight="true"
+                        android:text="Score: 000"
+                        android:textSize="22sp"
+                        android:textColor="#000000"
+                        android:padding="5dp">
+                    </TextView>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_height="wrap_content" android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -36,6 +86,7 @@
                     android:background="@drawable/enter_word_background_black"
                     android:gravity="center"
                     android:text="A"
+                    android:textSize="22sp"
                     android:textColor="#0000FF"
                     android:layout_margin="5dp">
                 </TextView>

@@ -83,6 +83,24 @@
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile" >
         </activity>
+	<activity
+            android:name=".GameOverActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game_over"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".StartingGame"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_starting_game"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".QuickGameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_quick_game"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.iplay.concatenate;
 
+import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;

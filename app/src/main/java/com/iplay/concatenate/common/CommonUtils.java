@@ -19,13 +19,22 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
 
 /**
  * Created by divanshu on 06/04/15.
  */
 public class CommonUtils {
 
+//    52.6.17.252
+    public final static String SERVER_BASE = "http://ec2-52-6-17-252.compute-1.amazonaws.com/";
+
     public static String userId = null;
+	public static String waitingFor = null;
+    public static Timer startingGameTimer = null;
+    public static Timer hostGameTimer = null;
+    public static Timer mainGameTimer = null;
+    public static Timer quickGameTimer = null;
     public static String name;
     public static int score;
     public static List<FriendModel> friendArrayList;

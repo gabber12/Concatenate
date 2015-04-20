@@ -26,6 +26,8 @@ public class MyAdapter extends BaseAdapter {
     public InviteModel getItem(int position) {
 
         InviteModel[] a = mData.toArray(new InviteModel[mData.size()]);
+
+
         return a[position];
     }
 

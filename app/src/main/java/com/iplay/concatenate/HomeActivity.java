@@ -1,12 +1,19 @@
 package com.iplay.concatenate;
-
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
 
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +22,8 @@ import android.view.animation.Transformation;
 import android.widget.ImageView;
 
 import carbon.widget.ImageActionButton;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -136,6 +145,15 @@ public class HomeActivity extends Activity {
                 Intent in = new Intent(getApplicationContext(), InviteFriends.class);
                 startActivity(in);
                 overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+            }
+        });
+		
+		findViewById(R.id.quick_game).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), QuickGameActivity.class);
+                startActivity(in);
+
             }
         });
     }

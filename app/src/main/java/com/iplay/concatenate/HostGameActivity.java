@@ -11,11 +11,15 @@ import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,6 +76,7 @@ public class HostGameActivity extends Activity {
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
+    private static Activity that;
     private SystemUiHider mSystemUiHider;
     private WebDialog dialog;
     private void showDialogWithoutNotificationBar(String action, Bundle params){
@@ -83,20 +88,53 @@ public class HostGameActivity extends Activity {
                         if (error != null && !(error instanceof FacebookOperationCanceledException)) {
 
                         }
-                        if(values != null)
-                            System.out.println("to=>,"+ values.toString());
+                        if(values != null) {
+                            System.out.println("to=>," + values.toString());
 
-                        String opponentId = values.getString("to[0]");
-                        dialog = null;
-                        OrtcClient client = ORTCUtil.getClient();
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("typeFlag", 1);
-                            jsonObject.put("toUser", opponentId);
-                            jsonObject.put("fromUser", CommonUtils.userId);
-                            client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
-                        } catch ( JSONException je ) {
-                            System.out.println("Unable to encode json: " + je.getMessage());
+                            final String opponentId = values.getString("to[0]");
+                            dialog = null;
+                            final OrtcClient client = ORTCUtil.getClient();
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("typeFlag", 1);
+                                jsonObject.put("toUser", opponentId);
+                                jsonObject.put("fromUser", CommonUtils.userId);
+                                client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                            } catch (JSONException je) {
+                                System.out.println("Unable to encode json: " + je.getMessage());
+                            }
+                            CommonUtils.waitingFor = opponentId;
+                            CommonUtils.hostGameTimer = new Timer();
+                            final long startTime = System.currentTimeMillis();
+                            CommonUtils.hostGameTimer.scheduleAtFixedRate(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    that.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            long left = (30 * 1000 - System.currentTimeMillis() + startTime);
+                                            if (left <= 0) {
+                                                CommonUtils.hostGameTimer.cancel();
+                                                try {
+                                                    JSONObject jsonObject = new JSONObject();
+                                                    jsonObject.put("typeFlag", 3);
+                                                    jsonObject.put("toUser", opponentId);
+                                                    jsonObject.put("fromUser", CommonUtils.userId);
+                                                    client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                                                } catch (JSONException je) {
+                                                    System.out.println("Unable to encode json: " + je.getMessage());
+                                                }
+                                                CommonUtils.waitingFor = null;
+                                                Toast toast = Toast.makeText(getApplicationContext(), "Opponent did not join. :(", Toast.LENGTH_LONG);
+                                                toast.show();
+                                                Intent intent = new Intent(that, HomeActivity.class);
+                                                that.startActivity(intent);
+                                            }
+                                        }
+                                    });
+                                }
+                            }, new Long(0), new Long(200));
+
                         }
 
                     }
@@ -113,7 +151,7 @@ public class HostGameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        that = this;
         setContentView(R.layout.activity_host_game);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
@@ -181,10 +219,9 @@ public class HostGameActivity extends Activity {
         Bundle params = new Bundle();
         params.putString("message", "I just smashed " +
                 " friends! Can you beat it?");
-        
         params.putInt("max_recipients", 1);
         showDialogWithoutNotificationBar("apprequests", params);
-
+//
 //        callbackManager = CallbackManager.Factory.create();
 //        requestDialog = new GameRequestDialog(this);
 //
@@ -222,7 +259,7 @@ public class HostGameActivity extends Activity {
 //                                if(  left <=0 ){
 //                                    t.cancel();
 //                                    left = 0;
-//                                    Toast t = Toast.makeText(getApplicationContext(), "No one joind your game :(", Toast.LENGTH_LONG);
+//                                    Toast t = Toast.makeText(getApplicationContext(), "No one joined your game :(", Toast.LENGTH_LONG);
 //                                    t.show();
 //
 //                                }

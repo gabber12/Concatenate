@@ -10,6 +10,7 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.facebook.widget.ProfilePictureView;
+import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
@@ -268,52 +269,5 @@ public class FullscreenActivity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
-    }
-}
-
-
-class BackgroundURLRequest extends AsyncTask<String, Integer, String> {
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
-
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
-        final String SERVER_BASE = "http://ec2-52-4-64-120.compute-1.amazonaws.com:8000/";
-        try {
-            String relativeURL = params[0];
-            String message = params[1];
-            HttpPost post = new HttpPost(SERVER_BASE + relativeURL);
-            StringEntity se = new StringEntity(message);
-            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            post.setEntity(se);
-            HttpResponse response = httpClient.execute(post);
-
-            InputStream is = response.getEntity().getContent();
-
-            if (is != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                is.close();
-
-                return sb.toString();
-            }
-        } catch (Exception e) {
-            Log.e("log_tag", "Error converting result " + e.toString());
-        }
-        return "error";
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
     }
 }

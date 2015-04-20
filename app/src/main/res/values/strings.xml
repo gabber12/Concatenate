@@ -20,5 +20,10 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_game_over">GameOverActivity</string>
+
+    <string name="title_activity_starting_game">StartingGame</string>
+
+    <string name="title_activity_quick_game">QuickGameActivity</string>
 
 </resources>
