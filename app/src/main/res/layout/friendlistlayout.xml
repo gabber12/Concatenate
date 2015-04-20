@@ -1,20 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="4">
+    android:layout_height="90dp"
+    android:background="@drawable/frame"
+    android:padding="0dp"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical"
+    android:layout_margin="0dp"
+
+    >
     <com.iplay.concatenate.CircularProfilePicView
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_marginLeft="40dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         android:id="@+id/profile_pic"></com.iplay.concatenate.CircularProfilePicView>
-    <TextView
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:layout_marginRight="10dp"
-        android:textColor="#000000"
-        android:textStyle="bold"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:paddingLeft="20dp"
-        android:id="@+id/profile_name"/>
+        android:weightSum="4">
+        <TextView
+                android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:id="@+id/profile_name"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"
+            android:text="Score"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:id="@+id/profile_score"
+            />
+    </LinearLayout>
 </LinearLayout>

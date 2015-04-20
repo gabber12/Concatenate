@@ -1,25 +1,20 @@
 package com.iplay.concatenate;
 
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
+import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.ImageView;
 
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import carbon.widget.ImageActionButton;
 
 
 /**
@@ -63,42 +58,86 @@ public class HomeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_home);
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.host_game).setOnClickListener(new View.OnClickListener() {
+
+        View.OnTouchListener genListener = new View.OnTouchListener() {
+
             @Override
-            public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), InviteFriends.class);
-                in.putExtra("userId", getIntent().getExtras().getString("userId"));
-                startActivity(in);
+            public boolean onTouch(View v, MotionEvent event) {
+                System.out.println(event.getX()+" " +event.getY());
+                System.out.println(v.getX()+" " +v.getY());
+                System.out.println(v.getWidth()+" " +v.getHeight());
+                //CIRCLE :      (x-a)^2 + (y-b)^2 = r^2
+                float centerX, centerY, touchX, touchY, radius;
+                centerX = v.getWidth()/2;
+                centerY = v.getHeight()/2;
+                System.out.println(centerX+" " +centerY);
 
+                touchX = event.getX();
+                touchY = event.getY();
+                radius = centerX;
+                System.out.println("centerX = "+centerX+", centerY = "+centerY);
+                System.out.println("touchX = "+touchX+", touchY = "+touchY);
+                System.out.println("radius = "+radius);
+                if (Math.pow(touchX - centerX, 2)
+                        + Math.pow(touchY - centerY, 2) < Math.pow(radius, 2)) {
+                    System.out.println("Inside Circle");
+                    return false;
+                } else {
+                    System.out.println("Outside Circle");
+                    return true;
+                }
             }
-        });
+        };
 
-        findViewById(R.id.join_game).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), JoinGameAcitvity.class);
-                 in.putExtra("userId", getIntent().getExtras().getString("userId"));
-                startActivity(in);
-            }
-        });
+        ImageActionButton leaderboardButton = (ImageActionButton) findViewById(R.id.leaderboard);
+        ImageActionButton hostButton = (ImageActionButton) findViewById(R.id.host_game);
+        ImageActionButton joinButton = (ImageActionButton) findViewById(R.id.join_game);
+        ImageActionButton quickButton = (ImageActionButton) findViewById(R.id.quick_game);
 
-        findViewById(R.id.leaderboard).setOnClickListener( new View.OnClickListener() {
+        hostButton.setOnTouchListener(genListener);
+        quickButton.setOnTouchListener(genListener);
+        joinButton.setOnTouchListener(genListener);
+        leaderboardButton.setOnTouchListener(genListener);
+
+        CircularProfilePicView profile_pic = ((CircularProfilePicView)findViewById(R.id.profile_pic));
+        profile_pic.setProfileId(CommonUtils.userId);
+
+        leaderboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), LeaderboardActivity.class);
                 in.putExtra("userId", getIntent().getExtras().getString("userId"));
                 startActivity(in);
+                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+
             }
         });
-//        ConcurrentLinkedQueue qu = ListAdapterUtil.getQueue();
-//        qu.add("String");
-//        ListAdapterUtil.getAdapter(getApplicationContext()).notifyDataSetChanged();
+        profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), ProfileActivity.class);
+                startActivity(in);
+            }
+        });
+        joinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), JoinGameAcitvity.class);
+                startActivity(in);
+                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+            }
+        });
+
+        hostButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), InviteFriends.class);
+                startActivity(in);
+                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+            }
+        });
     }
 
 
@@ -123,5 +162,38 @@ public class HomeActivity extends Activity {
      * while interacting with activity UI.
      */
 
+    public class ResizeAnimation extends Animation {
+        final int startWidth;
+        final int startHeight;
+        final int targetWidth;
+        final int targetHeight;
+        View view;
 
+        public ResizeAnimation(View view, int targetWidth, int targetHeight) {
+            this.view = view;
+            this.targetWidth = targetWidth;
+            this.targetHeight = targetHeight;
+            startWidth = view.getWidth();
+            startHeight = view.getHeight();
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            int newWidth = (int) (startWidth + (targetWidth - startWidth) * interpolatedTime);
+            int newHeight = (int) (startHeight + (targetHeight - startHeight) * interpolatedTime);
+            view.getLayoutParams().width = newWidth;
+            view.getLayoutParams().height = newHeight;
+            view.requestLayout();
+        }
+
+        @Override
+        public void initialize(int width, int height, int parentWidth, int parentHeight) {
+            super.initialize(width, height, parentWidth, parentHeight);
+        }
+
+        @Override
+        public boolean willChangeBounds() {
+            return true;
+        }
+    }
 }

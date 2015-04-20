@@ -303,12 +303,12 @@ public class MainGameActivity extends Activity {
         int length = str.length();
         int totalWidth = viewWidth*length;
         int autoMargin = (parentWidth - totalWidth)/2;
-        List<Integer> newLeftPosition = new ArrayList<>();
+        List<Integer> newLeftPosition = new ArrayList<Integer>();
         for ( int i = 0; i < str.length(); ++i ) {
             newLeftPosition.add(autoMargin+i*viewWidth);
         }
 
-        List<Integer> leftPosition = new ArrayList<>();
+        List<Integer> leftPosition = new ArrayList<Integer>();
         for ( int i = 0; i < wordsLayout.getChildCount(); ++i ) {
 //            System.out.println( ((TextView)wordsLayout.getChildAt(i)).getText() + " " + wordsLayout.getChildAt(i).getLeft());
             leftPosition.add(wordsLayout.getChildAt(i).getLeft());

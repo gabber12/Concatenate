@@ -42,7 +42,7 @@ public class SubscribeCallbackHandler implements OnMessage {
             final JSONObject jsonObject = (JSONObject) jsonParser.parse(messageReceived);
 
             // Handle all the cases here!
-            switch (((int)(long)jsonObject.get("typeFlag"))) {
+            switch (((Integer)jsonObject.get("typeFlag"))) {
 
                 case 1:
                     Intent intent = new Intent("invite_recieved");
@@ -80,7 +80,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                     if ( against.equals(CommonUtils.userId) )
                         against = (String) jsonObject.get("toUser");
                     String gameWord = (String) jsonObject.get("gameWord");
-                    int gameId = (int)(long) jsonObject.get("gameId");
+                    int gameId = (Integer) jsonObject.get("gameId");
                     String userTurn = (String) jsonObject.get("userTurn");
                     Intent in = new Intent(ctx, MainGameActivity.class);
                     in.putExtra("game_word", gameWord);
@@ -94,7 +94,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                 case 5:
                     intent = new Intent("gameword_recieved");
                     intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
-                    intent.putExtra("game_id", (int)(long) jsonObject.get("gameId") );
+                    intent.putExtra("game_id", (Integer) jsonObject.get("gameId") );
                     intent.putExtra("game_word", (String)jsonObject.get("gameWord") );
                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     break;

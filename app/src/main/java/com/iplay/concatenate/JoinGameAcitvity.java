@@ -13,10 +13,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import org.json.simple.JSONObject;
@@ -136,14 +139,11 @@ public class JoinGameAcitvity extends Activity {
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
         //Add id to channel
-
         final OrtcClient client = ORTCUtil.getClient();
         final ListView inviteView = (ListView)findViewById(R.id.invitesView);
 
         inviteView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                System.out.println("Clicked on position : " + position);
 
                 Object object = inviteView.getItemAtPosition(position);
                 InviteModel inviteModel = (InviteModel) object;//As you are using Default String Adapter

@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -71,7 +72,7 @@ public class LeaderboardActivity extends Activity {
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
-
+    public List<FriendModel> friends;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,8 +141,8 @@ public class LeaderboardActivity extends Activity {
         // while interacting with the UI.
         final Session session = Session.getActiveSession();
 //        askForPublishActionsForScores();
-        Bundle bd = getIntent().getExtras();
-        String userId = bd.getString("userId");
+        friends = new ArrayList<FriendModel>();
+        String userId = CommonUtils.userId;
         GraphObject go = new GraphObject() {
             String score;
             JSONObject jobj = new JSONObject();
@@ -152,7 +153,7 @@ public class LeaderboardActivity extends Activity {
 
             @Override
             public Map<String, Object> asMap() {
-                Map<String, Object> ma = new TreeMap<>();
+                Map<String, Object> ma = new TreeMap<String, Object>();
                 ma.put("score", 123);
                 return ma;
             }
@@ -236,7 +237,7 @@ public class LeaderboardActivity extends Activity {
                                     String userName = userObj.optString("name");
 
                                     scoreboardEntriesList.add(new Integer(score));
-
+                                    friends.add(new FriendModel(userName, userID, score));
                                     System.out.println(userName+" "+score);
                                 }
 
@@ -249,9 +250,9 @@ public class LeaderboardActivity extends Activity {
                                     @Override
                                     public void run() {
                                         ListView friendList = (ListView)findViewById(R.id.friendsView);
-                                        for(int i= 0; i < scoreboardEntriesList.size(); i++){
 
-                                        }
+                                        FriendListAdapter adapter = new FriendListAdapter(getApplicationContext(), R.layout.friendlistlayout, friends);
+                                        friendList.setAdapter(adapter);
                                     }
                                 });
                             }
@@ -261,37 +262,6 @@ public class LeaderboardActivity extends Activity {
 
                 });
         Request.executeBatchAsync(scoresGraphPathRequest);
-    }
-    private void requestPublishPermissions() {
-
-        LoginButton lb = (LoginButton) CommonUtils.getLoginButton();
-        lb.clearPermissions();
-        lb.setPublishPermissions("publish_Actions");
-
-    }
-    private void askForPublishActionsForScores() {
-        new AlertDialog.Builder(this)
-                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    private DialogInterface dialog;
-                    private int id;
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        this.dialog = dialog;
-                        this.id = id;
-                        // User hit OK. Request Facebook friends permission.
-                        requestPublishPermissions();
-                    }
-                })
-                .setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User hit cancel.
-                        // Hide the gameOverContainer
-                    }
-                })
-                .setTitle(R.string.publish_scores_dialog_title)
-                .setMessage(R.string.publish_scores_dialog_message)
-                .show();
     }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

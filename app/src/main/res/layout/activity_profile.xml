@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"  android:background="#0099cc"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context="com.iplay.concatenate.ProfileActivity">
+
+    <com.iplay.concatenate.CircularProfilePicView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id ="@+id/profile_pic"></com.iplay.concatenate.CircularProfilePicView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/profile_name"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/profile_score"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/profile_level"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+    <com.facebook.widget.LoginButton
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/logoutButton"/>
+</LinearLayout>
