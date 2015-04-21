@@ -230,8 +230,14 @@ public class FullscreenActivity extends Activity {
     protected void onResume(){
         super.onResume();
         fbUiLifecycleHelper.onResume();
+        Session session = Session.getActiveSession();
+        if( session.isOpened() ) {
+            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(in);
+        }
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

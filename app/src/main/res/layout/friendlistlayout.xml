@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<carbon.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="90dp"
-    android:background="@drawable/frame"
     android:padding="0dp"
+    android:background="@color/carbon_background_light"
     android:layout_gravity="center_vertical"
+    app:carbon_rippleColor="#CACACA"
     android:gravity="center_vertical"
-    android:layout_margin="0dp"
+    android:clickable="true"
+    app:carbon_cornerRadius="5dp"
 
     >
+
     <com.iplay.concatenate.CircularProfilePicView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
         android:id="@+id/profile_pic"></com.iplay.concatenate.CircularProfilePicView>
-    <LinearLayout
+
+    <carbon.widget.LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -31,8 +37,10 @@
             android:textStyle="bold"
             android:paddingLeft="20dp"
             android:layout_gravity="center_vertical"
+            android:clickable="true"
             android:gravity="center_vertical"
             android:id="@+id/profile_name"/>
+
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="0dp"
@@ -45,5 +53,6 @@
             android:gravity="center_vertical"
             android:id="@+id/profile_score"
             />
-    </LinearLayout>
-</LinearLayout>
+    </carbon.widget.LinearLayout>
+
+</carbon.widget.LinearLayout>

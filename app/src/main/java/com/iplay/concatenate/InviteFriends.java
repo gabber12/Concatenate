@@ -120,18 +120,7 @@ public class InviteFriends extends Activity {
                 }
             });
             Request.executeBatchAsync(friendsRequest);
-            friendList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    Bundle params = new Bundle();
-                    params.putString("message", "I just smashed " +
-                            " friends! Can you beat it?");
-                    params.putString("to", fla.getItem(position).getId());
-                    params.putInt("max_recipients", 1);
-                    showDialogWithoutNotificationBar("apprequests", params);
-                }
-            });
 
 
         }
@@ -230,6 +219,19 @@ public class InviteFriends extends Activity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
+        ((carbon.widget.ListView)findViewById(R.id.friendList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Bundle params = new Bundle();
+                params.putString("message", "I just smashed " +
+                        " friends! Can you beat it?");
+                params.putString("to", fla.getItem(position).getId());
+                params.putInt("max_recipients", 1);
+                showDialogWithoutNotificationBar("apprequests", params);
+                System.out.print("Hello");
+            }
+        });
     }
 
 

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +23,8 @@ import android.view.animation.Transformation;
 import android.widget.ImageView;
 
 import carbon.widget.ImageActionButton;
+import carbon.widget.TransitionLayout;
+
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -32,7 +35,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @see SystemUiHider
  */
-public class HomeActivity extends Activity {
+public class HomeActivity extends FragmentActivity {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -61,7 +64,7 @@ public class HomeActivity extends Activity {
      */
     private SystemUiHider mSystemUiHider;
 
-
+    public Boolean trans;
 
 
     @Override
@@ -69,6 +72,26 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        trans = true;
+        getSupportFragmentManager().beginTransaction().add(R.id.container, new LeaderboardActivity()).commit();
+
+        final TransitionLayout transitionView = (TransitionLayout) findViewById(R.id.transition);
+        findViewById(R.id.leaderboard).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                transitionView.setHotspot(v);
+                transitionView.startTransition(TransitionLayout.TransitionType.Radial,trans, 200);
+                if (trans) {
+                    HomeActivity.this.findViewById(R.id.friendsView).setVisibility(View.VISIBLE);
+                }
+                else {
+                    HomeActivity.this.findViewById(R.id.friendsView).setVisibility(View.GONE);
+                }
+
+                trans = !trans;
+            }
+        });
 
         View.OnTouchListener genListener = new View.OnTouchListener() {
 
@@ -160,6 +183,13 @@ public class HomeActivity extends Activity {
 
 
 
+    @Override
+    public void onBackPressed() {
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
+    }
 
 
 

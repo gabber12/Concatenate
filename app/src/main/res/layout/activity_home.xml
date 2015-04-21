@@ -1,110 +1,84 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<carbon.widget.FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/concat_back"
-    android:orientation="vertical"
     android:layout_gravity="center"
+    android:background="@drawable/concat_back"
     tools:context="com.iplay.concatenate.HomeActivity"
 
-    android:weightSum="7">
+>
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
-
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:weightSum="2"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:layout_marginTop="15dp">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="left">
             <com.iplay.concatenate.CircularProfilePicView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
                 android:id ="@+id/profile_pic"
-                android:layout_gravity="left"
+                android:layout_gravity="top|left"
                 ></com.iplay.concatenate.CircularProfilePicView>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="right">
+    <carbon.widget.TransitionLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/transition">
+
+        <carbon.widget.RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
             <carbon.widget.ImageActionButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/quick_game_back"
-                android:id="@+id/leaderboard"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/quick_game_icon"
+                android:id="@+id/quick_game"
+                app:carbon_touchMargin="6dp"
+                app:carbon_rippleStyle="borderless"
                 app:carbon_rippleColor="@color/carbon_white"
                 android:scaleType="centerCrop"
-                android:layout_gravity="right"
-                android:layout_marginRight="15dp"
+                android:layout_centerInParent="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="30dp"
                 />
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:layout_gravity="center"
-        android:gravity="center"
-        >
+            <carbon.widget.ImageActionButton
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/host_game_icon"
+                android:id="@+id/host_game"
+                app:carbon_rippleColor="@color/carbon_white"
+                android:scaleType="centerCrop"
+                app:carbon_rippleStyle="borderless"
+                android:layout_centerInParent="true"
+                />
+            <carbon.widget.ImageActionButton
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/join_game_icon"
+                android:id="@+id/join_game"
+                app:carbon_rippleColor="@color/carbon_white"
+                app:carbon_rippleStyle="borderless"
+                android:background="@null"
+                android:scaleType="centerCrop"
+                app:carbon_elevation="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="30dp"
+                />
+        </carbon.widget.RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/container"
+        ></FrameLayout>
+    </carbon.widget.TransitionLayout>
     <carbon.widget.ImageActionButton
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@drawable/quick_game_icon"
-        android:id="@+id/quick_game"
-        app:carbon_rippleColor="@color/carbon_white"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/quick_game_back"
+        android:id="@+id/leaderboard"
         android:scaleType="centerCrop"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:elevation="1dp"
+        android:layout_gravity="right|top"
         />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:layout_gravity="center"
-        android:gravity="center"
-        >
-    <carbon.widget.ImageActionButton
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@drawable/host_game_icon"
-        android:id="@+id/host_game"
-        app:carbon_rippleColor="@color/carbon_white"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center"
-        android:gravity="center"
-        />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:layout_gravity="center"
-        android:gravity="center"
-        >
-    <carbon.widget.ImageActionButton
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@drawable/join_game_icon"
-        android:id="@+id/join_game"
-        app:carbon_rippleColor="@color/carbon_white"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center"
-        android:gravity="center"
-        />
-    </LinearLayout>
-</LinearLayout>
+</carbon.widget.FrameLayout>
