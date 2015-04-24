@@ -44,30 +44,25 @@
             android:name=".HostGameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_host_game"
-            android:theme="@style/FullscreenTheme" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
         <activity
             android:name=".GamePlayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_play"
             android:parentActivityName=".HomeActivity"
-            android:theme="@style/FullscreenTheme" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.iplay.concatenate.HomeActivity" />
         </activity>
-        <activity
-            android:name=".LeaderboardActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_leaderboard"
-            android:theme="@style/FullscreenTheme" >
-        </activity>
+
         <activity
             android:name=".MainGameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main_game"
             android:parentActivityName=".HomeActivity"
-            android:theme="@style/FullscreenTheme"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             android:windowSoftInputMode="stateAlwaysVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -81,25 +76,26 @@
         </activity>
         <activity
             android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/title_activity_profile"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
 	<activity
             android:name=".GameOverActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_over"
-            android:theme="@style/FullscreenTheme" >
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
         <activity
             android:name=".StartingGame"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_starting_game"
-            android:theme="@style/FullscreenTheme" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
         <activity
             android:name=".QuickGameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_quick_game"
-            android:theme="@style/FullscreenTheme" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
     </application>
 

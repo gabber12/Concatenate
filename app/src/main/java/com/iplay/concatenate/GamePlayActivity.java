@@ -182,46 +182,10 @@ public class GamePlayActivity extends Activity {
                 } catch (Exception e) {
                     Log.e("json", "error while generating a json file and sending to server");
                 }
-//                client.send("user_channel_aman", et.getText().toString());
 
             }
         });
 
-//        while ( true ) {
-//            if ( !client.getIsConnected() ) {
-//                try {
-//                    Thread.sleep(100);
-//                } catch( Exception e ) {
-//                    Log.d("sleep", e.getMessage());
-//                }
-//                continue;
-//            }
-//            client.subscribe(channel, true,
-//                    new OnMessage() {
-//                        public void run(OrtcClient sender, String channel, String message) {
-//                            final String subscribedChannel = channel;
-//                            final String messageReceived = message;
-//                            Log.d("pubsub",String.format("Message on channel %s: %s", subscribedChannel, messageReceived));
-//
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    try {
-//                                        JSONParser jsonParser = new JSONParser();
-//                                        JSONObject jsonObject = (JSONObject) jsonParser.parse(messageReceived);
-//                                        addListItem((String)jsonObject.get("gameWord"));
-//                                        if ( ((Long)jsonObject.get("typeFlag")) == 6) {
-//                                            addListItem("---- Game Over ----");
-//                                        }
-//                                    } catch ( Exception e ) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    });
-//            break;
-//        }
 
     }
 

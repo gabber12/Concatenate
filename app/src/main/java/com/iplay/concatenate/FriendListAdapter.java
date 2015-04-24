@@ -116,6 +116,7 @@ public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filt
         // TODO replace findViewById by ViewHolder
         ((CircularProfilePicView) result.findViewById(R.id.profile_pic)).setProfileId(list.get(position).getId());
         ((TextView) result.findViewById(R.id.profile_name)).setText(list.get(position).getName());
+        ((TextView) result.findViewById(R.id.profile_score)).setText("Score "+list.get(position).getScore());
         return result;
 
 

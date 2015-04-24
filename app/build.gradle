@@ -32,4 +32,5 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.facebook.android:facebook-android-sdk:3.23.1'
     compile 'co.realtime:messaging-android:2.1.30'
+    compile 'com.pnikosis:materialish-progress:1.5'
 }

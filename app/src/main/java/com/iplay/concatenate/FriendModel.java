@@ -5,6 +5,15 @@ package com.iplay.concatenate;
  */
 public class FriendModel {
     public int Score;
+
+    public int getScore() {
+        return Score;
+    }
+
+    public void setScore(int score) {
+        Score = score;
+    }
+
     public FriendModel(String name, String id) {
         Name = name;
         this.id = id;

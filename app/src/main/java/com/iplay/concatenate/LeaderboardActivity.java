@@ -181,14 +181,11 @@ public class LeaderboardActivity extends Fragment {
                                     String userID = userObj.optString("id");
                                     String userName = userObj.optString("name");
 
-                                    scoreboardEntriesList.add(new Integer(score));
                                     friends.add(new FriendModel(userName, userID, score));
                                     System.out.println(userName+" "+score);
                                 }
 
 
-                                Comparator<Integer> comparator = Collections.reverseOrder();
-                                Collections.sort(scoreboardEntriesList);
 
                                 // Populate the scoreboard on the UI thread
                                 getActivity().runOnUiThread(new Runnable() {

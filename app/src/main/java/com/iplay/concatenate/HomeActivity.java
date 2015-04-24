@@ -20,9 +20,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import carbon.widget.ImageActionButton;
+import carbon.widget.RelativeLayout;
 import carbon.widget.TransitionLayout;
 
 import java.util.List;
@@ -84,9 +86,13 @@ public class HomeActivity extends FragmentActivity {
                 transitionView.startTransition(TransitionLayout.TransitionType.Radial,trans, 200);
                 if (trans) {
                     HomeActivity.this.findViewById(R.id.friendsView).setVisibility(View.VISIBLE);
+                    ((RelativeLayout)HomeActivity.this.findViewById(R.id.home)).setElevation(new Float(10));
+                    ((FrameLayout)HomeActivity.this.findViewById(R.id.container)).setElevation(new Float(20));
                 }
                 else {
                     HomeActivity.this.findViewById(R.id.friendsView).setVisibility(View.GONE);
+                    ((RelativeLayout)HomeActivity.this.findViewById(R.id.home)).setElevation(new Float(20));
+                    ((FrameLayout)HomeActivity.this.findViewById(R.id.container)).setElevation(new Float(10));
                 }
 
                 trans = !trans;
@@ -136,16 +142,15 @@ public class HomeActivity extends FragmentActivity {
         CircularProfilePicView profile_pic = ((CircularProfilePicView)findViewById(R.id.profile_pic));
         profile_pic.setProfileId(CommonUtils.userId);
 
-        leaderboardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), LeaderboardActivity.class);
-                in.putExtra("userId", getIntent().getExtras().getString("userId"));
-                startActivity(in);
-                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
-
-            }
-        });
+//        leaderboardButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent in = new Intent(getApplicationContext(), LeaderboardActivity.class);
+//                startActivity(in);
+//                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+//
+//            }
+//        });
         profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

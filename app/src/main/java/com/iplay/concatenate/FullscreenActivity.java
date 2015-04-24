@@ -136,6 +136,7 @@ public class FullscreenActivity extends Activity {
                                     CommonUtils.name = user.getName();
                                     new BackgroundURLRequest().execute("subscribe_user/", userId);
 
+                                    CommonUtils.fetchScore();
                                     OrtcClient cli = ORTCUtil.getClient();
 
                                     cli.onConnected = new OnConnected() {

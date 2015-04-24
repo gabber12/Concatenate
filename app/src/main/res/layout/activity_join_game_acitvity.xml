@@ -8,11 +8,14 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Invites"
             android:id="@+id/textView"
+            android:textSize="34dp"
+            android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal|top"
+            android:gravity="center"
             android:nestedScrollingEnabled="true"
              />
 
@@ -26,9 +29,10 @@
             android:alwaysDrawnWithCache="true"
             android:scrollingCache="true"
             android:smoothScrollbar="true"
-            app:carbon_overScroll="always"
             android:divider="@drawable/transperent_color"
-            android:dividerHeight="5dp"
             android:layout_below="@id/textView"
-            android:textAlignment="4" android:id="@+id/invitesView"/>
+            app:carbon_overScroll="ifContentScrolls"
+            android:dividerHeight="2dp"
+            android:textAlignment="4"
+            android:id="@+id/invitesView"/>
 </RelativeLayout>

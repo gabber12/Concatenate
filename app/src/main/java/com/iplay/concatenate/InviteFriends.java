@@ -2,11 +2,14 @@ package com.iplay.concatenate;
 
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
+
 import com.facebook.widget.ProfilePictureView;
 import com.facebook.widget.WebDialog;
 import com.iplay.concatenate.common.CommonUtils;
@@ -22,13 +25,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -41,6 +47,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -84,6 +92,7 @@ public class InviteFriends extends Activity {
     private SystemUiHider mSystemUiHider;
     public FriendListAdapter fla;
     private WebDialog dialog;
+    public List<FriendModel>friends;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,33 +102,62 @@ public class InviteFriends extends Activity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
+        friends = new ArrayList<FriendModel>();
         final ListView friendList = (ListView) findViewById(R.id.friendList);
-        Session session = Session.getActiveSession();
+        final Session session = Session.getActiveSession();
         final Activity that = this;
         final Context ctx = getApplicationContext();
         if(session != null) {
-            Request friendsRequest = Request.newMyFriendsRequest(session , new Request.GraphUserListCallback()
-            {
+            Request scoresGraphPathRequest = Request.newGraphPathRequest(session,
+                    session.getApplicationId()+"/scores",
+                    new Request.Callback() {
 
-                @Override
-                public void onCompleted(List<GraphUser> graphUsers, Response response) {
-                    final List<FriendModel> friends = new ArrayList<FriendModel>();
-                    for(GraphUser usr: graphUsers){
-                        friends.add(new FriendModel(usr.getName(), usr.getId()));
-                    }
-                    CommonUtils.friendArrayList = friends;
-                    runOnUiThread(new Runnable() {
                         @Override
-                        public void run() {
-                            fla = new FriendListAdapter(ctx,R.layout.friendlistlayout, friends);
-                            ((ListView) findViewById(R.id.friendList)).setAdapter(fla);
-                            fla.notifyDataSetChanged();
+                        public void onCompleted(Response response) {
+                            FacebookRequestError error = response.getError();
+                            System.out.println(""+R.string.facebook_app_id);
 
+                            if (error != null) {
+                                Log.e("Error", error.toString());
+
+                                // TODO: Show an error or handle it better.
+                                //((ScoreboardActivity)getActivity()).handleError(error, false);
+                            } else if (session == Session.getActiveSession()) {
+                                if (response != null) {
+                                    GraphObject graphObject = response.getGraphObject();
+                                    JSONArray dataArray = (JSONArray)graphObject.getProperty("data");
+
+                                    System.out.println("Number of players: "+dataArray.length());
+                                    for (int i=0; i< dataArray.length(); i++) {
+                                        JSONObject oneData = dataArray.optJSONObject(i);
+                                        int score = oneData.optInt("score");
+
+                                        JSONObject userObj = oneData.optJSONObject("user");
+                                        String userID = userObj.optString("id");
+                                        String userName = userObj.optString("name");
+                                        if(!userID.equalsIgnoreCase(CommonUtils.userId))
+                                            friends.add(new FriendModel(userName, userID, score));
+                                        System.out.println(userName+" "+score);
+                                    }
+
+
+
+                                    // Populate the scoreboard on the UI thread
+                                    InviteFriends.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            fla = new FriendListAdapter(ctx, R.layout.friendlistlayout, friends);
+                                            ((ListView) findViewById(R.id.friendList)).setAdapter(fla);
+                                            fla.notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+                            }
                         }
+
+
                     });
-                }
-            });
-            Request.executeBatchAsync(friendsRequest);
+            Request.executeBatchAsync(scoresGraphPathRequest);
 
 
 
@@ -169,36 +207,9 @@ public class InviteFriends extends Activity {
                             }
                             CommonUtils.waitingFor = opponentId;
                             CommonUtils.hostGameTimer = new Timer();
-                            final long startTime = System.currentTimeMillis();
-                            CommonUtils.hostGameTimer.scheduleAtFixedRate(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    InviteFriends.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            long left = (30 * 1000 - System.currentTimeMillis() + startTime);
-                                            if (left <= 0) {
-                                                CommonUtils.hostGameTimer.cancel();
-                                                try {
-                                                    JSONObject jsonObject = new JSONObject();
-                                                    jsonObject.put("typeFlag", 3);
-                                                    jsonObject.put("toUser", opponentId);
-                                                    jsonObject.put("fromUser", CommonUtils.userId);
-                                                    client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
-                                                } catch (JSONException je) {
-                                                    System.out.println("Unable to encode json: " + je.getMessage());
-                                                }
-                                                CommonUtils.waitingFor = null;
-                                                Toast toast = Toast.makeText(getApplicationContext(), "Opponent did not join. :(", Toast.LENGTH_LONG);
-                                                toast.show();
-                                                Intent intent = new Intent(InviteFriends.this, HomeActivity.class);
-                                                InviteFriends.this.startActivity(intent);
-                                            }
-                                        }
-                                    });
-                                }
-                            }, new Long(0), new Long(200));
-
+                            Intent in = new Intent(getApplicationContext(), HostGameActivity.class);
+                            in.putExtra("id", opponentId);
+                            startActivity(in);
                         }
 
                     }
@@ -211,6 +222,10 @@ public class InviteFriends extends Activity {
 
 
         dialog.show();
+
+
+
+
     }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -219,19 +234,29 @@ public class InviteFriends extends Activity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        ((carbon.widget.ListView)findViewById(R.id.friendList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        ((carbon.widget.ListView)findViewById(R.id.friendList)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                Bundle params = new Bundle();
+//                params.putString("message", "I just smashed " +
+//                        " friends! Can you beat it?");
+//                params.putString("to", fla.getItem(position).getId());
+//                params.putInt("max_recipients", 1);
+//                showDialogWithoutNotificationBar("apprequests", params);
+//                System.out.print("Hello");
+//            }
+//        });
+    }
+    public void myfunc(View v){
 
-                Bundle params = new Bundle();
-                params.putString("message", "I just smashed " +
-                        " friends! Can you beat it?");
-                params.putString("to", fla.getItem(position).getId());
-                params.putInt("max_recipients", 1);
-                showDialogWithoutNotificationBar("apprequests", params);
-                System.out.print("Hello");
-            }
-        });
+        Bundle params = new Bundle();
+        params.putString("message", "I just smashed " +
+                " friends! Can you beat it?");
+        params.putString("to",((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId());
+        params.putInt("max_recipients", 1);
+        showDialogWithoutNotificationBar("apprequests", params);
+        System.out.print("Hello");
     }
 
 

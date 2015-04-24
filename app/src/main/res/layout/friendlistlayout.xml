@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
+    android:layout_height="60dp"
     android:padding="0dp"
     android:background="@color/carbon_background_light"
     android:layout_gravity="center_vertical"
     app:carbon_rippleColor="#CACACA"
     android:gravity="center_vertical"
-    android:clickable="true"
+    android:onClick="myfunc"
     app:carbon_cornerRadius="5dp"
 
     >
 
     <com.iplay.concatenate.CircularProfilePicView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
@@ -28,7 +28,7 @@
         android:orientation="vertical"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:weightSum="4">
+        android:weightSum="3">
         <TextView
                 android:layout_width="fill_parent"
             android:layout_height="0dp"

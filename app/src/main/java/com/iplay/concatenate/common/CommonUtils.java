@@ -54,7 +54,7 @@ public class CommonUtils {
         }
         final Session session = Session.getActiveSession();
         Request scoresGraphPathRequest = Request.newGraphPathRequest(session,
-                session.getApplicationId()+"/scores",
+                userId+"/scores",
                 new Request.Callback() {
 
                     @Override
@@ -82,7 +82,7 @@ public class CommonUtils {
                                     String userName = userObj.optString("name");
 
                                     scoreboardEntriesList.add(new Integer(score));
-                                    score = sc;
+                                    CommonUtils.score = sc;
                                 }
                             }
                         }

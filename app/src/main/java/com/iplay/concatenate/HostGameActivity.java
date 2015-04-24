@@ -8,6 +8,7 @@ import com.facebook.Session;
 import com.facebook.widget.WebDialog;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
+import com.pnikosis.materialishprogress.ProgressWheel;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -76,262 +77,46 @@ public class HostGameActivity extends Activity {
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
-    private static Activity that;
-    private SystemUiHider mSystemUiHider;
-    private WebDialog dialog;
-    private void showDialogWithoutNotificationBar(String action, Bundle params){
-        System.out.println(Session.getActiveSession().getAccessToken());
-        dialog = new WebDialog.Builder(HostGameActivity.this, Session.getActiveSession(), action, params).
-                setOnCompleteListener(new WebDialog.OnCompleteListener() {
-                    @Override
-                    public void onComplete(Bundle values, FacebookException error) {
-                        if (error != null && !(error instanceof FacebookOperationCanceledException)) {
-
-                        }
-                        if(values != null) {
-                            System.out.println("to=>," + values.toString());
-
-                            final String opponentId = values.getString("to[0]");
-                            dialog = null;
-                            final OrtcClient client = ORTCUtil.getClient();
-                            try {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("typeFlag", 1);
-                                jsonObject.put("toUser", opponentId);
-                                jsonObject.put("fromUser", CommonUtils.userId);
-                                client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
-                            } catch (JSONException je) {
-                                System.out.println("Unable to encode json: " + je.getMessage());
-                            }
-                            CommonUtils.waitingFor = opponentId;
-                            CommonUtils.hostGameTimer = new Timer();
-                            final long startTime = System.currentTimeMillis();
-                            CommonUtils.hostGameTimer.scheduleAtFixedRate(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    that.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            long left = (30 * 1000 - System.currentTimeMillis() + startTime);
-                                            if (left <= 0) {
-                                                CommonUtils.hostGameTimer.cancel();
-                                                try {
-                                                    JSONObject jsonObject = new JSONObject();
-                                                    jsonObject.put("typeFlag", 3);
-                                                    jsonObject.put("toUser", opponentId);
-                                                    jsonObject.put("fromUser", CommonUtils.userId);
-                                                    client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
-                                                } catch (JSONException je) {
-                                                    System.out.println("Unable to encode json: " + je.getMessage());
-                                                }
-                                                CommonUtils.waitingFor = null;
-                                                Toast toast = Toast.makeText(getApplicationContext(), "Opponent did not join. :(", Toast.LENGTH_LONG);
-                                                toast.show();
-                                                Intent intent = new Intent(that, HomeActivity.class);
-                                                that.startActivity(intent);
-                                            }
-                                        }
-                                    });
-                                }
-                            }, new Long(0), new Long(200));
-
-                        }
-
-                    }
-                }).build();
-
-        Window dialog_window = dialog.getWindow();
-        dialog_window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
-
-        dialog.show();
-    }
+    public ProgressWheel pw ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        that = this;
         setContentView(R.layout.activity_host_game);
+        Bundle intentExtra  = getIntent().getExtras();
+        final String opponentId = intentExtra.getString("id");
+        ((CircularProfilePicView)findViewById(R.id.ppic)).setProfileId(opponentId);
 
-        final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final View contentView = findViewById(R.id.fullscreen_content);
-
-        // Set up an instance of SystemUiHider to control the system UI for
-        // this activity.
-        mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
-        mSystemUiHider.setup();
-        mSystemUiHider
-                .setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
-                    // Cached values.
-                    int mControlsHeight;
-                    int mShortAnimTime;
-
+        pw= (ProgressWheel)findViewById(R.id.progress_wheel);
+        pw.setSpinSpeed(new Float(0));
+        final long startTime = System.currentTimeMillis();
+        CommonUtils.hostGameTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                HostGameActivity.this.runOnUiThread(new Runnable() {
                     @Override
-                    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-                    public void onVisibilityChange(boolean visible) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-                            // If the ViewPropertyAnimator API is available
-                            // (Honeycomb MR2 and later), use it to animate the
-                            // in-layout UI controls at the bottom of the
-                            // screen.
-                            if (mControlsHeight == 0) {
-                                mControlsHeight = controlsView.getHeight();
+                    public void run() {
+                        long left = (30 * 1000 - System.currentTimeMillis() + startTime);
+                        pw.setInstantProgress((30*1000-left)/new Float(30*1000));
+                        if (left <= 0) {
+                            CommonUtils.hostGameTimer.cancel();
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("typeFlag", 3);
+                                jsonObject.put("toUser", opponentId);
+                                jsonObject.put("fromUser", CommonUtils.userId);
+                                ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                            } catch (JSONException je) {
+                                System.out.println("Unable to encode json: " + je.getMessage());
                             }
-                            if (mShortAnimTime == 0) {
-                                mShortAnimTime = getResources().getInteger(
-                                        android.R.integer.config_shortAnimTime);
-                            }
-                            controlsView.animate()
-                                    .translationY(visible ? 0 : mControlsHeight)
-                                    .setDuration(mShortAnimTime);
-                        } else {
-                            // If the ViewPropertyAnimator APIs aren't
-                            // available, simply show or hide the in-layout UI
-                            // controls.
-                            controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
-                        }
-
-                        if (visible && AUTO_HIDE) {
-                            // Schedule a hide().
-                            delayedHide(AUTO_HIDE_DELAY_MILLIS);
+                            CommonUtils.waitingFor = null;
+                            Toast toast = Toast.makeText(getApplicationContext(), "Opponent did not join. :(", Toast.LENGTH_LONG);
+                            toast.show();
                         }
                     }
                 });
-
-        // Set up the user interaction to manually show or hide the system UI.
-        contentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TOGGLE_ON_CLICK) {
-                    mSystemUiHider.toggle();
-                } else {
-                    mSystemUiHider.show();
-                }
             }
-        });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-
-        Bundle params = new Bundle();
-        params.putString("message", "I just smashed " +
-                " friends! Can you beat it?");
-        params.putInt("max_recipients", 1);
-        showDialogWithoutNotificationBar("apprequests", params);
-//
-//        callbackManager = CallbackManager.Factory.create();
-//        requestDialog = new GameRequestDialog(this);
-//
-//        final Activity that = this;
-//        content = new GameRequestContent.Builder()
-//                .setMessage("Come play this level with me")
-//                .build();
-//        System.out.println(content.getData());
-//        requestDialog.registerCallback(callbackManager, new FacebookCallback<GameRequestDialog.Result>() {
-//
-//            public void onSuccess(GameRequestDialog.Result result) {
-//                String str = content.getTo();
-//                System.out.println(content.getData());
-//                final String id = result.getRequestId();
-//                System.out.println(">>>>"+id);
-//                Log.d("Error", "hello" + id);
-//                final Timer t = new Timer();
-//                final long startTime = System.currentTimeMillis();
-//
-//                t.scheduleAtFixedRate(new TimerTask() {
-//
-//
-//
-//                    @Override
-//                    public void run() {
-//                        OrtcClient client = ORTCUtil.getClient();
-//                        String payload = "";
-//                        client.send("host_game_"+id, payload);
-//                        that.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                TextView dummy_text = (TextView) findViewById(R.id.fullscreen_content);
-//                                Log.d("", "" + System.currentTimeMillis());
-//                                long left = (30 * 1000 - System.currentTimeMillis() + startTime);
-//                                if(  left <=0 ){
-//                                    t.cancel();
-//                                    left = 0;
-//                                    Toast t = Toast.makeText(getApplicationContext(), "No one joined your game :(", Toast.LENGTH_LONG);
-//                                    t.show();
-//
-//                                }
-//
-//                                dummy_text.setText("" + Math.round(left/100.0)/10.0 + "s left!!");
-//
-//                            }
-//                        });
-//
-//                    }
-//                }, new Long(0), new Long(100));
-//            }
-//
-//            public void onCancel() {
-//                Log.d("Error", "hello1");
-//            }
-//
-//            public void onError(FacebookException error) {
-//                Log.d("Error", "hello2");
-//            }
-//        });
-
-
-
-
+        }, new Long(0), new Long(20));
 
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
-    }
-
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
-
-    Handler mHideHandler = new Handler();
-    Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mSystemUiHider.hide();
-        }
-    };
-
-    /**
-     * Schedules a call to hide() in [delay] milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
-    }
 }
