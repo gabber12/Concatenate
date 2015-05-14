@@ -10,8 +10,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.widget.ImageView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -20,7 +24,7 @@ import android.widget.TextView;
  *
  * @see SystemUiHider
  */
-public class GameOverActivity extends Activity {
+public class SplashScreenActivity extends Activity {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -47,16 +51,13 @@ public class GameOverActivity extends Activity {
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
-    private GameOverActivity that;
     private SystemUiHider mSystemUiHider;
-    private TextView winOrLose, finalScore;
-    private Button playAnother;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        that = this;
-        setContentView(R.layout.activity_game_over);
+
+        setContentView(R.layout.activity_splash_screen);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
@@ -120,26 +121,31 @@ public class GameOverActivity extends Activity {
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        winOrLose = (TextView) findViewById(R.id.win_or_lose);
-        playAnother = (Button) findViewById(R.id.play_another);
-        finalScore = (TextView) findViewById(R.id.final_score);
+        ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
+        Animation scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        scale.setDuration(5000);
+        background_image.startAnimation(scale);
 
-        int myScore = getIntent().getIntExtra("my_score", 0);
-        int yourScore = getIntent().getIntExtra("your_score", 0);
+        final Timer buttonTimer = new Timer();
+        buttonTimer.schedule(new TimerTask() {
 
-        if ( myScore > yourScore ) winOrLose.setText("You win :D");
-        else if ( myScore < yourScore ) winOrLose.setText("You lose :(");
-        else winOrLose.setText("Its a draw :|");
-
-        finalScore.setText("Your score: " + String.valueOf(myScore));
-
-        playAnother.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(that, HomeActivity.class);
-                that.startActivity(intent);
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        Intent intent = new Intent(SplashScreenActivity.this, FullscreenActivity.class);
+                        SplashScreenActivity.this.startActivity(intent);
+
+                        buttonTimer.cancel();
+                        buttonTimer.purge();
+
+                    }
+                });
             }
-        });
+        }, 5000);
 
     }
 
@@ -185,11 +191,4 @@ public class GameOverActivity extends Activity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
-
-    @Override
-    public void onBackPressed() {
-        Intent in = new Intent(this, HomeActivity.class);
-        startActivity(in);
-    }
-
 }

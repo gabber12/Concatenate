@@ -1,4 +1,7 @@
 package com.iplay.concatenate;
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -86,13 +89,13 @@ public class HomeActivity extends FragmentActivity {
                 transitionView.startTransition(TransitionLayout.TransitionType.Radial,trans, 200);
                 if (trans) {
                     HomeActivity.this.findViewById(R.id.friendsView).setVisibility(View.VISIBLE);
-                    ((RelativeLayout)HomeActivity.this.findViewById(R.id.home)).setElevation(new Float(10));
-                    ((FrameLayout)HomeActivity.this.findViewById(R.id.container)).setElevation(new Float(20));
+                    ((carbon.widget.RelativeLayout)HomeActivity.this.findViewById(R.id.home)).setElevation(new Float(10));
+                    ((carbon.widget.FrameLayout)HomeActivity.this.findViewById(R.id.container)).setElevation(new Float(20));
                 }
                 else {
                     HomeActivity.this.findViewById(R.id.friendsView).setVisibility(View.GONE);
-                    ((RelativeLayout)HomeActivity.this.findViewById(R.id.home)).setElevation(new Float(20));
-                    ((FrameLayout)HomeActivity.this.findViewById(R.id.container)).setElevation(new Float(10));
+                    ((carbon.widget.RelativeLayout)HomeActivity.this.findViewById(R.id.home)).setElevation(new Float(20));
+                    ((carbon.widget.FrameLayout)HomeActivity.this.findViewById(R.id.container)).setElevation(new Float(10));
                 }
 
                 trans = !trans;
@@ -179,7 +182,7 @@ public class HomeActivity extends FragmentActivity {
 		findViewById(R.id.quick_game).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), QuickGameActivity.class);
+                Intent in = new Intent(getApplicationContext(), NewQuickGame.class);
                 startActivity(in);
 
             }
@@ -188,13 +191,6 @@ public class HomeActivity extends FragmentActivity {
 
 
 
-    @Override
-    public void onBackPressed() {
-        Intent a = new Intent(Intent.ACTION_MAIN);
-        a.addCategory(Intent.CATEGORY_HOME);
-        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(a);
-    }
 
 
 
@@ -206,6 +202,48 @@ public class HomeActivity extends FragmentActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        new MaterialDialog.Builder(this)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        HomeActivity.super.onBackPressed();
+                    }
+                })
+                .title("Quit Game")
+                .titleGravity(GravityEnum.CENTER)
+                .content("Do you really want to quit the game?")
+                .positiveText("QUIT")
+                .negativeText("PLAY ON")
+                .theme(Theme.LIGHT)
+                .negativeColorRes(R.color.material_deep_teal_500)
+                .positiveColorRes(R.color.material_red_500)
+                .show();
+
+//        new AlertDialog.Builder(this)
+//                .setTitle("Really Exit?")
+//                .setMessage("Are you sure you want to exit?")
+//                .setNegativeButton(android.R.string.no, null)
+//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//
+//                    public void onClick(DialogInterface arg0, int arg1) {
+//                        HomeActivity.super.onBackPressed();
+//                    }
+//                }).create().show();
+    }
+
+    public void myfunc_leaderboard(View v){
+
+//        Bundle params = new Bundle();
+//        params.putString("message", "I challenge you for a Concaty showdown!");
+//        params.putString("to",((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId());
+//        params.putInt("max_recipients", 1);
+//        showDialogWithoutNotificationBar("apprequests", params);
+//        System.out.print("Hello");
     }
 
 
@@ -248,5 +286,6 @@ public class HomeActivity extends FragmentActivity {
         public boolean willChangeBounds() {
             return true;
         }
+
     }
 }

@@ -9,7 +9,7 @@
     android:layout_gravity="center_vertical"
     app:carbon_rippleColor="#CACACA"
     android:gravity="center_vertical"
-    android:onClick="myfunc_invite"
+    android:onClick="myfunc_join"
     app:carbon_cornerRadius="5dp"
 
     >

@@ -1,0 +1,203 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="#0099cc"
+    tools:context="com.iplay.concatenate.NewGameOverActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+    <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#33b5e5"
+        android:textStyle="bold" android:textSize="50sp" android:gravity="center"
+        android:text="" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:visibility="invisible"
+            android:id="@+id/yourinfolayout"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/yourname"
+                android:text="Divanshu Garg"
+                android:textSize="15sp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/yourlevel"
+                android:text="Level 12"
+                android:textSize="15sp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_below="@+id/yourinfolayout"
+            android:id="@+id/yourpiclayout"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/yourpic"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_margin="30dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/circlepic"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/textSwitcherlayout"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/yourpiclayout"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+
+                android:visibility="gone"
+                android:id="@+id/barLeftrel"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:layout_toLeftOf="@+id/textBoxrel">
+                <View
+                    android:id="@+id/bar_left"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@android:color/white"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/textSwitcherrel"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center">
+                <TextSwitcher
+                    android:id="@+id/textSwitcher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/textBoxrel"
+                android:visibility="gone"
+                android:layout_width="50dp"
+                android:layout_centerInParent="true"
+                android:layout_height="30dp">
+                <TextView
+                    android:id="@+id/textBox"
+                    android:text="VS"
+                    android:textSize="20sp"
+                    android:layout_centerInParent="true"
+                    android:textColor="@android:color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/barRightrel"
+                android:visibility="gone"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:layout_toRightOf="@+id/textBoxrel">
+                <View
+                    android:id="@+id/bar_right"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@android:color/white"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/mypiclayout"
+            android:gravity="center"
+            android:layout_below="@+id/textSwitcherlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/mypic"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="30dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/circlepic"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:visibility="invisible"
+            android:id="@+id/myinfolayout"
+            android:layout_below="@+id/mypiclayout"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/myname"
+                android:text="Aman Choudhary"
+                android:textSize="15sp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/mylevel"
+                android:text="Level 10"
+                android:textSize="15sp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout android:id="@+id/fullscreen_content_controls" style="?metaButtonBarStyle"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/black_overlay" android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <Button android:id="@+id/dummy_button" style="?metaButtonBarButtonStyle"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="@string/dummy_button" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

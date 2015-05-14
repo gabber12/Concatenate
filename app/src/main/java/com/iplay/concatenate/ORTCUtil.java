@@ -100,6 +100,8 @@ public class ORTCUtil {
 
                     public void run(OrtcClient send, Exception ex) {
                         final Exception exception = ex;
+                        System.out.println(ex.getMessage());
+                        System.out.println(ex.getStackTrace());
 
                     }
                 };

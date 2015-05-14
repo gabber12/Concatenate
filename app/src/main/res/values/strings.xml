@@ -26,4 +26,14 @@
 
     <string name="title_activity_quick_game">QuickGameActivity</string>
 
+    <string name="title_activity_new_quick_game">NewQuickGame</string>
+
+    <string name="title_activity_new_host_game">NewHostGameActivity</string>
+
+    <string name="title_activity_new_join_game">NewJoinGameActivity</string>
+
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+
+    <string name="title_activity_new_game_over">NewGameOverActivity</string>
+
 </resources>

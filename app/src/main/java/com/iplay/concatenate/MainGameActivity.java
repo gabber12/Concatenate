@@ -1,28 +1,38 @@
 package com.iplay.concatenate;
 
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
@@ -32,7 +42,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -111,16 +123,20 @@ public class MainGameActivity extends Activity {
     private TextView myScore, yourScore;
     public static int currentMyScore = 0, currentYourScore = 0;
 
-    private ProgressBar pb;
+    private ProgressBar mpb, ypb;
+
+    Typeface myTypeface = null, myTypefaceLight = null, myTypefaceMedium = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        myTypeface = Typeface.createFromAsset(getAssets(), "BrandonText-Bold.otf");
+        myTypefaceLight = Typeface.createFromAsset(getAssets(), "BrandonText-Light.otf");
+        myTypefaceMedium = Typeface.createFromAsset(getAssets(), "BrandonText-Medium.otf");
+
         CommonUtils.waitingFor = null;
-        if (CommonUtils.startingGameTimer != null) {
-            CommonUtils.startingGameTimer.cancel();
-            CommonUtils.startingGameTimer.purge();
-        }
+        CommonUtils.startGameIntent = null;
+        CommonUtils.disableTimer(CommonUtils.startingGameTimer);
         currentMyScore = currentYourScore = 0;
 
         super.onCreate(savedInstanceState);
@@ -196,11 +212,56 @@ public class MainGameActivity extends Activity {
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        pb = (ProgressBar) findViewById(R.id.progressBarTimeout);
+        mpb = (ProgressBar) findViewById(R.id.myProgressBarTimeout);
+        ypb = (ProgressBar) findViewById(R.id.yourProgressBarTimeout);
 
         myScore = (TextView) findViewById(R.id.myscore);
         yourScore = (TextView) findViewById(R.id.yourscore);
         enterWord = (LockEditText) findViewById(R.id.enter_word);
+
+        enterWord.addTextChangedListener(new TextWatcher() {
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            public void afterTextChanged(Editable s) {
+
+                // you can call or do what you want with your EditText here
+                String str = enterWord.getText().toString();
+                int maxMatch = 0;
+                for (int i = 0; i < lastWord.length(); ++i) {
+                    if (str.startsWith(lastWord.substring(i))) {
+                        maxMatch = lastWord.length() - i;
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
+                    TextView textView = (TextView) wordsLayout.getChildAt(i);
+                    if (i + maxMatch >= wordsLayout.getChildCount()) {
+                        setBackgroundBox(textView, R.drawable.enter_word_background_red);
+                    } else {
+                        setBackgroundBox(textView, R.drawable.enter_word_background_black);
+                    }
+                }
+
+            }
+        });
+
+        enterWord.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    System.out.println("clicked on done");
+                    // send the word now
+                    sendTheWrittenWord();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         InputFilter filter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
@@ -233,11 +294,11 @@ public class MainGameActivity extends Activity {
         enterWord.setFilters(new InputFilter[]{new InputFilter.AllCaps(), filter});
         wordsLayout = (LinearLayout) findViewById(R.id.LinearLayoutWords);
 
-        setWords(getIntent().getStringExtra("game_word"));
-        against = getIntent().getStringExtra("against_user");
         userTurn = getIntent().getStringExtra("user_turn");
+        against = getIntent().getStringExtra("against_user");
         gameId = getIntent().getIntExtra("game_id", 0);
         isBot = getIntent().getBooleanExtra("is_bot", false);
+        setWords(getIntent().getStringExtra("game_word"));
         changeEnterWordBox();
 
         System.out.println(CommonUtils.userId + " " + against + " " + userTurn);
@@ -248,50 +309,67 @@ public class MainGameActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                if (!CommonUtils.userId.equals(userTurn) || pb.getProgress() == 0)
-                    return;
-
-                String str = enterWord.getText().toString();
-                int maxMatch = getMaxMatch(str, lastWord);
-
-                if (!CommonUtils.words.contains(str) || maxMatch == 0 || str.equals(lastWord))
-                    shakeWord();
-                else {
-                    setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
-                    updateMyScore(str);
-                    changeTheWord(str);
-
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("fromUser", CommonUtils.userId);
-                        jsonObject.put("toUser", against);
-                        jsonObject.put("gameId", gameId);
-                        jsonObject.put("gameWord", str);
-                        jsonObject.put("typeFlag", 5);
-                        jsonObject.put("myScore", currentMyScore);
-
-                        // send to other player
-                        userTurn = against;
-                        changeEnterWordBox();
-                        if (!isBot)
-                            ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
-
-                    } catch (Exception e) {
-                        Log.e("json", "error while generating a json file and sending to server");
-                    }
-                    resetCountdownTimer();
-                }
+                sendTheWrittenWord();
 
             }
 
         });
     }
 
+    private void sendTheWrittenWord() {
+
+        if (!CommonUtils.userId.equals(userTurn) || mpb.getProgress() == 0)
+            return;
+
+        String str = enterWord.getText().toString();
+        int maxMatch = getMaxMatch(str, lastWord);
+
+        if (!CommonUtils.words.contains(str) || maxMatch == 0 || str.equals(lastWord)) {
+            System.out.println(maxMatch);
+            System.out.println(CommonUtils.words.contains(str));
+            shakeWord();
+        } else {
+            setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
+            updateMyScore(str);
+            changeTheWord(str);
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("fromUser", CommonUtils.userId);
+                jsonObject.put("toUser", against);
+                jsonObject.put("gameId", gameId);
+                jsonObject.put("gameWord", str);
+                jsonObject.put("typeFlag", 5);
+                jsonObject.put("myScore", currentMyScore);
+
+                // send to other player
+                userTurn = against;
+                changeEnterWordBox();
+                if (!isBot)
+                    ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
+
+            } catch (Exception e) {
+                Log.e("json", "error while generating a json file and sending to server");
+            }
+            resetCountdownTimer();
+        }
+
+    }
+
     private void resetCountdownTimer() {
 
-        if (CommonUtils.mainGameTimer != null) CommonUtils.mainGameTimer.cancel();
+        CommonUtils.disableTimer(CommonUtils.mainGameTimer);
         CommonUtils.mainGameTimer = new Timer();
-        pb.setProgress(pb.getMax());
+        ProgressBar temp = null;
+        if ( userTurn.equals(CommonUtils.userId) ) {
+            mpb.setProgress(mpb.getMax());
+            ypb.setProgress(0); temp = mpb;
+
+        } else {
+            ypb.setProgress(ypb.getMax());
+            mpb.setProgress(0); temp = ypb;
+        }
+        final ProgressBar pb = temp;
         final long startTime = System.currentTimeMillis();
         CommonUtils.mainGameTimer.scheduleAtFixedRate(new TimerTask() {
             boolean word_request_sent = false;
@@ -323,10 +401,10 @@ public class MainGameActivity extends Activity {
                                 } catch (JSONException je) {
                                     System.out.println("Unable to encode json: " + je.getMessage());
                                 }
-                                CommonUtils.mainGameTimer.cancel();
+                                CommonUtils.disableTimer(CommonUtils.mainGameTimer);
                             }
                         }
-                        if (left <= -10 * 1000) {
+                        if (left <= -15 * 1000) {
                             if (userTurn.equals(against)) {
                                 try {
                                     org.json.JSONObject jsonObject = new org.json.JSONObject();
@@ -340,7 +418,7 @@ public class MainGameActivity extends Activity {
                                     System.out.println("Unable to encode json: " + je.getMessage());
                                 }
                             }
-                            CommonUtils.mainGameTimer.cancel();
+                            CommonUtils.disableTimer(CommonUtils.mainGameTimer);
                         }
                     }
                 });
@@ -363,30 +441,68 @@ public class MainGameActivity extends Activity {
     }
 
     private void updateMyScore(String str) {
-        currentMyScore += getScoreForThisWord(str, lastWord);
-        String points = String.valueOf(currentMyScore);
-        while (points.length() < 3) points = "0" + points;
-        myScore.setText("Score: " + points);
+        int gained = getScoreForThisWord(str, lastWord);
+        animateScore(myScore, currentMyScore, currentMyScore + gained);
+        currentMyScore += gained;
+//        myScore.setText("Score: " + points);
+    }
+
+    private void animateScore(final TextView textView, final int fromScore, final int toScore) {
+//        System.out.println("reached in animation score");
+        final String base = "Score: ";
+        final Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+            int currentScore = fromScore;
+            @Override
+            public void run() {
+                MainGameActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        currentScore += 1;
+                        textView.setText(base + currentScore);
+                        if ( currentScore >= toScore ) {
+                            t.cancel();
+                            t.purge();
+                        }
+
+                    }
+                });
+            }
+        }, new Long(0), new Long(30));
     }
 
 
     private void setWords(String str) {
+
+        System.out.println(str);
+
+        float layout_margin = 1f;
+        int layout_width = getPixelsfromDP(40f);
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        int parentWidth = size.x;
+        int probableWidth = (parentWidth - getPixelsfromDP(10f))/str.length();
+        layout_width = Math.min(probableWidth, layout_width);
+        int margin = getPixelsfromDP(layout_margin);
+        int blockWidth = layout_width - margin - margin;
+
+        System.out.println(parentWidth + " " + blockWidth);
+
         wordsLayout.removeAllViews();
 
         for (int i = 0; i < str.length(); ++i) {
-            TextView newTextView = new TextView(that);
+            TextView newTextView = new TextView(this);
             String s = Character.toString(str.charAt(i));
             newTextView.setText(s);
             newTextView.setGravity(Gravity.CENTER);
             setBackgroundBox(newTextView, R.drawable.enter_word_background_black);
-            newTextView.setHeight(getPixelsfromDP(40f));
-            newTextView.setWidth(getPixelsfromDP(40f));
+            newTextView.setHeight(blockWidth);
+            newTextView.setWidth(blockWidth);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(getPixelsfromDP(5f), getPixelsfromDP(5f), getPixelsfromDP(5f), getPixelsfromDP(5f));
+            params.setMargins(getPixelsfromDP(layout_margin), getPixelsfromDP(layout_margin), getPixelsfromDP(layout_margin), getPixelsfromDP(layout_margin));
             newTextView.setLayoutParams(params);
             newTextView.setTextColor(Color.BLUE);
             wordsLayout.addView(newTextView);
-
         }
         lastWord = str;
         resetCountdownTimer();
@@ -422,15 +538,23 @@ public class MainGameActivity extends Activity {
 
     private void changeTheWord(String str) {
         int maxMatch = getMaxMatch(str, lastWord);
+
+        float layout_margin = 1f;
+        int layout_width = getPixelsfromDP(40f);
+
         int parentWidth = wordsLayout.getWidth();
-        final int margin = getPixelsfromDP(5f), blockWidth = getPixelsfromDP(40f);
-        int viewWidth = (blockWidth + margin + margin);
+        int probableWidth = (parentWidth - getPixelsfromDP(10f))/str.length();
+        probableWidth = Math.min(probableWidth, layout_width);
+        layout_width = probableWidth;
+        int margin = getPixelsfromDP(layout_margin);
+        int blockWidth = layout_width - margin - margin;
+        int viewWidth = layout_width;
         int length = str.length();
-        int totalWidth = viewWidth * length;
-        int autoMargin = (parentWidth - totalWidth) / 2;
-        List<Integer> newLeftPosition = new ArrayList<Integer>();
-        for (int i = 0; i < str.length(); ++i) {
-            newLeftPosition.add(autoMargin + i * viewWidth);
+        int totalWidth = viewWidth*length;
+        int autoMargin = (parentWidth - totalWidth)/2;
+        List<Integer> newLeftPosition = new ArrayList<>();
+        for ( int i = 0; i < str.length(); ++i ) {
+            newLeftPosition.add(autoMargin+i*viewWidth);
         }
 
         List<Integer> leftPosition = new ArrayList<Integer>();
@@ -456,14 +580,27 @@ public class MainGameActivity extends Activity {
             wordsLayout.removeView(textView);
         }
 
+        int diff = 0;
+
         for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
             TextView textView = (TextView) wordsLayout.getChildAt(i);
             Integer curLeftPosition = textView.getLeft();
+            AnimationSet animationSet = new AnimationSet(true);
             Animation animateToStart = new TranslateAnimation(leftPosition.get(lastWord.length() - maxMatch + i) - newLeftPosition.get(i), 0, 0, 0);
             animateToStart.setDuration(800);
             animateToStart.setStartOffset(200);
             animateToStart.setInterpolator(new OvershootInterpolator());
-            textView.startAnimation(animateToStart);
+            animationSet.addAnimation(animateToStart);
+            diff += blockWidth - textView.getWidth();
+            float blockWidthf = blockWidth;
+            float lastWidthf = textView.getHeight();
+            float scale = (blockWidthf/lastWidthf);
+            Animation scaleForChange = new ScaleAnimation(1.0f,scale,1.0f,scale,Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            scaleForChange.setDuration(800);
+            scaleForChange.setStartOffset(200);
+            animationSet.addAnimation(scaleForChange);
+            animationSet.setFillEnabled(true); animationSet.setFillAfter(true);
+            textView.startAnimation(animationSet);
         }
 
         for (int i = maxMatch; i < str.length(); ++i) {
@@ -482,7 +619,7 @@ public class MainGameActivity extends Activity {
 
 //            System.out.println("new left :" + newTextView.getText().toString() + " " + newTextView.getLeft() );
 
-            Animation animateFromExtremeRight = new TranslateAnimation(600 - i * 50, 0, 0, 0);
+            Animation animateFromExtremeRight = new TranslateAnimation(600 - i * 50, diff, 0, 0);
             animateFromExtremeRight.setDuration(800);
             Animation fadeOutAnimation = new AlphaAnimation(0.0f, 1.0f);
             fadeOutAnimation.setDuration(800);
@@ -507,7 +644,7 @@ public class MainGameActivity extends Activity {
         return (int) (fpixels + 0.5f);
     }
 
-    // Not required.
+    // Not required. already in SP.
     private float getSPFromPixels(float px) {
         float scaledDensity = getApplicationContext().getResources().getDisplayMetrics().scaledDensity;
         return px / scaledDensity;
@@ -534,10 +671,11 @@ public class MainGameActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             changeTheWord(intent.getStringExtra("game_word"));
+            animateScore(yourScore, currentYourScore, Math.max(currentYourScore, intent.getIntExtra("your_score", 0)));
             currentYourScore = Math.max(currentYourScore, intent.getIntExtra("your_score", 0));
-            String points = String.valueOf(currentYourScore);
-            while (points.length() < 3) points = "0" + points;
-            yourScore.setText("Score: " + points);
+//            String points = String.valueOf(currentYourScore);
+//            while (points.length() < 3) points = "0" + points;
+//            yourScore.setText("Score: " + points);
             userTurn = CommonUtils.userId;
             changeEnterWordBox();
             resetCountdownTimer();
@@ -547,6 +685,87 @@ public class MainGameActivity extends Activity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
+
+        TextView myNameTextView = (TextView) findViewById(R.id.myname);
+        TextView myLevelTextView = (TextView) findViewById(R.id.mylevel);
+        TextView myScoreTextView = (TextView) findViewById(R.id.myscore);
+
+        TextView yourNameTextView = (TextView) findViewById(R.id.yourname);
+        TextView yourLevelTextView = (TextView) findViewById(R.id.yourlevel);
+        TextView yourScoreTextView = (TextView) findViewById(R.id.yourscore);
+
+        myNameTextView.setTypeface(myTypefaceMedium);
+        myLevelTextView.setTypeface(myTypefaceLight);
+        myScoreTextView.setTypeface(myTypefaceMedium);
+        yourNameTextView.setTypeface(myTypefaceMedium);
+        yourLevelTextView.setTypeface(myTypefaceLight);
+        yourScoreTextView.setTypeface(myTypefaceMedium);
+
+
+        AnimationSet animationSet1 = new AnimationSet(true);
+        Animation fadeIn1 = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn1.setDuration(1000);
+        Animation comeIn1 = new TranslateAnimation(-200, 0, 0, 0);
+        comeIn1.setDuration(1000);
+        animationSet1.addAnimation(fadeIn1);
+        animationSet1.addAnimation(comeIn1);
+        myNameTextView.startAnimation(animationSet1);
+
+        AnimationSet animationSet2 = new AnimationSet(true);
+        Animation fadeIn2 = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn2.setDuration(1000);
+        Animation comeIn2 = new TranslateAnimation(-200, 0, 0, 0);
+        comeIn2.setDuration(1000);
+        fadeIn2.setStartOffset(300);
+        comeIn2.setStartOffset(300);
+        animationSet2.addAnimation(fadeIn2);
+        animationSet2.addAnimation(comeIn2);
+        myLevelTextView.startAnimation(animationSet2);
+
+        AnimationSet animationSet3 = new AnimationSet(true);
+        Animation fadeIn3 = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn3.setDuration(1000);
+        Animation comeIn3 = new TranslateAnimation(-200, 0, 0, 0);
+        comeIn3.setDuration(1000);
+        fadeIn3.setStartOffset(600);
+        comeIn3.setStartOffset(600);
+        animationSet3.addAnimation(fadeIn3);
+        animationSet3.addAnimation(comeIn3);
+        myScoreTextView.startAnimation(animationSet3);
+
+
+        AnimationSet animationSet1y = new AnimationSet(true);
+        Animation fadeIn1y = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn1y.setDuration(1000);
+        Animation comeIn1y = new TranslateAnimation(200, 0, 0, 0);
+        comeIn1y.setDuration(1000);
+        animationSet1y.addAnimation(fadeIn1y);
+        animationSet1y.addAnimation(comeIn1y);
+        yourNameTextView.startAnimation(animationSet1y);
+
+        AnimationSet animationSet2y = new AnimationSet(true);
+        Animation fadeIn2y = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn2y.setDuration(1000);
+        Animation comeIn2y = new TranslateAnimation(200, 0, 0, 0);
+        comeIn2y.setDuration(1000);
+        fadeIn2y.setStartOffset(300);
+        comeIn2y.setStartOffset(300);
+        animationSet2y.addAnimation(fadeIn2y);
+        animationSet2y.addAnimation(comeIn2y);
+        yourLevelTextView.startAnimation(animationSet2y);
+
+        AnimationSet animationSet3y = new AnimationSet(true);
+        Animation fadeIn3y = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn3y.setDuration(1000);
+        Animation comeIn3y = new TranslateAnimation(200, 0, 0, 0);
+        comeIn3y.setDuration(1000);
+        fadeIn3y.setStartOffset(600);
+        comeIn3y.setStartOffset(600);
+        animationSet3y.addAnimation(fadeIn3y);
+        animationSet3y.addAnimation(comeIn3y);
+        yourScoreTextView.startAnimation(animationSet3y);
+
 
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
@@ -561,7 +780,7 @@ public class MainGameActivity extends Activity {
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // Show the Up button in the action bar.
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+//            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -669,5 +888,34 @@ public class MainGameActivity extends Activity {
             super.onPostExecute(result);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceivedBackPress);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceivedGameWord);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        new MaterialDialog.Builder(this)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        MainGameActivity.super.onBackPressed();
+                    }
+                })
+                .title("Leave Game")
+                .titleGravity(GravityEnum.CENTER)
+                .content("You will lose if you leave the game. Still continue?")
+                .positiveText("YES")
+                .negativeText("NO")
+                .theme(Theme.LIGHT)
+                .negativeColorRes(R.color.material_deep_teal_500)
+                .positiveColorRes(R.color.material_red_500)
+                .show();
     }
 }

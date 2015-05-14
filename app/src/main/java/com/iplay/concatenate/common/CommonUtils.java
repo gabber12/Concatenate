@@ -1,5 +1,6 @@
 package com.iplay.concatenate.common;
 
+import android.content.Intent;
 import android.util.Log;
 import android.util.Pair;
 
@@ -26,15 +27,24 @@ import java.util.Timer;
  */
 public class CommonUtils {
 
-//    52.6.17.252
-    public final static String SERVER_BASE = "http://ec2-52-6-17-252.compute-1.amazonaws.com/";
+//    concaty.tk
+    public final static String SERVER_BASE = "http://concaty.tk/";
 
     public static String userId = null;
 	public static String waitingFor = null;
+
+    public static boolean onQuickGame = false;
+    public static boolean onStartingGame = false;
+    public static boolean onHostGame = false;
+
+
     public static Timer startingGameTimer = null;
     public static Timer hostGameTimer = null;
     public static Timer mainGameTimer = null;
     public static Timer quickGameTimer = null;
+
+    public static Intent startGameIntent = null;
+
     public static String name;
     public static int score;
     public static List<FriendModel> friendArrayList;
@@ -45,6 +55,14 @@ public class CommonUtils {
     public static LoginButton loginButton = null;
     public static LoginButton getLoginButton() { if (loginButton == null) throw new FacebookGraphObjectException(); return loginButton; }
     public static void setLoginButton(LoginButton lb) { loginButton = lb; }
+
+    public static void disableTimer(Timer t) {
+        if ( t != null ) {
+            t.cancel();
+            t.purge();
+            t = null;
+        }
+    }
 
     public static Set<String> words = null;
     public static void fetchScore() {

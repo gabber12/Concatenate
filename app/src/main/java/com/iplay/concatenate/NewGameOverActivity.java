@@ -5,13 +5,18 @@ import com.iplay.concatenate.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 
 /**
@@ -20,7 +25,7 @@ import android.widget.TextView;
  *
  * @see SystemUiHider
  */
-public class GameOverActivity extends Activity {
+public class NewGameOverActivity extends Activity {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -47,16 +52,13 @@ public class GameOverActivity extends Activity {
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
-    private GameOverActivity that;
     private SystemUiHider mSystemUiHider;
-    private TextView winOrLose, finalScore;
-    private Button playAnother;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        that = this;
-        setContentView(R.layout.activity_game_over);
+
+        setContentView(R.layout.activity_new_game_over);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
@@ -120,26 +122,39 @@ public class GameOverActivity extends Activity {
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        winOrLose = (TextView) findViewById(R.id.win_or_lose);
-        playAnother = (Button) findViewById(R.id.play_another);
-        finalScore = (TextView) findViewById(R.id.final_score);
+
+        TextSwitcher mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);
+
+//        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+//        anim.setDuration(1000); //You can manage the blinking time with this parameter
+//        anim.setStartOffset(20);
+//        anim.setRepeatMode(Animation.REVERSE);
+//        anim.setRepeatCount(Animation.INFINITE);
+//        mSwitcher.startAnimation(anim);
+
+        // Set the ViewFactory of the TextSwitcher that will create TextView object when asked
+        mSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
+
+            public View makeView() {
+                // TODO Auto-generated method stub
+                // create new textView and set the properties like color, size etc
+                TextView myText = new TextView(NewGameOverActivity.this);
+                myText.setGravity(Gravity.CENTER_HORIZONTAL);
+                myText.setTextSize(20);
+                myText.setTextColor(Color.WHITE);
+                return myText;
+            }
+        });
 
         int myScore = getIntent().getIntExtra("my_score", 0);
         int yourScore = getIntent().getIntExtra("your_score", 0);
 
-        if ( myScore > yourScore ) winOrLose.setText("You win :D");
-        else if ( myScore < yourScore ) winOrLose.setText("You lose :(");
-        else winOrLose.setText("Its a draw :|");
+        if ( myScore > yourScore ) mSwitcher.setText("YOU WIN");
+        else if ( myScore < yourScore ) mSwitcher.setText("YOU LOSE");
+        else mSwitcher.setText("IT'S A DRAW");
 
-        finalScore.setText("Your score: " + String.valueOf(myScore));
-
-        playAnother.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(that, HomeActivity.class);
-                that.startActivity(intent);
-            }
-        });
+        // TODO: Fill required data/ game metrics above and below in two boxes
+        // TODO: Add a button to go to home.
 
     }
 

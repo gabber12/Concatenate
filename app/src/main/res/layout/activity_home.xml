@@ -77,11 +77,11 @@
                 />
         </carbon.widget.RelativeLayout>
 
-        <FrameLayout
+        <carbon.widget.FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/container"
-        ></FrameLayout>
+        ></carbon.widget.FrameLayout>
     </carbon.widget.TransitionLayout>
     <carbon.widget.ImageActionButton
         android:layout_width="60dp"

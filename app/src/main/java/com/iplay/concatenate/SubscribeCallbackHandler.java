@@ -64,7 +64,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                     }, 30000);
                     break;
                 case 2:
-                    if ( CommonUtils.waitingFor != null && CommonUtils.waitingFor.equals((String)jsonObject.get("fromUser")) ) {
+                    if ( CommonUtils.onHostGame && CommonUtils.waitingFor != null && CommonUtils.waitingFor.equals((String)jsonObject.get("fromUser")) ) {
 
                         try {
                             JSONObject sendjsonObject = new JSONObject();
@@ -77,14 +77,14 @@ public class SubscribeCallbackHandler implements OnMessage {
                             Log.e("json", "Error while encoding json for server");
                         }
 
-                        if ( CommonUtils.hostGameTimer != null )
-                            CommonUtils.hostGameTimer.cancel();
-                        CommonUtils.hostGameTimer = null;
+                        CommonUtils.disableTimer(CommonUtils.hostGameTimer);
 
-                        intent = new Intent(ctx, StartingGame.class);
+//                        intent = new Intent(ctx, StartingGame.class);
+                        intent = new Intent("starting_game");
                         intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        ctx.startActivity(intent);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        ctx.startActivity(intent);
+                        LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     }
                     break;
                 case 3:
@@ -99,10 +99,6 @@ public class SubscribeCallbackHandler implements OnMessage {
                         against = (String) jsonObject.get("toUser");
                     if ( CommonUtils.waitingFor != null && CommonUtils.waitingFor.equals(against) ) {
                         CommonUtils.waitingFor = null;
-                        if (CommonUtils.startingGameTimer != null)
-                            CommonUtils.startingGameTimer.cancel();
-                        intent = new Intent("game_started");
-                        LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                         String gameWord = (String) jsonObject.get("gameWord");
                         int gameId = (int)(long) jsonObject.get("gameId");
                         String userTurn = (String) jsonObject.get("userTurn");
@@ -113,8 +109,10 @@ public class SubscribeCallbackHandler implements OnMessage {
                         in.putExtra("user_turn", userTurn);
                         in.putExtra("against_user", against);
                         in.putExtra("is_bot", isBot);
-                        in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        ctx.startActivity(in);
+                        in.putExtra("timestamp", System.currentTimeMillis());
+                        CommonUtils.startGameIntent = in;
+//                        in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        ctx.startActivity(in);
                     }
                     break;
                 case 5:
@@ -126,8 +124,8 @@ public class SubscribeCallbackHandler implements OnMessage {
                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     break;
                 case 6:
-                    CommonUtils.mainGameTimer.cancel();
-                    Intent in = new Intent(ctx, GameOverActivity.class);
+                    CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+                    Intent in = new Intent(ctx, NewGameOverActivity.class);
                     in.putExtra("my_score", MainGameActivity.currentMyScore);
                     in.putExtra("your_score", MainGameActivity.currentYourScore);
                     in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -137,30 +135,37 @@ public class SubscribeCallbackHandler implements OnMessage {
                     // Ignoring the word timed out request
                     break;
                 case 8:
-                    if ( CommonUtils.quickGameTimer != null ) {
-                        CommonUtils.quickGameTimer.cancel();
-                        try {
-                            JSONObject sendjsonObject = new JSONObject();
-                            sendjsonObject.put("typeFlag", 2);
-                            sendjsonObject.put("fromUser", CommonUtils.userId);
-                            sendjsonObject.put("toUser", (String) jsonObject.get("fromUser"));
-                            System.out.println(sendjsonObject.toString());
-                            ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID((String) jsonObject.get("fromUser")), sendjsonObject.toString());
-                        } catch (Exception e) {
-                            Log.e("json", "Error while encoding json for server");
+                    if ( CommonUtils.onQuickGame ) {
+                        if (CommonUtils.quickGameTimer != null) {
+                            CommonUtils.disableTimer(CommonUtils.quickGameTimer);
+                            try {
+                                JSONObject sendjsonObject = new JSONObject();
+                                sendjsonObject.put("typeFlag", 2);
+                                sendjsonObject.put("fromUser", CommonUtils.userId);
+                                sendjsonObject.put("toUser", (String) jsonObject.get("fromUser"));
+                                System.out.println(sendjsonObject.toString());
+                                ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID((String) jsonObject.get("fromUser")), sendjsonObject.toString());
+                            } catch (Exception e) {
+                                Log.e("json", "Error while encoding json for server");
+                            }
+
+//                            intent = new Intent(ctx, StartingGame.class);
+                            intent = new Intent("starting_game");
+                            intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
+                            intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
+                            LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            ctx.startActivity(intent);
+                        } else if ((Boolean) jsonObject.get("isBot")) {
+//                            intent = new Intent(ctx, StartingGame.class);
+                            intent = new Intent("starting_game");
+                            intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
+                            intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            ctx.startActivity(intent);
+                            LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                         }
 
-                        intent = new Intent(ctx, StartingGame.class);
-                        intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
-                        intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        ctx.startActivity(intent);
-                    } else if ( (Boolean) jsonObject.get("isBot") ) {
-                        intent = new Intent(ctx, StartingGame.class);
-                        intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
-                        intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        ctx.startActivity(intent);
                     }
                     break;
 

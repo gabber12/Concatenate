@@ -61,6 +61,7 @@ public class QuickGameActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_quick_game);
+        CommonUtils.onQuickGame = true;
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
@@ -132,8 +133,9 @@ public class QuickGameActivity extends Activity {
 
             @Override
             public void run() {
-                CommonUtils.quickGameTimer.cancel();
+                System.out.println("Sending bot request");
                 new BackgroundURLRequest().execute("give_me_bot/", CommonUtils.userId);
+                CommonUtils.disableTimer(CommonUtils.quickGameTimer);
             }
         }, 30000);
 
@@ -149,6 +151,14 @@ public class QuickGameActivity extends Activity {
         delayedHide(100);
     }
 
+
+    @Override
+    public void onPause() {
+        new BackgroundURLRequest().execute("remove_me_from_pool/", CommonUtils.userId);
+        CommonUtils.onQuickGame = false;
+        CommonUtils.disableTimer(CommonUtils.quickGameTimer);
+        super.onPause();
+    }
 
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the
@@ -180,5 +190,11 @@ public class QuickGameActivity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(this, HomeActivity.class);
+        startActivity(in);
     }
 }

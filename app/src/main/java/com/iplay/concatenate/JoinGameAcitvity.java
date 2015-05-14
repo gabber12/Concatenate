@@ -91,7 +91,8 @@ public class JoinGameAcitvity extends Activity {
                 InviteModel inviteModel = (InviteModel) object;//As you are using Default String Adapter
 
                 try {
-                    Intent intent = new Intent(that, StartingGame.class);
+                    // TODO: Fix this to point to NewJoinGame
+                    Intent intent = new Intent(that, NewJoinGameActivity.class);
                     intent.putExtra("sender_id", inviteModel.getSenderId());
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("typeFlag", 2);
@@ -141,5 +142,27 @@ public class JoinGameAcitvity extends Activity {
         // are available.
     }
 
+    public void myfunc_join(View v){
+
+//        Bundle params = new Bundle();
+//        params.putString("message", "I challenge you for a Concaty showdown!");
+//        params.putString("to",((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId());
+//        params.putInt("max_recipients", 1);
+//        showDialogWithoutNotificationBar("apprequests", params);
+//        System.out.print("Hello");
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(this, HomeActivity.class);
+        startActivity(in);
+    }
 
 }

@@ -12,16 +12,13 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
         <activity
             android:name=".FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name="com.facebook.LoginActivity"
@@ -32,37 +29,41 @@
             android:name=".HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_home"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name=".JoinGameAcitvity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_join_game_acitvity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name=".HostGameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_host_game"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name=".GamePlayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_play"
+            android:noHistory="true"
             android:parentActivityName=".HomeActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.iplay.concatenate.HomeActivity" />
         </activity>
-
         <activity
             android:name=".MainGameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main_game"
+            android:noHistory="true"
             android:parentActivityName=".HomeActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -72,30 +73,76 @@
             android:name=".InviteFriends"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_invite_friends"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
-	<activity
+        <activity
             android:name=".GameOverActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_game_over"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name=".StartingGame"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_starting_game"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name=".QuickGameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_quick_game"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name=".NewQuickGame"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_new_quick_game"
+            android:noHistory="true"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".NewHostGameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_new_host_game"
+            android:noHistory="true"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".NewJoinGameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_new_join_game"
+            android:noHistory="true"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".SplashScreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_splash_screen"
+            android:noHistory="true"
+            android:theme="@style/FullscreenTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".NewGameOverActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_new_game_over"
+            android:noHistory="true"
+            android:theme="@style/FullscreenTheme" >
         </activity>
     </application>
 

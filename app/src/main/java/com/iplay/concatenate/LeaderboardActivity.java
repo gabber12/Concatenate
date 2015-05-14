@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -193,7 +194,7 @@ public class LeaderboardActivity extends Fragment {
                                     public void run() {
                                         ListView friendList = (ListView)myFragmentView.findViewById(R.id.friendsView);
 
-                                        FriendListAdapter adapter = new FriendListAdapter(getActivity().getApplicationContext(), R.layout.friendlistlayout, friends);
+                                        FriendListAdapter adapter = new FriendListAdapter(getActivity().getApplicationContext(), R.layout.friendlistlayout_leaderboard, friends);
                                         friendList.setAdapter(adapter);
                                     }
                                 });

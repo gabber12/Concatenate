@@ -1,9 +1,9 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@android:id/progress">
         <shape
-            android:innerRadiusRatio="4.4"
+            android:innerRadiusRatio="2.6"
             android:shape="ring"
-            android:thicknessRatio="5.5"
+            android:thicknessRatio="9"
             android:useLevel="true">
             <gradient
                 android:endColor="#000000"

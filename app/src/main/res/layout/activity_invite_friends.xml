@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/concat_back"
     android:orientation="vertical"
+    android:focusableInTouchMode="true"
     tools:context="com.iplay.concatenate.InviteFriends"
     >
 
@@ -29,7 +30,7 @@
         android:alwaysDrawnWithCache="true"
         android:scrollingCache="true"
         android:smoothScrollbar="true"
-        app:carbon_overScroll="always"
+        app:carbon_overScroll="ifContentScrolls"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
         android:divider="@drawable/transperent_color"

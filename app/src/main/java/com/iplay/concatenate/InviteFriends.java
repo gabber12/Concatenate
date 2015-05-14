@@ -207,7 +207,7 @@ public class InviteFriends extends Activity {
                             }
                             CommonUtils.waitingFor = opponentId;
                             CommonUtils.hostGameTimer = new Timer();
-                            Intent in = new Intent(getApplicationContext(), HostGameActivity.class);
+                            Intent in = new Intent(getApplicationContext(), NewHostGameActivity.class);
                             in.putExtra("id", opponentId);
                             startActivity(in);
                         }
@@ -248,16 +248,30 @@ public class InviteFriends extends Activity {
 //            }
 //        });
     }
-    public void myfunc(View v){
+    public void myfunc_invite(View v){
 
         Bundle params = new Bundle();
-        params.putString("message", "I just smashed " +
-                " friends! Can you beat it?");
+        params.putString("message", "I challenge you for a Concaty showdown!");
         params.putString("to",((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId());
         params.putInt("max_recipients", 1);
         showDialogWithoutNotificationBar("apprequests", params);
         System.out.print("Hello");
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(this, HomeActivity.class);
+        startActivity(in);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        EditText editText = ((EditText)findViewById(R.id.inputSearch));
+//        editText.clearFocus();
+        editText.setFocusableInTouchMode(false);
+        editText.setFocusable(false);
+        editText.setFocusableInTouchMode(true);
+        editText.setFocusable(true);
+    }
 }
