@@ -46,7 +46,7 @@ public class ProfileActivity extends Fragment {
 
                 ((TextView)myFragment.findViewById(R.id.profile_name)).setText(CommonUtils.name);
         ((TextView)myFragment.findViewById(R.id.profile_score)).setText("Score "+CommonUtils.score);
-        ((CircularProfilePicView)myFragment.findViewById(R.id.profile_pic)).setProfileId(CommonUtils.userId);
+        ((CircularProfilePicView)myFragment.findViewById(R.id.profile_pic_ac)).setProfileId(CommonUtils.userId);
 
         Bundle bd = new Bundle();
         bd.putString("fields", "cover");

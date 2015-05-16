@@ -86,7 +86,7 @@
         android:layout_width="177dp"
         android:layout_height="177dp"
         android:layout_centerHorizontal="true"
-        android:id ="@+id/profile_pic"
+        android:id ="@+id/profile_pic_ac"
         android:layout_gravity="center"
         ></com.iplay.concatenate.CircularProfilePicView>
 

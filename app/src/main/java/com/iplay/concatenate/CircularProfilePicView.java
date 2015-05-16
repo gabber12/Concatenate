@@ -197,7 +197,7 @@ public class CircularProfilePicView extends FrameLayout {
     public final void setCropped(boolean showCroppedVersion) {
         isCropped = showCroppedVersion;
         // No need to force the refresh since we will catch the change in required dimensions
-        refreshImage(false);
+        refreshImage(true);
     }
 
     /**
@@ -431,12 +431,15 @@ public class CircularProfilePicView extends FrameLayout {
                     getContext(),
                     ImageRequest.getProfilePictureUrl(profileId, queryWidth, queryHeight));
 
+            System.out.println("Downloading profile pic: " + profileId + " " + queryWidth + " " + queryHeight);
+
             ImageRequest request = requestBuilder.setAllowCachedRedirects(allowCachedResponse)
                     .setCallerTag(this)
                     .setCallback(
                             new ImageRequest.Callback() {
                                 @Override
                                 public void onCompleted(ImageResponse response) {
+                                    System.out.println("Response profile: " + response.getBitmap().getWidth() + " " + response.getBitmap().getWidth());
                                     processResponse(response);
                                 }
                             }
@@ -529,7 +532,7 @@ public class CircularProfilePicView extends FrameLayout {
                 if (!forcePreset) {
                     return ImageRequest.UNSPECIFIED_DIMENSION;
                 } else {
-                    dimensionId = R.dimen.com_facebook_profilepictureview_preset_size_normal;
+                    dimensionId = R.dimen.com_facebook_profilepictureview_preset_size_large;
                     break;
                 }
             default:
