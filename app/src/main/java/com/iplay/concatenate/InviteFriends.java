@@ -58,11 +58,12 @@ import ibt.ortc.extensibility.OrtcClient;
 
 
 
-public class InviteFriends extends Activity {
+public class InviteFriends extends Activity implements DataListener{
 
     public FriendListAdapter fla;
     private WebDialog dialog;
     public List<FriendModel>friends;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,16 +86,11 @@ public class InviteFriends extends Activity {
         }
 
 
+        CommonUtils.addAsSubscriber(this);
 
-        // Populate the scoreboard on the UI thread
-        InviteFriends.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fla = new FriendListAdapter(ctx, R.layout.friendlistlayout, friends);
-                ((ListView) findViewById(R.id.friendList)).setAdapter(fla);
-                fla.notifyDataSetChanged();
-            }
-        });
+        fla = new FriendListAdapter(ctx, R.layout.friendlistlayout, friends);
+        ((ListView) findViewById(R.id.friendList)).setAdapter(fla);
+        fla.notifyDataSetChanged();
 
 
 
@@ -211,5 +207,17 @@ public class InviteFriends extends Activity {
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(true);
         editText.setFocusable(true);
+    }
+
+    @Override
+    public void dataSetAvailable() {
+        if(friends.size() == 0)
+        for (Map.Entry<String, FriendModel> friend: CommonUtils.friendsMap.entrySet()) {
+            FriendModel f = friend.getValue();
+            if(!f.getId().equalsIgnoreCase(CommonUtils.userId))
+                friends.add(new FriendModel(f.getName(), f.getId(), f.getScore()));
+        }
+        if(fla != null)
+            fla.notifyDataSetChanged();
     }
 }
