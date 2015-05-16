@@ -114,6 +114,7 @@ public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filt
             result = convertView;
         }
         // TODO replace findViewById by ViewHolder
+        System.out.println("-------=Hello"+ list.get(position).getId());
         ((CircularProfilePicView) result.findViewById(R.id.profile_pic)).setProfileId(list.get(position).getId());
         ((TextView) result.findViewById(R.id.profile_name)).setText(list.get(position).getName());
         ((TextView) result.findViewById(R.id.profile_score)).setText("Score "+list.get(position).getScore());

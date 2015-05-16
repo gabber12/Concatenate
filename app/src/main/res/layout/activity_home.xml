@@ -8,36 +8,23 @@
     android:background="@drawable/concat_back"
     tools:context="com.iplay.concatenate.HomeActivity"
 
->
+>           <TextView
+    android:layout_width="200dp"
+    android:layout_height="60dp"
+    android:text="Select An Option"
+    android:textSize="23dp"
+    android:gravity="center"
+    android:layout_gravity="top|center"
+    android:layout_marginTop="15dp"/>
 
-            <com.iplay.concatenate.CircularProfilePicView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp"
-                android:id ="@+id/profile_pic"
-                android:layout_gravity="top|left"
-                ></com.iplay.concatenate.CircularProfilePicView>
-    <TextView
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:text="Select An Option"
-        android:textSize="23dp"
-        android:gravity="center"
-        android:layout_gravity="top|center"
-        android:layout_marginTop="15dp"/>
 
-    <carbon.widget.TransitionLayout
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-
-        android:id="@+id/transition">
 
         <carbon.widget.RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="60dp"
             android:id="@+id/home">
+
             <carbon.widget.ImageActionButton
                 android:layout_width="150dp"
                 android:layout_height="150dp"
@@ -77,12 +64,46 @@
                 />
         </carbon.widget.RelativeLayout>
 
+
+    <io.codetail.widget.RevealFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+
+        android:id="@+id/transition">
         <carbon.widget.FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/container"
-        ></carbon.widget.FrameLayout>
-    </carbon.widget.TransitionLayout>
+            ></carbon.widget.FrameLayout>
+
+
+
+    </io.codetail.widget.RevealFrameLayout>
+    <io.codetail.widget.RevealFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+
+        android:id="@+id/transition1">
+        <carbon.widget.FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/container_profile"
+            ></carbon.widget.FrameLayout>
+
+
+
+    </io.codetail.widget.RevealFrameLayout>
+
+    <com.iplay.concatenate.CircularProfilePicView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:id ="@+id/profile_pic_user"
+
+        android:layout_gravity="top|left"
+        ></com.iplay.concatenate.CircularProfilePicView>
+
     <carbon.widget.ImageActionButton
         android:layout_width="60dp"
         android:layout_height="60dp"

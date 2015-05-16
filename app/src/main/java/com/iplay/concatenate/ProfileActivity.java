@@ -1,17 +1,22 @@
 package com.iplay.concatenate;
 
 import android.app.Activity;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,17 +32,17 @@ import org.json.JSONException;
 import java.io.InputStream;
 
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends Fragment {
     public String url;
+    View myFragment;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        myFragment = inflater.inflate(R.layout.activity_profile, container, false);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
 
-
-        ((TextView)findViewById(R.id.profile_name)).setText(CommonUtils.name);
-        ((TextView)findViewById(R.id.profile_score)).setText("Score "+CommonUtils.score);
-        ((CircularProfilePicView)findViewById(R.id.profile_pic)).setProfileId(CommonUtils.userId);
+        ((TextView)myFragment.findViewById(R.id.profile_name)).setText(CommonUtils.name);
+        ((TextView)myFragment.findViewById(R.id.profile_score)).setText("Score "+CommonUtils.score);
+        ((CircularProfilePicView)myFragment.findViewById(R.id.profile_pic)).setProfileId(CommonUtils.userId);
         Bundle bd = new Bundle();
         bd.putString("fields", "cover");
         new Request(
@@ -51,7 +56,7 @@ public class ProfileActivity extends Activity {
                         try {
                             if (response != null) {
                                 url = response.getGraphObject().getInnerJSONObject().getJSONObject("cover").getString("source");
-                                new DownloadImageTask((ImageView) findViewById(R.id.cover)).execute(url);
+                                new DownloadImageTask((ImageView)myFragment.findViewById(R.id.cover)).execute(url);
                                 System.out.print(url);
                             }
                         } catch (Exception e) {
@@ -60,6 +65,8 @@ public class ProfileActivity extends Activity {
                     }
                 }
         ).executeAsync();
+
+        return myFragment;
     }
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
@@ -83,8 +90,7 @@ public class ProfileActivity extends Activity {
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
-            MediaStore.Images.Media.insertImage(getContentResolver(), result,
-                    "cover", "");
+
         }
     }
 

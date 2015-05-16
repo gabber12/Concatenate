@@ -47,7 +47,9 @@ public class SubscribeCallbackHandler implements OnMessage {
                 case 1:
                     Intent intent = new Intent("invite_received");
                     intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
-                    ListAdapterUtil.getQueue().add( new InviteModel((String)jsonObject.get("fromUser"),"Accept the challenge?") );
+                    InviteModel newRequest = new InviteModel((String)jsonObject.get("fromUser"),"Accept the challenge?");
+                    newRequest.setName(CommonUtils.friendsMap.get((String)jsonObject.get("fromUser")).getName());
+                    ListAdapterUtil.getQueue().add(newRequest);
                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     // remove the request after 30 secs
                     final Timer buttonTimer = new Timer();

@@ -120,13 +120,17 @@ public class FullscreenActivity extends Activity {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
                 // Add code here to accommodate session changes
+                System.out.println("Hello-----------=");
+                if (exception != null) {
+                    Log.e("Error", "Error loggin in "+exception.getStackTrace());
+                }
                 if(state.isOpened()) {
                     System.out.println("session" + session.getAccessToken());
                     Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
-
+                            System.out.println("Hello------########");
                             if (user != null) {
                                 try {
 
@@ -136,7 +140,7 @@ public class FullscreenActivity extends Activity {
                                     CommonUtils.name = user.getName();
                                     new BackgroundURLRequest().execute("subscribe_user/", userId);
 
-                                    CommonUtils.fetchScore();
+                                    CommonUtils.fetchFriendScore();
                                     OrtcClient cli = ORTCUtil.getClient();
 
                                     cli.onConnected = new OnConnected() {
@@ -147,16 +151,17 @@ public class FullscreenActivity extends Activity {
                                                     new SubscribeCallbackHandler(getApplicationContext()));
                                 }
                             };
+
                                     ORTCUtil.connect();
-                                    Intent in = new Intent(getApplicationContext(), HomeActivity.class);
-                                    in.putExtra("userId", userId);
-                                    startActivity(in);
-                                    overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+
+
                                 } catch(Exception e){
                                     e.printStackTrace();
                                 }
                             }
                         }
+
+
                     });
 
 
@@ -189,7 +194,7 @@ public class FullscreenActivity extends Activity {
 
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions", "read_friendlists"));
+        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
         String text = loginButton.getText().toString();
         System.out.println(text);
         CommonUtils.setLoginButton(loginButton);
@@ -234,7 +239,10 @@ public class FullscreenActivity extends Activity {
         Session session = Session.getActiveSession();
         if( session.isOpened() ) {
             Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+            in.putExtra("userId", CommonUtils.userId);
             startActivity(in);
+            overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+
         }
 
     }

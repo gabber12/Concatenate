@@ -26,6 +26,7 @@
 
              />
 
+
         <carbon.widget.ListView
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
@@ -36,10 +37,11 @@
             android:alwaysDrawnWithCache="true"
             android:scrollingCache="true"
             android:smoothScrollbar="true"
-            android:visibility="gone"
             android:divider="@drawable/transperent_color"
             app:carbon_overScroll="ifContentScrolls"
             android:dividerHeight="2dp"
-            android:textAlignment="4" android:id="@+id/friendsView"/>
+            android:gravity="center"
+            android:textAlignment="4" android:id="@+id/friendsView"
+                />
 
 </carbon.widget.RelativeLayout>
