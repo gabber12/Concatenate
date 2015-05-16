@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -79,7 +80,7 @@ public class HomeActivity extends FragmentActivity {
 
 
                 // get the final radius for the clipping circle
-                final int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+                final int finalRadius = (int)Math.sqrt(myView.getWidth()*myView.getWidth()+myView.getHeight()*myView.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
 
 
                 SupportAnimator animator =
@@ -199,7 +200,7 @@ public class HomeActivity extends FragmentActivity {
                 final int cx1 = (iab1.getLeft() + iab1.getRight()) / 2;
                 final int cy1 = (iab1.getTop() + iab1.getBottom()) / 2;
                 // get the final radius for the clipping circle
-                final int finalRadius = Math.max(myView1.getWidth(), myView1.getHeight());
+                final int finalRadius = (int)Math.sqrt(myView1.getWidth()*myView1.getWidth()+myView1.getHeight()*myView1.getHeight());
 
                 SupportAnimator animator =
                         ViewAnimationUtils.createCircularReveal(myView1, cx1, cy1, finalRadius, 0);
@@ -368,6 +369,7 @@ public class HomeActivity extends FragmentActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent in = new Intent(getApplicationContext(), JoinGameAcitvity.class);
                 startActivity(in);
                 overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
@@ -391,6 +393,8 @@ public class HomeActivity extends FragmentActivity {
 
             }
         });
+        Drawable RippleDraw =
+                hostButton.getDrawable());
     }
 
 
@@ -415,7 +419,6 @@ public class HomeActivity extends FragmentActivity {
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        HomeActivity.super.onBackPressed();
                         HomeActivity.this.moveTaskToBack(true);
                     }
                 })

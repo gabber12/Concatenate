@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
+    android:clickable="true"
     tools:context="com.iplay.concatenate.LeaderboardActivity"
     >
     <!-- The primary full-screen view. This can be replaced with whatever view
@@ -16,7 +17,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/home_back"
+        android:background="@drawable/splash_background"
         >
 
         <ImageView
@@ -72,6 +73,7 @@
                 android:src="@drawable/leader_box"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:scaleType="fitEnd"
                 android:gravity="center"
                 />
             <!--<View-->

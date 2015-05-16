@@ -55,6 +55,7 @@
                 android:id="@+id/join_game"
                 app:carbon_rippleColor="@color/touchcolor"
                 app:carbon_rippleStyle="borderless"
+                app:carbon_elevation="-1dp"
                 android:background="@null"
                 android:scaleType="centerCrop"
                 android:layout_alignParentBottom="true"

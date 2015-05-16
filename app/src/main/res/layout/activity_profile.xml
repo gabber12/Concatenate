@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#0099cc"
     android:orientation="vertical"
+    android:clickable="true"
     tools:context="com.iplay.concatenate.ProfileActivity">
 
 <RelativeLayout
@@ -51,7 +52,7 @@
         android:layout_height="fill_parent"
         android:layout_above="@id/logoutContainer"
         android:gravity="center"
-        android:background="@drawable/home_back"
+        android:background="@drawable/splash_background"
         android:layout_gravity="center"
         android:id="@+id/coverContainer">
         <RelativeLayout
