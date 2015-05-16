@@ -54,9 +54,8 @@ public class LeaderboardActivity extends Fragment implements DataListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myFragmentView = inflater.inflate(R.layout.activity_leaderboard, container, false);
         friends = new ArrayList<FriendModel>();
-
         CommonUtils.addAsSubscriber(this);
-        friendList = (ListView)myFragmentView.findViewById(R.id.friendsView);
+        friendList = (ListView)myFragmentView.findViewById(R.id.friendsView1);
         adapter = new FriendListAdapter(getActivity().getApplicationContext(), R.layout.friendlistlayout_leaderboard, friends);
         friendList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -66,6 +65,7 @@ public class LeaderboardActivity extends Fragment implements DataListener {
     @Override
     public void dataSetAvailable() {
         System.out.println(CommonUtils.friendsMap.size()+"================");
+        if (friends.size() == 0)
         for (Map.Entry<String, FriendModel> friend: CommonUtils.friendsMap.entrySet()) {
             FriendModel f = friend.getValue();
             if(!f.getId().equalsIgnoreCase(CommonUtils.userId))

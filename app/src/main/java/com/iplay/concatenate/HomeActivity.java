@@ -105,12 +105,12 @@ public class HomeActivity extends FragmentActivity {
                         @Override
                         public void onAnimationStart(Animation animation) {
                             ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setClickable(false);
+
                         }
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setVisibility(View.INVISIBLE);
-
                         }
 
                         @Override
@@ -159,7 +159,7 @@ public class HomeActivity extends FragmentActivity {
                 animator.addListener(new SupportAnimator.AnimatorListener() {
                     @Override
                     public void onAnimationStart() {
-
+                        iab.setClickable(false);
                     }
 
                     @Override
@@ -169,7 +169,7 @@ public class HomeActivity extends FragmentActivity {
 
 
                         }
-
+                        iab.setClickable(true);
 
                         trans = !trans;
                     }
@@ -272,7 +272,7 @@ public class HomeActivity extends FragmentActivity {
                 animator.addListener(new SupportAnimator.AnimatorListener() {
                     @Override
                     public void onAnimationStart() {
-
+                        iab1.setClickable(false);
 
 
                     }
@@ -285,7 +285,7 @@ public class HomeActivity extends FragmentActivity {
                         } else {
 
                         }
-
+                        iab1.setClickable(true);
                         trans1 = !trans1;
                     }
 
