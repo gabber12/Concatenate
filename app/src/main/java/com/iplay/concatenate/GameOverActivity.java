@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 
 
-public class GameOverActivity extends Activity {
+public class GameOverActivity extends NetworkActivity {
 
     private GameOverActivity that;
 

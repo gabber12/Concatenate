@@ -58,7 +58,7 @@ import ibt.ortc.extensibility.OrtcClient;
 
 
 
-public class InviteFriends extends Activity implements DataListener{
+public class InviteFriends extends NetworkActivity implements DataListener{
 
     public FriendListAdapter fla;
     private WebDialog dialog;
@@ -78,7 +78,7 @@ public class InviteFriends extends Activity implements DataListener{
         final Session session = Session.getActiveSession();
         final Activity that = this;
         final Context ctx = getApplicationContext();
-
+        if (CommonUtils.friendsMap != null)
         for (Map.Entry<String, FriendModel> friend: CommonUtils.friendsMap.entrySet()) {
             FriendModel f = friend.getValue();
             if(!f.getId().equalsIgnoreCase(CommonUtils.userId))

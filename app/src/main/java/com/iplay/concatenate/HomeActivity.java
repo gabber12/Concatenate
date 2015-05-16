@@ -12,8 +12,11 @@ import com.iplay.concatenate.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -218,10 +221,43 @@ public class HomeActivity extends FragmentActivity {
 
 
     CircularProfilePicView iab1;
+    MaterialDialog md;
+    class ConnectivityReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+
+            Log.d("app", "Network connectivity change");
+            if(!CommonUtils.isOnline(context) ){
+                System.out.println("Network not Available");
+                if(md == null)
+
+                    md = new MaterialDialog.Builder(context)
+                            .callback(new MaterialDialog.ButtonCallback() {
+
+                            })
+                            .title("No Internet Connection Available")
+                            .titleGravity(GravityEnum.CENTER)
+                            .content("Please Check your Internet Connection")
+                            .progress(true, 1)
+                            .theme(Theme.LIGHT).cancelable(false)
+                            .show();
+            } else if(md != null) {
+                System.out.println("Network Available");
+                md.dismiss();
+                md = null;
+                Intent in = new Intent(context, FullscreenActivity.class);
+                context.startActivity(in);
+            }
+
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        super.registerReceiver(new ConnectivityReciever(), new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
         trans1 = true;
         trans = true;
         getSupportFragmentManager().beginTransaction().add(R.id.container_profile, new ProfileActivity()).commit();

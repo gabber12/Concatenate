@@ -42,7 +42,7 @@ import java.util.TimerTask;
 
 
 
-public class NewQuickGame extends Activity {
+public class NewQuickGame extends NetworkActivity {
 
     private TextSwitcher mSwitcher;
 

@@ -20,7 +20,7 @@ import android.widget.ViewSwitcher;
 
 
 
-public class NewGameOverActivity extends Activity {
+public class NewGameOverActivity extends NetworkActivity {
 
 
     @Override

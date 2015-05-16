@@ -40,7 +40,7 @@ import java.util.TimerTask;
 
 
 
-public class NewJoinGameActivity extends Activity {
+public class NewJoinGameActivity extends NetworkActivity {
 
     private TextSwitcher mSwitcher;
 
