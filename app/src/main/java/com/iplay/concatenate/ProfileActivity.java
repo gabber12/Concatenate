@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +34,8 @@ public class ProfileActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        ((Button)findViewById(R.id.logoutButton)).setBackgroundResource(R.drawable.profile_logout);
 
 
         ((TextView)findViewById(R.id.profile_name)).setText(CommonUtils.name);
@@ -86,6 +89,12 @@ public class ProfileActivity extends Activity {
             MediaStore.Images.Media.insertImage(getContentResolver(), result,
                     "cover", "");
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
 

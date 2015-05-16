@@ -12,34 +12,101 @@
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-            <TextView
-            android:layout_width="match_parent"
-           android:layout_height="40dp"
-            android:text="Hall of fame"
-                android:gravity="center"
-            android:textSize="34dp"
-            android:id="@+id/textView"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/home_back"
+        >
+
+        <ImageView
+            android:layout_width="123dp"
+            android:layout_height="146dp"
+            android:src="@drawable/splash_logo"
+            android:id="@+id/leader_logo"
             android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:nestedScrollingEnabled="true"
-            android:layout_marginTop="20dp"
+            android:layout_centerInParent="true"/>
 
-             />
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:src="@drawable/leader_title"
+            android:id="@+id/leader_title"
+            android:layout_below="@+id/leader_logo"
+            android:layout_centerInParent="true"/>
 
-        <carbon.widget.ListView
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="105dp"
+            android:src="@drawable/leader_cup"
+            android:id="@+id/leader_cup"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"/>
+
+
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+           <!--android:layout_height="40dp"-->
+            <!--android:text="Hall of fame"-->
+                <!--android:gravity="center"-->
+            <!--android:textSize="34dp"-->
+            <!--android:id="@+id/textView"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:nestedScrollingEnabled="true"-->
+            <!--android:layout_marginTop="20dp"-->
+
+             <!--/>-->
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_below="@id/textView"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginRight="18dp"
-            android:alwaysDrawnWithCache="true"
-            android:scrollingCache="true"
-            android:smoothScrollbar="true"
-            android:visibility="gone"
-            android:divider="@drawable/transperent_color"
-            app:carbon_overScroll="ifContentScrolls"
-            android:dividerHeight="2dp"
-            android:textAlignment="4" android:id="@+id/friendsView"/>
+            android:layout_below="@id/leader_title"
+            android:layout_above="@id/leader_cup"
+            android:layout_margin="5dp"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/leader_box"
+            android:layout_centerInParent="true">
+            <ImageView
+                android:layout_width="match_parent"
+                android:src="@drawable/leader_box"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                />
+            <!--<View-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:layout_marginBottom="10dp"-->
+                <!--android:layout_marginLeft="10dp"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:background="@color/carbon_white"-->
+                <!--android:scaleType="fitEnd"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:gravity="center"-->
+                <!--/>-->
+            <carbon.widget.ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginRight="15dp"
+                android:alwaysDrawnWithCache="true"
+                android:scrollingCache="true"
+                android:smoothScrollbar="true"
+                android:visibility="gone"
+                android:divider="@color/touchcolor"
+                app:carbon_overScroll="ifContentScrolls"
+                android:dividerHeight="1dp"
+                android:textAlignment="4" android:id="@+id/friendsView"/>
+
+        </FrameLayout>
+
+
+
+    </RelativeLayout>
 
 </carbon.widget.RelativeLayout>

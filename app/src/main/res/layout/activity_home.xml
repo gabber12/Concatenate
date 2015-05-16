@@ -3,29 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:layout_gravity="center"
-    android:background="@drawable/concat_back"
+    android:scaleType="centerCrop"
+    android:background="@drawable/home_back"
     tools:context="com.iplay.concatenate.HomeActivity"
 
 >
 
             <com.iplay.concatenate.CircularProfilePicView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="53dp"
+                android:layout_height="53dp"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="13dp"
                 android:id ="@+id/profile_pic"
                 android:layout_gravity="top|left"
                 ></com.iplay.concatenate.CircularProfilePicView>
-    <TextView
+    <ImageView
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:text="Select An Option"
-        android:textSize="23dp"
+        android:src="@drawable/home_title"
         android:gravity="center"
         android:layout_gravity="top|center"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="65dp"/>
 
     <carbon.widget.TransitionLayout
         android:layout_width="match_parent"
@@ -36,37 +35,39 @@
         <carbon.widget.RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="80dp"
             android:id="@+id/home">
             <carbon.widget.ImageActionButton
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/quick_game_icon"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:src="@drawable/home_quick"
                 android:id="@+id/quick_game"
                 app:carbon_touchMargin="6dp"
                 app:carbon_rippleStyle="borderless"
-                app:carbon_rippleColor="@color/carbon_white"
+                app:carbon_elevation="1dp"
+                app:carbon_rippleColor="@color/touchcolor"
                 android:scaleType="centerCrop"
                 android:layout_centerInParent="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="30dp"
                 />
             <carbon.widget.ImageActionButton
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/host_game_icon"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:src="@drawable/home_host"
                 android:id="@+id/host_game"
-                app:carbon_rippleColor="@color/carbon_white"
+                app:carbon_rippleColor="@color/touchcolor"
                 android:scaleType="centerCrop"
                 app:carbon_rippleStyle="borderless"
+                app:carbon_elevation="1dp"
                 android:layout_centerInParent="true"
                 />
             <carbon.widget.ImageActionButton
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/join_game_icon"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:src="@drawable/home_join"
                 android:id="@+id/join_game"
-                app:carbon_rippleColor="@color/carbon_white"
+                app:carbon_rippleColor="@color/touchcolor"
                 app:carbon_rippleStyle="borderless"
                 android:background="@null"
                 android:scaleType="centerCrop"
@@ -84,13 +85,13 @@
         ></carbon.widget.FrameLayout>
     </carbon.widget.TransitionLayout>
     <carbon.widget.ImageActionButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/quick_game_back"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:src="@drawable/home_hof"
         android:id="@+id/leaderboard"
         android:scaleType="centerCrop"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
         android:elevation="1dp"
         android:layout_gravity="right|top"
         />

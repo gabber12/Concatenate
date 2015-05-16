@@ -189,15 +189,17 @@ public class LeaderboardActivity extends Fragment {
 
 
                                 // Populate the scoreboard on the UI thread
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ListView friendList = (ListView)myFragmentView.findViewById(R.id.friendsView);
+                                if ( getActivity() != null ) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ListView friendList = (ListView) myFragmentView.findViewById(R.id.friendsView);
 
-                                        FriendListAdapter adapter = new FriendListAdapter(getActivity().getApplicationContext(), R.layout.friendlistlayout_leaderboard, friends);
-                                        friendList.setAdapter(adapter);
-                                    }
-                                });
+                                            FriendListAdapter adapter = new FriendListAdapter(getActivity().getApplicationContext(), R.layout.friendlistlayout_leaderboard, friends);
+                                            friendList.setAdapter(adapter);
+                                        }
+                                    });
+                                }
                             }
                         }
                     }

@@ -157,6 +157,7 @@ public class HomeActivity extends FragmentActivity {
         profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("hello");
                 Intent in = new Intent(getApplicationContext(), ProfileActivity.class);
                 startActivity(in);
             }

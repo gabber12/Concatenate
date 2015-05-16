@@ -189,7 +189,7 @@ public class FullscreenActivity extends Activity {
 
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions", "read_friendlists"));
+        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
         String text = loginButton.getText().toString();
         System.out.println(text);
         CommonUtils.setLoginButton(loginButton);
