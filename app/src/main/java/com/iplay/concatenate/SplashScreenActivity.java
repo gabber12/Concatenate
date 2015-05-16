@@ -32,7 +32,7 @@ public class SplashScreenActivity extends Activity {
 
         ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
         Animation scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(5000);
+        scale.setDuration(1000);
 
         scale.setAnimationListener(new Animation.AnimationListener() {
             @Override

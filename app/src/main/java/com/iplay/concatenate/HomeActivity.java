@@ -30,6 +30,7 @@ import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import carbon.drawable.RippleDrawable;
 import carbon.widget.ImageActionButton;
 import carbon.widget.RelativeLayout;
 import io.codetail.animation.SupportAnimator;
@@ -366,9 +367,20 @@ public class HomeActivity extends FragmentActivity {
 //            }
 //        });
 
+
+//        RippleDrawable rippleDrawable = ((ImageActionButton) findViewById(R.id.join_game)).getRippleDrawable();
+//        rippleDrawable.setBounds(20,20,20,20);
+//        rippleDrawable.setAlpha(0);
+
+
+
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+//                RippleDrawable rippleDrawable = ((ImageActionButton) findViewById(R.id.join_game)).getRippleDrawable();
+//                rippleDrawable.setBounds(20,20,20,20);
+//                rippleDrawable.setAlpha(0);
 
                 Intent in = new Intent(getApplicationContext(), JoinGameAcitvity.class);
                 startActivity(in);
@@ -393,8 +405,7 @@ public class HomeActivity extends FragmentActivity {
 
             }
         });
-        Drawable RippleDraw =
-                hostButton.getDrawable());
+
     }
 
 

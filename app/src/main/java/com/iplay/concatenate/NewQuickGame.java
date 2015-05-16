@@ -115,7 +115,7 @@ public class NewQuickGame extends Activity {
                     }
                 });
             }
-        }, 5000); // TODO: change the time to 30 seconds
+        }, 10000); // TODO: change the time to 30 seconds
 
 
 
@@ -125,6 +125,7 @@ public class NewQuickGame extends Activity {
 
         CommonUtils.onQuickGame = false;
         CommonUtils.onStartingGame = true;
+        findViewById(R.id.progress_wheel_quick).setVisibility(View.GONE);
 
         // TODO: Add the joining users pic and cover
 

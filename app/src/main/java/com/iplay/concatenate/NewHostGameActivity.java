@@ -60,10 +60,6 @@ public class NewHostGameActivity extends Activity {
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
 
-
-
-
-
         // my code begins here
 
         CommonUtils.onHostGame = true;
@@ -107,16 +103,23 @@ public class NewHostGameActivity extends Activity {
         mSwitcher.setText("WAITING FOR FRIEND");
 
 
-        // add determinate progress bar too.
+        com.pnikosis.materialishprogress.ProgressWheel pw = (com.pnikosis.materialishprogress.ProgressWheel)findViewById(R.id.progress_wheel_host);
+        pw.setProgress(0);
 
+        final long startTime = System.currentTimeMillis();
         CommonUtils.hostGameTimer = new Timer();
-        CommonUtils.hostGameTimer.schedule(new TimerTask() {
+        CommonUtils.hostGameTimer.scheduleAtFixedRate(new TimerTask() {
 
             @Override
             public void run() {
-                    NewHostGameActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+
+                NewHostGameActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        double left = System.currentTimeMillis() - startTime;
+                        com.pnikosis.materialishprogress.ProgressWheel pw = (com.pnikosis.materialishprogress.ProgressWheel) findViewById(R.id.progress_wheel_host);
+                        pw.setProgress((float) (left / 30000));
+                        if (left >= 30000) {
                             System.out.println("Wait for friend over. Did not join.");
                             Toast t = Toast.makeText(getApplicationContext(), "Opponent did not join :(", Toast.LENGTH_LONG);
                             t.show();
@@ -125,9 +128,10 @@ public class NewHostGameActivity extends Activity {
                             CommonUtils.disableTimer(CommonUtils.hostGameTimer);
                             startActivity(intent);
                         }
-                    });
-                }
-            }, 30000);
+                    }
+                });
+            }
+        }, 0, 100);
 
 
 
@@ -137,8 +141,7 @@ public class NewHostGameActivity extends Activity {
 
         CommonUtils.onHostGame = false;
         CommonUtils.onStartingGame = true;
-
-        // TODO: Add the joining users cover
+        findViewById(R.id.progress_wheel_host).setVisibility(View.GONE);
 
         mSwitcher.clearAnimation();
         Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(),0);

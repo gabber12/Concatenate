@@ -26,9 +26,9 @@
             android:id="@+id/home">
 
             <carbon.widget.ImageActionButton
-                android:layout_width="170dp"
-                android:layout_height="170dp"
-                android:src="@drawable/home_quick"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:src="@drawable/home_quick_copy"
                 android:id="@+id/quick_game"
                 app:carbon_touchMargin="6dp"
                 app:carbon_rippleStyle="borderless"
@@ -38,29 +38,30 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="30dp"
                 />
+
             <carbon.widget.ImageActionButton
-                android:layout_width="170dp"
-                android:layout_height="170dp"
-                android:src="@drawable/home_host"
-                android:id="@+id/host_game"
-                app:carbon_rippleColor="@color/touchcolor"
-                android:scaleType="centerCrop"
-                app:carbon_rippleStyle="borderless"
-                android:layout_centerInParent="true"
-                />
-            <carbon.widget.ImageActionButton
-                android:layout_width="170dp"
-                android:layout_height="170dp"
-                android:src="@drawable/home_join"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:src="@drawable/home_join_copy"
                 android:id="@+id/join_game"
                 app:carbon_rippleColor="@color/touchcolor"
                 app:carbon_rippleStyle="borderless"
-                app:carbon_elevation="-1dp"
                 android:background="@null"
                 android:scaleType="centerCrop"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="30dp"
+                />
+
+            <carbon.widget.ImageActionButton
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:src="@drawable/home_host_copy"
+                android:id="@+id/host_game"
+                app:carbon_rippleColor="@color/touchcolor"
+                android:scaleType="centerCrop"
+                app:carbon_rippleStyle="borderless"
+                android:layout_centerInParent="true"
                 />
         </carbon.widget.RelativeLayout>
 

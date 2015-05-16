@@ -56,7 +56,7 @@ public class HostGameActivity extends Activity {
         final String opponentId = intentExtra.getString("id");
         ((CircularProfilePicView)findViewById(R.id.ppic)).setProfileId(opponentId);
 
-        pw= (ProgressWheel)findViewById(R.id.progress_wheel);
+        pw = (ProgressWheel)findViewById(R.id.progress_wheel);
         pw.setSpinSpeed(new Float(0));
         final long startTime = System.currentTimeMillis();
         CommonUtils.hostGameTimer.scheduleAtFixedRate(new TimerTask() {
