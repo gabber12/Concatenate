@@ -222,6 +222,7 @@ public class HomeActivity extends FragmentActivity {
 
     CircularProfilePicView iab1;
     MaterialDialog md;
+
     class ConnectivityReciever extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -250,13 +251,24 @@ public class HomeActivity extends FragmentActivity {
             }
 
         }
-    };
+    }
+    ConnectivityReciever cr = null;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(cr != null)
+            super.unregisterReceiver(cr);
+    }
+    protected  void onResume() {
+        super.onResume();
+        super.registerReceiver(cr, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        cr = new ConnectivityReciever();
 
-        super.registerReceiver(new ConnectivityReciever(), new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 
         trans1 = true;
         trans = true;
@@ -480,6 +492,7 @@ public class HomeActivity extends FragmentActivity {
             view.requestLayout();
         }
 
+
         @Override
         public void initialize(int width, int height, int parentWidth, int parentHeight) {
             super.initialize(width, height, parentWidth, parentHeight);
@@ -490,5 +503,13 @@ public class HomeActivity extends FragmentActivity {
             return true;
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(md != null) {
+            md.cancel();
+        }
     }
 }

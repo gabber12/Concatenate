@@ -21,12 +21,27 @@ import com.iplay.concatenate.common.CommonUtils;
  */
 public class NetworkActivity extends Activity {
     MaterialDialog md;
+    ConnectivityReciever cr = null;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
 
+        cr = new ConnectivityReciever();
+        super.registerReceiver(cr, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+    }
 
-        super.registerReceiver(new ConnectivityReciever(), new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(cr != null)
+        super.unregisterReceiver(cr);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(md != null) {
+            md.cancel();
+        }
     }
     class ConnectivityReciever extends  BroadcastReceiver {
         @Override

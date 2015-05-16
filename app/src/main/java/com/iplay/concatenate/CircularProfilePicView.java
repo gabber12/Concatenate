@@ -431,7 +431,6 @@ public class CircularProfilePicView extends FrameLayout {
                     getContext(),
                     ImageRequest.getProfilePictureUrl(profileId, queryWidth, queryHeight));
 
-            System.out.println("Downloading profile pic: " + profileId + " " + queryWidth + " " + queryHeight);
 
             ImageRequest request = requestBuilder.setAllowCachedRedirects(allowCachedResponse)
                     .setCallerTag(this)
@@ -439,7 +438,6 @@ public class CircularProfilePicView extends FrameLayout {
                             new ImageRequest.Callback() {
                                 @Override
                                 public void onCompleted(ImageResponse response) {
-                                    System.out.println("Response profile: " + response.getBitmap().getWidth() + " " + response.getBitmap().getWidth());
                                     processResponse(response);
                                 }
                             }
