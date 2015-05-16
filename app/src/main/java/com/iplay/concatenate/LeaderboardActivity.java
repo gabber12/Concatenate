@@ -42,172 +42,41 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
-public class LeaderboardActivity extends Fragment {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
+public class LeaderboardActivity extends Fragment implements DataListener {
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    /**
-     * If set, will toggle the system UI visibility upon interaction. Otherwise,
-     * will show the system UI visibility upon interaction.
-     */
-    private static final boolean TOGGLE_ON_CLICK = true;
-
-    /**
-     * The flags to pass to {@link SystemUiHider#getInstance}.
-     */
-
-    /**
-     * The instance of the {@link SystemUiHider} for this activity.
-     */
     public List<FriendModel> friends;
     View myFragmentView;
+    public ListView friendList;
+    public FriendListAdapter adapter;
+
     @Override
-
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-         myFragmentView = inflater.inflate(R.layout.activity_leaderboard, container, false);
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        final Session session = Session.getActiveSession();
-//        askForPublishActionsForScores();
+        myFragmentView = inflater.inflate(R.layout.activity_leaderboard, container, false);
         friends = new ArrayList<FriendModel>();
-        String userId = CommonUtils.userId;
-        GraphObject go = new GraphObject() {
-            String score;
-            JSONObject jobj = new JSONObject();
-            @Override
-            public <T extends GraphObject> T cast(Class<T> tClass) {
-                return null;
-            }
 
-            @Override
-            public Map<String, Object> asMap() {
-                Map<String, Object> ma = new TreeMap<String, Object>();
-                ma.put("score", 123);
-                return ma;
-            }
-
-            @Override
-            public JSONObject getInnerJSONObject() {
-                JSONObject jobj = new JSONObject();
-                try {
-                    jobj.put("score", 123);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            public Object getProperty(String s) {
-                return null;
-            }
-
-            @Override
-            public <T extends GraphObject> T getPropertyAs(String s, Class<T> tClass) {
-                return null;
-            }
-
-            @Override
-            public <T extends GraphObject> GraphObjectList<T> getPropertyAsList(String s, Class<T> tClass) {
-                return null;
-            }
-
-            @Override
-            public void setProperty(String s, Object o) {
-
-            }
-
-            @Override
-            public void removeProperty(String s) {
-
-            }
-        };
-        //askForPublishActionsForScores();
-        Request postScore = Request.newPostRequest(session, userId + "/scores", go, new Request.Callback() {
-
-            @Override
-            public void onCompleted(Response response) {
-                if (response.getError() != null) {
-                    Log.e("Facebook", response.getError().toString());
-                }
-
-            }
-        });
-        Request.executeBatchAsync(postScore);
-        Request scoresGraphPathRequest = Request.newGraphPathRequest(session,
-                session.getApplicationId()+"/scores",
-                new Request.Callback() {
-
-                    @Override
-                    public void onCompleted(Response response) {
-                        FacebookRequestError error = response.getError();
-                        System.out.println(""+session.getApplicationId());
-                        System.out.println(""+R.string.facebook_app_id);
-
-                        if (error != null) {
-                            Log.e("Error", error.toString());
-
-                            // TODO: Show an error or handle it better.
-                            //((ScoreboardActivity)getActivity()).handleError(error, false);
-                        } else if (session == Session.getActiveSession()) {
-                            if (response != null) {
-                                GraphObject graphObject = response.getGraphObject();
-                                JSONArray dataArray = (JSONArray)graphObject.getProperty("data");
-
-                                final ArrayList<Integer> scoreboardEntriesList = new ArrayList<Integer>();
-                                System.out.println("Number of players: "+dataArray.length());
-                                for (int i=0; i< dataArray.length(); i++) {
-                                    JSONObject oneData = dataArray.optJSONObject(i);
-                                    int score = oneData.optInt("score");
-
-                                    JSONObject userObj = oneData.optJSONObject("user");
-                                    String userID = userObj.optString("id");
-                                    String userName = userObj.optString("name");
-
-                                    friends.add(new FriendModel(userName, userID, score));
-                                    System.out.println(userName+" "+score);
-                                }
-
-
-
-                                // Populate the scoreboard on the UI thread
-                                if ( getActivity() != null ) {
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ListView friendList = (ListView) myFragmentView.findViewById(R.id.friendsView);
-
-                                            FriendListAdapter adapter = new FriendListAdapter(getActivity().getApplicationContext(), R.layout.friendlistlayout_leaderboard, friends);
-                                            friendList.setAdapter(adapter);
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-
-                });
-        Request.executeBatchAsync(scoresGraphPathRequest);
+        CommonUtils.addAsSubscriber(this);
+        friendList = (ListView)myFragmentView.findViewById(R.id.friendsView);
+        adapter = new FriendListAdapter(getActivity().getApplicationContext(), R.layout.friendlistlayout_leaderboard, friends);
+        friendList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         return myFragmentView;
     }
 
+    @Override
+    public void dataSetAvailable() {
+        System.out.println(CommonUtils.friendsMap.size()+"================");
+        for (Map.Entry<String, FriendModel> friend: CommonUtils.friendsMap.entrySet()) {
+            FriendModel f = friend.getValue();
+            if(!f.getId().equalsIgnoreCase(CommonUtils.userId))
+                friends.add(new FriendModel(f.getName(), f.getId(), f.getScore()));
+        }
+
+        if(adapter != null) {
+            System.out.println("----=Hello");
+            adapter.notifyDataSetChanged();
+        }
+
+
+    }
 }

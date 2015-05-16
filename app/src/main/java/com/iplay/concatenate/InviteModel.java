@@ -3,8 +3,8 @@ package com.iplay.concatenate;
 /**
  * Created by gabber12 on 06/04/15.
  */
-public class InviteModel {
-    private String senderId;
+public class InviteModel  extends FriendModel{
+
     private String message;
 
     public String getMessage() {
@@ -16,19 +16,19 @@ public class InviteModel {
     }
 
     public String getSenderId() {
-        return senderId;
+        return id;
     }
 
     public void setSenderId(String senderId) {
-        this.senderId = senderId;
+        this.id = senderId;
     }
 
-    public InviteModel(){ senderId = ""; message="";}
+    public InviteModel(){ id = ""; message="";}
     public InviteModel(String senderId, String message){
         this.message = message;
-        this.senderId = senderId;
+        this.id = senderId;
     }
     public String toString() {
-        return senderId;
+        return id;
     }
 }

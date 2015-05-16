@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -107,61 +108,29 @@ public class InviteFriends extends Activity {
         final Session session = Session.getActiveSession();
         final Activity that = this;
         final Context ctx = getApplicationContext();
-        if(session != null) {
-            Request scoresGraphPathRequest = Request.newGraphPathRequest(session,
-                    session.getApplicationId()+"/scores",
-                    new Request.Callback() {
 
-                        @Override
-                        public void onCompleted(Response response) {
-                            FacebookRequestError error = response.getError();
-                            System.out.println(""+R.string.facebook_app_id);
-
-                            if (error != null) {
-                                Log.e("Error", error.toString());
-
-                                // TODO: Show an error or handle it better.
-                                //((ScoreboardActivity)getActivity()).handleError(error, false);
-                            } else if (session == Session.getActiveSession()) {
-                                if (response != null) {
-                                    GraphObject graphObject = response.getGraphObject();
-                                    JSONArray dataArray = (JSONArray)graphObject.getProperty("data");
-
-                                    System.out.println("Number of players: "+dataArray.length());
-                                    for (int i=0; i< dataArray.length(); i++) {
-                                        JSONObject oneData = dataArray.optJSONObject(i);
-                                        int score = oneData.optInt("score");
-
-                                        JSONObject userObj = oneData.optJSONObject("user");
-                                        String userID = userObj.optString("id");
-                                        String userName = userObj.optString("name");
-                                        if(!userID.equalsIgnoreCase(CommonUtils.userId))
-                                            friends.add(new FriendModel(userName, userID, score));
-                                        System.out.println(userName+" "+score);
-                                    }
-
-
-
-                                    // Populate the scoreboard on the UI thread
-                                    InviteFriends.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            fla = new FriendListAdapter(ctx, R.layout.friendlistlayout, friends);
-                                            ((ListView) findViewById(R.id.friendList)).setAdapter(fla);
-                                            fla.notifyDataSetChanged();
-                                        }
-                                    });
-                                }
-                            }
-                        }
-
-
-                    });
-            Request.executeBatchAsync(scoresGraphPathRequest);
-
-
-
+        for (Map.Entry<String, FriendModel> friend: CommonUtils.friendsMap.entrySet()) {
+            FriendModel f = friend.getValue();
+            if(!f.getId().equalsIgnoreCase(CommonUtils.userId))
+                friends.add(new FriendModel(f.getName(), f.getId(), f.getScore()));
         }
+
+
+
+        // Populate the scoreboard on the UI thread
+        InviteFriends.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                fla = new FriendListAdapter(ctx, R.layout.friendlistlayout, friends);
+                ((ListView) findViewById(R.id.friendList)).setAdapter(fla);
+                fla.notifyDataSetChanged();
+            }
+        });
+
+
+
+
+
         ((EditText)findViewById(R.id.inputSearch)).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

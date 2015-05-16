@@ -13,7 +13,7 @@ public class FriendModel {
     public void setScore(int score) {
         Score = score;
     }
-
+    public FriendModel() { Score = 0; id = ""; Name= "";}
     public FriendModel(String name, String id) {
         Name = name;
         this.id = id;
@@ -30,7 +30,7 @@ public class FriendModel {
 
         return Name;
     }
-    private String Name;
+    public String Name;
 
     public String getId() {
         return id;
@@ -48,6 +48,6 @@ public class FriendModel {
         Name = name;
     }
 
-    private String id;
+    public String id;
 
 }

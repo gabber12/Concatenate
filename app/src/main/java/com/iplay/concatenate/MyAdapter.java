@@ -39,21 +39,19 @@ public class MyAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        System.out.println("Pos: " + position);
         final View result;
 
         if (convertView == null) {
 
-            result = LayoutInflater.from(parent.getContext()).inflate(R.layout.inviteentitylayout, parent, false);
+            result = LayoutInflater.from(parent.getContext()).inflate(R.layout.friendlistlayout_join, parent, false);
         } else {
             result = convertView;
         }
-
-        InviteModel item = (InviteModel)getItem(position);
-        System.out.println("Item = "+ item.getSenderId() + " " + position);
-        System.out.flush();
+        System.out.println("==----"+getItem(position).getName());
         // TODO replace findViewById by ViewHolder
-        ((TextView) result.findViewById(R.id.listViewItem)).setText(item.getSenderId());
+        ((CircularProfilePicView) result.findViewById(R.id.profile_pic)).setProfileId(getItem(position).getId());
+        ((TextView) result.findViewById(R.id.profile_name)).setText(getItem(position).getName());
+        ((TextView) result.findViewById(R.id.profile_score)).setText("Score "+getItem(position).getScore());
 
         return result;
     }

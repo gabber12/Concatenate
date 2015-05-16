@@ -69,7 +69,7 @@ public class JoinGameAcitvity extends Activity {
     private SystemUiHider mSystemUiHider;
 
     private JoinGameAcitvity that;
-
+    ListView inviteView;
     ConcurrentLinkedQueue<InviteModel> inviteModels;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,32 +82,9 @@ public class JoinGameAcitvity extends Activity {
         //Add id to channel
 
         final OrtcClient client = ORTCUtil.getClient();
-        final ListView inviteView = (ListView)findViewById(R.id.invitesView);
 
-        inviteView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Object object = inviteView.getItemAtPosition(position);
-                InviteModel inviteModel = (InviteModel) object;//As you are using Default String Adapter
-
-                try {
-                    // TODO: Fix this to point to NewJoinGame
-                    Intent intent = new Intent(that, NewJoinGameActivity.class);
-                    intent.putExtra("sender_id", inviteModel.getSenderId());
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("typeFlag", 2);
-                    jsonObject.put("fromUser", CommonUtils.userId);
-                    jsonObject.put("toUser", inviteModel.getSenderId());
-                    System.out.println(jsonObject.toString());
-                    client.send(CommonUtils.getChannelNameFromUserID(inviteModel.getSenderId()), jsonObject.toString());
-                    ListAdapterUtil.removeInviteById( inviteModel.getSenderId() );
-                    ma.notifyDataSetChanged();
-                    startActivity(intent);
-                } catch (Exception e) {
-                    Log.e("json", "error while generating a json file and sending to server: " + e.getMessage());
-                }
-            }
-        });
+        inviteView = (ListView)findViewById(R.id.invitesView);
 
 
     }
@@ -143,13 +120,24 @@ public class JoinGameAcitvity extends Activity {
     }
 
     public void myfunc_join(View v){
-
-//        Bundle params = new Bundle();
-//        params.putString("message", "I challenge you for a Concaty showdown!");
-//        params.putString("to",((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId());
-//        params.putInt("max_recipients", 1);
-//        showDialogWithoutNotificationBar("apprequests", params);
-//        System.out.print("Hello");
+        String senderId = ((CircularProfilePicView)v.findViewById(R.id.profile_pic)).getProfileId();
+        OrtcClient client = ORTCUtil.getClient();
+        try {
+            // TODO: Fix this to point to NewJoinGame
+            Intent intent = new Intent(that, NewJoinGameActivity.class);
+            intent.putExtra("sender_id", senderId);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("typeFlag", 2);
+            jsonObject.put("fromUser", CommonUtils.userId);
+            jsonObject.put("toUser", senderId);
+            System.out.println(jsonObject.toString());
+            client.send(CommonUtils.getChannelNameFromUserID(senderId), jsonObject.toString());
+            ListAdapterUtil.removeInviteById( senderId );
+            ma.notifyDataSetChanged();
+            startActivity(intent);
+        } catch (Exception e) {
+            Log.e("json", "error while generating a json file and sending to server: " + e.getMessage());
+        }
     }
 
     @Override

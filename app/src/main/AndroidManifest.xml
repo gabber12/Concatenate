@@ -76,12 +76,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateHidden" >
         </activity>
-        <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:noHistory="true"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-        </activity>
+
         <activity
             android:name=".GameOverActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
