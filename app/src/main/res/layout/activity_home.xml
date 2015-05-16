@@ -32,7 +32,6 @@
                 android:id="@+id/quick_game"
                 app:carbon_touchMargin="6dp"
                 app:carbon_rippleStyle="borderless"
-                app:carbon_elevation="1dp"
                 app:carbon_rippleColor="@color/touchcolor"
                 android:scaleType="centerCrop"
                 android:layout_centerInParent="true"
@@ -47,7 +46,6 @@
                 app:carbon_rippleColor="@color/touchcolor"
                 android:scaleType="centerCrop"
                 app:carbon_rippleStyle="borderless"
-                app:carbon_elevation="1dp"
                 android:layout_centerInParent="true"
                 />
             <carbon.widget.ImageActionButton
@@ -59,7 +57,6 @@
                 app:carbon_rippleStyle="borderless"
                 android:background="@null"
                 android:scaleType="centerCrop"
-                app:carbon_elevation="1dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="30dp"
@@ -114,7 +111,6 @@
         android:scaleType="centerCrop"
         android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
-        android:elevation="1dp"
         android:layout_gravity="right|top"
         />
 </carbon.widget.FrameLayout>

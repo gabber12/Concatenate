@@ -41,7 +41,7 @@ public class ProfileActivity extends Fragment {
         myFragment = inflater.inflate(R.layout.activity_profile, container, false);
         super.onCreate(savedInstanceState);
 
-        ((Button)findViewById(R.id.logoutButton)).setBackgroundResource(R.drawable.profile_logout);
+        ((Button)myFragment.findViewById(R.id.logoutButton)).setBackgroundResource(R.drawable.profile_logout);
 
 
                 ((TextView)myFragment.findViewById(R.id.profile_name)).setText(CommonUtils.name);
