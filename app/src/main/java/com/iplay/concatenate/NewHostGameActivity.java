@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -364,6 +365,29 @@ public class NewHostGameActivity extends Activity {
             Intent in = new Intent(this, HomeActivity.class);
             startActivity(in);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if ( CommonUtils.onHostGame ) {
+            try {
+                JSONObject sendjsonObject = new JSONObject();
+                sendjsonObject.put("typeFlag", 3);
+                sendjsonObject.put("fromUser", CommonUtils.userId);
+                sendjsonObject.put("toUser", CommonUtils.waitingFor);
+                System.out.println(sendjsonObject.toString());
+                ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(CommonUtils.waitingFor), sendjsonObject.toString());
+            } catch ( Exception e ) {
+                Log.e("json", "Error while encoding json for server");
+            }
+            CommonUtils.onHostGame = false;
+        } else {
+            CommonUtils.onStartingGame = false;
+        }
+        CommonUtils.waitingFor = null;
+        CommonUtils.disableTimer(CommonUtils.hostGameTimer);
+        CommonUtils.disableTimer(CommonUtils.startingGameTimer);
     }
 
     private BroadcastReceiver mGameStarting = new BroadcastReceiver() {

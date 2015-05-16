@@ -1,58 +1,120 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"   android:background="#0099cc"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fb="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
     android:orientation="vertical"
     tools:context="com.iplay.concatenate.ProfileActivity">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+
+    <ImageView
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:scaleType="centerCrop"
+    android:cropToPadding="true"
+    android:id="@+id/cover"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:id="@+id/coverContainer">
-        <ImageView
+        android:layout_height="150dp"
+        android:background="@drawable/profile_red_back"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/logoutContainer"
+        android:layout_gravity="center">
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <com.facebook.widget.LoginButton
+                android:layout_width="130dp"
+                android:background="@drawable/profile_logout"
+                android:layout_height="45dp"
+                android:gravity="center"
+                fb:login_text=""
+                fb:logout_text=""
+                android:id="@+id/logoutButton"/>
+        </RelativeLayout>
+    </RelativeLayout>
 
-            android:cropToPadding="true"
-            android:id="@+id/cover"/>
-        <TextView
+    <RelativeLayout
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/logoutContainer"
+        android:gravity="center"
+        android:background="@drawable/home_back"
+        android:layout_gravity="center"
+        android:id="@+id/coverContainer">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:id="@+id/profile_name"
-            android:textSize="30dp"
-            />
-    <com.iplay.concatenate.CircularProfilePicView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_below="@id/profile_name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:id ="@+id/profile_pic"></com.iplay.concatenate.CircularProfilePicView>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:textSize="25dp"
-            android:id="@+id/profile_score"
-            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content"
+            android:gravity="center|center_vertical"
             android:layout_centerInParent="true"
-            android:layout_below="@id/profile_pic"
-            android:gravity="center"/>
-</RelativeLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/profile_level"
-        android:textSize="25dp"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/profile_pic"
-        android:gravity="center"/>
+            android:orientation="vertical">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:src="@drawable/profile_title"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/profile_heading"
+            />
+            <FrameLayout
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="15dp"
+                android:id="@+id/profile_box"
+                android:layout_below="@id/profile_heading"
+                android:layout_centerInParent="true">
+            <ImageView
+                android:layout_width="200dp"
+                android:src="@drawable/profile_box"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                />
+    <com.iplay.concatenate.CircularProfilePicView
+        android:layout_width="177dp"
+        android:layout_height="177dp"
+        android:layout_centerHorizontal="true"
+        android:id ="@+id/profile_pic"
+        android:layout_gravity="center"
+        ></com.iplay.concatenate.CircularProfilePicView>
 
-    <com.facebook.widget.LoginButton
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:id="@+id/logoutButton"/>
+            </FrameLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/carbon_black"
+                android:layout_below="@id/profile_box"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:id="@+id/profile_name"
+                android:textSize="20dp"
+                />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/carbon_black"
+            android:id="@+id/profile_score"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/profile_name"
+            android:gravity="center"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>
+
 </RelativeLayout>

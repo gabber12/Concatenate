@@ -124,28 +124,26 @@ public class SplashScreenActivity extends Activity {
         ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
         Animation scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         scale.setDuration(5000);
-        background_image.startAnimation(scale);
 
-        final Timer buttonTimer = new Timer();
-        buttonTimer.schedule(new TimerTask() {
+        scale.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
 
             @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        Intent intent = new Intent(SplashScreenActivity.this, FullscreenActivity.class);
-                        SplashScreenActivity.this.startActivity(intent);
-
-                        buttonTimer.cancel();
-                        buttonTimer.purge();
-
-                    }
-                });
+            public void onAnimationEnd(Animation animation) {
+                Intent intent = new Intent(SplashScreenActivity.this, FullscreenActivity.class);
+                SplashScreenActivity.this.startActivity(intent);
             }
-        }, 5000);
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        background_image.startAnimation(scale);
 
     }
 

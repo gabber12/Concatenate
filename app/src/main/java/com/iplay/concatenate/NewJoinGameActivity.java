@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -334,6 +335,14 @@ public class NewJoinGameActivity extends Activity {
             Intent in = new Intent(this, HomeActivity.class);
             startActivity(in);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CommonUtils.onStartingGame = false;
+        CommonUtils.waitingFor = null;
+        CommonUtils.disableTimer(CommonUtils.startingGameTimer);
     }
 
     @Override

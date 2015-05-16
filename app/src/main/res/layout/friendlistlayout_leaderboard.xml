@@ -3,19 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="30dp"
     android:padding="0dp"
-    android:background="@color/carbon_background_light"
+
+    android:background="@color/carbon_white"
     android:layout_gravity="center_vertical"
     app:carbon_rippleColor="#CACACA"
     android:gravity="center_vertical"
     android:onClick="myfunc_leaderboard"
-    app:carbon_cornerRadius="5dp"
 
     >
+    <!--android:background="@color/carbon_background_light"-->
 
     <com.iplay.concatenate.CircularProfilePicView
         android:layout_width="50dp"
+        android:visibility="gone"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"
@@ -25,26 +27,24 @@
     <carbon.widget.LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:weightSum="3">
+        android:gravity="center_vertical">
         <TextView
-                android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+                android:layout_width="0dp"
+            android:layout_height="26dp"
+            android:layout_weight="4"
             android:textColor="#000000"
             android:textStyle="bold"
             android:paddingLeft="20dp"
             android:layout_gravity="center_vertical"
-            android:clickable="true"
             android:gravity="center_vertical"
             android:id="@+id/profile_name"/>
 
         <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="26dp"
+            android:layout_weight="2"
             android:textColor="#000000"
             android:textStyle="bold"
             android:paddingLeft="20dp"
