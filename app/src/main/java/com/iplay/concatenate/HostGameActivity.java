@@ -45,7 +45,7 @@ import ibt.ortc.extensibility.OrtcClient;
 
 
 
-public class HostGameActivity extends Activity {
+public class HostGameActivity extends NetworkActivity {
 
     public ProgressWheel pw ;
     @Override

@@ -73,7 +73,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainGameActivity extends Activity {
+public class MainGameActivity extends NetworkActivity {
 
 
     private LockEditText enterWord;

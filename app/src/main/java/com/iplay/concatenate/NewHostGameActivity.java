@@ -47,7 +47,7 @@ import java.util.TimerTask;
  *
  * @see SystemUiHider
  */
-public class NewHostGameActivity extends Activity {
+public class NewHostGameActivity extends NetworkActivity {
 
     private TextSwitcher mSwitcher;
 

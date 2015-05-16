@@ -1,7 +1,10 @@
 package com.iplay.concatenate.common;
 
 import android.app.usage.UsageEvents;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.Pair;
@@ -86,7 +89,7 @@ public class CommonUtils {
     }
     public static void fetchFriendScore() {
 
-        if (friendsMap == null) {
+            if (friendsMap == null) {
             friendsMap = new TreeMap<String, FriendModel>();
         } else {
             return ;
@@ -210,5 +213,13 @@ public class CommonUtils {
             }
         });
         Request.executeBatchAsync(postScore);
+    }
+    public static boolean isOnline(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        //should check null because in air plan mode it will be null
+        return (netInfo != null && netInfo.isConnected());
+
     }
 }

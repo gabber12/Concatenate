@@ -52,7 +52,7 @@ import ibt.ortc.extensibility.OrtcClient;
 
 
 
-public class FullscreenActivity extends Activity {
+public class FullscreenActivity extends NetworkActivity {
 
     private AccessToken token;
 

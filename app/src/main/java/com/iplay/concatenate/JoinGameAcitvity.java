@@ -31,7 +31,7 @@ import ibt.ortc.extensibility.OrtcClient;
 
 
 
-public class JoinGameAcitvity extends Activity {
+public class JoinGameAcitvity extends NetworkActivity {
 
     public MyAdapter ma;
 

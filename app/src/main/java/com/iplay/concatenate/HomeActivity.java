@@ -12,8 +12,11 @@ import com.iplay.concatenate.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,148 +51,212 @@ public class HomeActivity extends FragmentActivity {
     public Boolean trans;
     public Boolean trans1;
 
+    public void radialTransitionShow(final View fragment, final View viewButton , final View otherButton) {
+        final int cx = (viewButton.getLeft() + viewButton.getRight()) / 2;
+        final int cy = (viewButton.getTop() + viewButton.getBottom()) / 2;
 
+
+        // get the final radius for the clipping circle
+        final int finalRadius = (int)Math.sqrt(fragment.getWidth() * fragment.getWidth() + fragment.getHeight() * fragment.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
+
+        fragment.setVisibility(View.VISIBLE);
+
+
+        SupportAnimator animator = ViewAnimationUtils.createCircularReveal(fragment,  cx, cy, 0, finalRadius);
+
+
+
+        animator.addListener(new SupportAnimator.AnimatorListener() {
+            @Override
+            public void onAnimationStart() {
+
+                AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+                anim.setDuration(800);
+                anim.setFillAfter(true);
+                anim.setFillEnabled(true);
+                otherButton.setClickable(false);
+                otherButton.setAnimation(anim);
+                otherButton.startAnimation(anim);
+
+                viewButton.setClickable(false);
+            }
+
+            @Override
+            public void onAnimationEnd() {
+                viewButton.setClickable(true);
+            }
+
+            @Override
+            public void onAnimationCancel() {
+
+            }
+
+            @Override
+            public void onAnimationRepeat() {
+
+            }
+        });
+
+
+
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(800);
+        animator.start();
+    }
+
+    public void radialTransitionHide(final View fragment, final View viewButton, final View otherButton) {
+        final int cx = (viewButton.getLeft() + viewButton.getRight()) / 2;
+        final int cy = (viewButton.getTop() + viewButton.getBottom()) / 2;
+
+        // get the final radius for the clipping circle
+        final int finalRadius = (int)Math.sqrt(fragment.getWidth() * fragment.getWidth() + fragment.getHeight() * fragment.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
+
+        SupportAnimator animator =
+                ViewAnimationUtils.createCircularReveal(fragment, cx, cy, finalRadius, 0);
+
+        animator.addListener(new SupportAnimator.AnimatorListener() {
+            @Override
+            public void onAnimationStart() {
+                viewButton.setClickable(false);
+
+                AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
+                anim.setStartOffset(300);
+                anim.setDuration(500);
+                anim.setFillAfter(true);
+                anim.setFillEnabled(true);
+                anim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        otherButton.setClickable(true);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                otherButton.setAnimation(anim);
+                otherButton.startAnimation(anim);
+
+
+            }
+
+            @Override
+            public void onAnimationEnd() {
+
+                fragment.setVisibility(View.INVISIBLE);
+                viewButton.setClickable(true);
+
+
+            }
+
+            @Override
+            public void onAnimationCancel() {
+
+            }
+
+            @Override
+            public void onAnimationRepeat() {
+
+            }
+        });
+
+
+
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(800);
+        animator.start();
+
+    }
+    RevealFrameLayout transitionView1;
+    RevealFrameLayout transitionView;
+
+    ImageActionButton iab ;
+
+
+    CircularProfilePicView iab1;
+    MaterialDialog md;
+
+    class ConnectivityReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+
+            Log.d("app", "Network connectivity change");
+            if(!CommonUtils.isOnline(context) ){
+                System.out.println("Network not Available");
+                if(md == null)
+
+                    md = new MaterialDialog.Builder(context)
+                            .callback(new MaterialDialog.ButtonCallback() {
+
+                            })
+                            .title("No Internet Connection Available")
+                            .titleGravity(GravityEnum.CENTER)
+                            .content("Please Check your Internet Connection")
+                            .progress(true, 1)
+                            .theme(Theme.LIGHT).cancelable(false)
+                            .show();
+            } else if(md != null) {
+                System.out.println("Network Available");
+                md.dismiss();
+                md = null;
+                Intent in = new Intent(context, FullscreenActivity.class);
+                context.startActivity(in);
+            }
+
+        }
+    }
+    ConnectivityReciever cr = null;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(cr != null)
+            super.unregisterReceiver(cr);
+    }
+    protected  void onResume() {
+        super.onResume();
+        super.registerReceiver(cr, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        cr = new ConnectivityReciever();
+
+
         trans1 = true;
         trans = true;
         getSupportFragmentManager().beginTransaction().add(R.id.container_profile, new ProfileActivity()).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.container, new LeaderboardActivity()).commit();
 
 
-        final RevealFrameLayout transitionView = (RevealFrameLayout) findViewById(R.id.transition);
-        final RevealFrameLayout transitionView1 = (RevealFrameLayout) findViewById(R.id.transition1);
+        transitionView = (RevealFrameLayout) findViewById(R.id.transition);
+        transitionView1 = (RevealFrameLayout) findViewById(R.id.transition1);
         transitionView.setVisibility(View.INVISIBLE);
         transitionView1.setVisibility(View.INVISIBLE);
-        final RevealFrameLayout myView = transitionView;
-        final RevealFrameLayout myView1 = transitionView1;
-        final ImageActionButton iab = (ImageActionButton)findViewById(R.id.leaderboard);
+
+        iab = (ImageActionButton)findViewById(R.id.leaderboard);
 
 
-        final CircularProfilePicView iab1 = (CircularProfilePicView)findViewById(R.id.profile_pic_user);
+        iab1 = (CircularProfilePicView)findViewById(R.id.profile_pic_user);
 
 
 
         findViewById(R.id.leaderboard).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                final int cx = (iab.getLeft() + iab.getRight()) / 2;
-                final int cy = (iab.getTop() + iab.getBottom()) / 2;
-
-
-                // get the final radius for the clipping circle
-                final int finalRadius = (int)Math.sqrt(myView.getWidth()*myView.getWidth()+myView.getHeight()*myView.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
-
-
-                SupportAnimator animator =
-                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
-
-
-
-
-
                 if (trans) {
-                    myView.setVisibility(View.VISIBLE);
-
-                    animator=
-                            ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-
-                    AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
-
-                    anim.setDuration(500);
-                    anim.setFillAfter(true);
-                    anim.setFillEnabled(true);
-                    anim.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setClickable(false);
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setVisibility(View.INVISIBLE);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-
-                    ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setAnimation(anim);
-                    anim.start();
+                    radialTransitionShow(transitionView, iab, iab1);
                 } else {
-
-                    AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-                    anim.setStartOffset(300);
-                    anim.setDuration(500);
-                    anim.setFillAfter(true);
-                    anim.setFillEnabled(true);
-                    anim.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-
-                            ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setClickable(true);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setAnimation(anim);
-                    anim.start();
-                    ((CircularProfilePicView)findViewById(R.id.profile_pic_user)).setVisibility(View.VISIBLE);
-
-                    animator =
-                            ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
-
+                    radialTransitionHide(transitionView, iab, iab1);
                 }
-
-
-
-                animator.addListener(new SupportAnimator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart() {
-                        iab.setClickable(false);
-                    }
-
-                    @Override
-                    public void onAnimationEnd() {
-                        if(!trans) {
-                            myView.setVisibility(View.INVISIBLE);
-
-
-                        }
-                        iab.setClickable(true);
-
-                        trans = !trans;
-                    }
-
-                    @Override
-                    public void onAnimationCancel() {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat() {
-
-                    }
-                });
-
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(800);
-                animator.start();
-
+                trans = !trans;
             }
         });
 
@@ -197,119 +264,12 @@ public class HomeActivity extends FragmentActivity {
         findViewById(R.id.profile_pic_user).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                final int cx1 = (iab1.getLeft() + iab1.getRight()) / 2;
-                final int cy1 = (iab1.getTop() + iab1.getBottom()) / 2;
-                // get the final radius for the clipping circle
-                final int finalRadius = (int)Math.sqrt(myView1.getWidth()*myView1.getWidth()+myView1.getHeight()*myView1.getHeight());
-
-                SupportAnimator animator =
-                        ViewAnimationUtils.createCircularReveal(myView1, cx1, cy1, finalRadius, 0);
-
-
-                if (trans1) {
-                    myView1.setVisibility(View.VISIBLE);
-
-                    animator=
-                            ViewAnimationUtils.createCircularReveal(myView1, cx1, cy1, 0, finalRadius);
-                    AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
-                    anim.setDuration(500);
-                    anim.setFillAfter(true);
-                    anim.setFillEnabled(true);
-                    anim.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            ((ImageActionButton)findViewById(R.id.leaderboard)).setClickable(false);
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            ((ImageActionButton)findViewById(R.id.leaderboard)).setVisibility(View.INVISIBLE);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-
-                    ((ImageActionButton)findViewById(R.id.leaderboard)).setAnimation(anim);
-                    anim.start();
+                if(trans1) {
+                    radialTransitionShow(transitionView1, iab1, iab);
                 } else {
-
-                    AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-                    anim.setStartOffset(300);
-                    anim.setDuration(500);
-                    anim.setFillAfter(true);
-                    anim.setFillEnabled(true);
-                    anim.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            ((ImageActionButton)findViewById(R.id.leaderboard)).setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-
-                            ((ImageActionButton)findViewById(R.id.leaderboard)).setClickable(true);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    ((ImageActionButton)findViewById(R.id.leaderboard)).setAnimation(anim);
-                    anim.start();
-                    ((ImageActionButton)findViewById(R.id.leaderboard)).setVisibility(View.VISIBLE);
-
-                    animator =
-                            ViewAnimationUtils.createCircularReveal(myView1, cx1, cy1, finalRadius, 0);
-
+                    radialTransitionHide(transitionView1, iab1, iab);
                 }
-
-
-
-                animator.addListener(new SupportAnimator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart() {
-                        iab1.setClickable(false);
-
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd() {
-                        if(!trans1) {
-                            myView1.setVisibility(View.INVISIBLE);
-
-                        } else {
-
-                        }
-                        iab1.setClickable(true);
-                        trans1 = !trans1;
-                    }
-
-                    @Override
-                    public void onAnimationCancel() {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat() {
-
-                    }
-                });
-
-
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(800);
-
-                animator.start();
-
-
-
-
+                trans1 = !trans1;
             }
         });
 
@@ -425,7 +385,17 @@ public class HomeActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
+        if(!trans || !trans1) {
+            if(!trans) {
+                radialTransitionHide(transitionView, iab, iab1);
+                trans = !trans;
+            } else {
+                radialTransitionHide(transitionView1, iab1, iab);
+                trans1 = !trans1;
+            }
 
+            return ;
+        }
         new MaterialDialog.Builder(this)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
@@ -492,6 +462,7 @@ public class HomeActivity extends FragmentActivity {
             view.requestLayout();
         }
 
+
         @Override
         public void initialize(int width, int height, int parentWidth, int parentHeight) {
             super.initialize(width, height, parentWidth, parentHeight);
@@ -502,5 +473,13 @@ public class HomeActivity extends FragmentActivity {
             return true;
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(md != null) {
+            md.cancel();
+        }
     }
 }

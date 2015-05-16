@@ -19,7 +19,7 @@ import java.util.TimerTask;
 
 
 
-public class SplashScreenActivity extends Activity {
+public class SplashScreenActivity extends NetworkActivity {
 
 
     @Override

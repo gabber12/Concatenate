@@ -30,7 +30,7 @@ import java.util.TimerTask;
 
 
 
-public class StartingGame extends Activity {
+public class StartingGame extends NetworkActivity {
 
 
     @Override

@@ -22,7 +22,7 @@ import java.util.TimerTask;
 
 
 
-public class QuickGameActivity extends Activity {
+public class QuickGameActivity extends NetworkActivity {
 
 
     @Override
