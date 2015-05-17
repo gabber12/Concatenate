@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -104,9 +107,9 @@ public class CommonUtils {
 
         subscribers.add(dl);
     }
-    public static void fetchFriendScore(final DataListener sub) {
+    public static void fetchFriendScore(final DataListener sub, boolean force) {
 
-            if (friendsMap == null) {
+        if (friendsMap == null || force) {
             friendsMap = new TreeMap<String, FriendModel>();
         } else {
             return ;
@@ -119,6 +122,7 @@ public class CommonUtils {
 
                     @Override
                     public void onCompleted(Response response) {
+
                         FacebookRequestError error = response.getError();
                         System.out.println(""+session.getApplicationId());
                         System.out.println(""+ R.string.facebook_app_id);
@@ -171,8 +175,13 @@ public class CommonUtils {
         }
         return friendsMap.get(id);
     }
-    public static void setScore(int score) {
+    public static String PREFS = "pref";
+    public static void setScore(int score, Context ctx) {
         CommonUtils.score = score+CommonUtils.score;
+        SharedPreferences settings = ctx.getSharedPreferences(PREFS, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putInt("Score", score);
+
         GraphObject go = new GraphObject() {
             String score;
             JSONObject jobj = new JSONObject();
@@ -247,4 +256,37 @@ public class CommonUtils {
 
     }
 
+    public static ImageResponse waitingForPic;
+
+    public static void getPic(String userId, final Context ctx) {
+        try {
+            ImageRequest.Builder requestBuilder = new ImageRequest.Builder(
+                    ctx
+                    ,
+                    ImageRequest.getProfilePictureUrl(CommonUtils.userId, 800, 800));
+
+
+            ImageRequest request = requestBuilder.setAllowCachedRedirects(false)
+                    .setCallerTag(ctx)
+                    .setCallback(
+                            new ImageRequest.Callback() {
+                                @Override
+                                public void onCompleted(ImageResponse response) {
+                                    CommonUtils.waitingForPic = response;
+                                    Intent in = new Intent("pic_loaded");
+                                    LocalBroadcastManager.getInstance(ctx).sendBroadcast(in);
+
+                                }
+                            }
+                    )
+                    .build();
+
+
+
+            ImageDownloader.downloadAsync(request);
+        } catch (URISyntaxException e) {
+            Log.e("Error", "Problem With downloading profile_pic");
+        }
+
+    }
 }
