@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.ContactsContract;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.ListView;
@@ -66,16 +67,25 @@ public class CommonUtils {
         return "user_channel_" + id;
     }
 
-    public static LoginButton loginButton = null;
+    private static LoginButton loginButton = null;
     public static LoginButton getLoginButton() { if (loginButton == null) throw new FacebookGraphObjectException(); return loginButton; }
     public static void setLoginButton(LoginButton lb) { loginButton = lb; }
-
+    public static Thread taskThread;
     public static void disableTimer(Timer t) {
         if ( t != null ) {
             t.cancel();
             t.purge();
             t = null;
+            if(taskThread != null){
+                taskThread.interrupt();
+            }
         }
+    }
+
+    public static int getPixelsfromDP(Context context, float dp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        float fpixels = metrics.density * dp;
+        return (int) (fpixels + 0.5f);
     }
 
     public static Set<String> words = null;
