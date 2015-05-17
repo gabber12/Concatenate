@@ -90,7 +90,7 @@ public class  UserInfoFetcher  implements DataListener{
              Log.e("Error", "User Id is null");
              return ;
          }
-        CommonUtils.fetchFriendScore(this);
+        CommonUtils.fetchFriendScore(this, true);
         fetchName();
         fetchProfilePic();
     }
