@@ -1,5 +1,21 @@
 package com.iplay.concatenate;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
 import com.facebook.AccessToken;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -11,37 +27,12 @@ import com.facebook.widget.LoginButton;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.common.UserInfoFetcher;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import ibt.ortc.extensibility.OnConnected;
 import ibt.ortc.extensibility.OrtcClient;

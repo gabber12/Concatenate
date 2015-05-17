@@ -1,12 +1,13 @@
 package com.iplay.concatenate;
+
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import android.view.LayoutInflater;
 import android.widget.TextView;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class MyAdapter extends BaseAdapter {

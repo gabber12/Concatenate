@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.internal.ImageDownloader;
 import com.facebook.internal.ImageRequest;
 import com.facebook.internal.ImageResponse;
-import com.facebook.internal.Logger;
 import com.facebook.model.GraphObject;
 import com.iplay.concatenate.DataListener;
 

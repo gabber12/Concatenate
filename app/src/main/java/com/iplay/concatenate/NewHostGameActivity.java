@@ -1,26 +1,14 @@
 package com.iplay.concatenate;
 
-import com.afollestad.materialdialogs.GravityEnum;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
-import com.iplay.concatenate.common.BackgroundURLRequest;
-import com.iplay.concatenate.common.CommonUtils;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -34,6 +22,13 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
+
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.iplay.concatenate.common.BackgroundURLRequest;
+import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.util.SystemUiHider;
 
 import org.json.simple.JSONObject;
 
@@ -62,8 +57,42 @@ public class NewHostGameActivity extends NetworkActivity {
 
         // my code begins here
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("pic_loaded"));
 
+        CommonUtils.getPic(CommonUtils.waitingFor, getApplicationContext());
         CommonUtils.onHostGame = true;
+
+
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setupScreen();
+        }
+    };
+
+    private void setupScreen() {
+
+        Animation fadeOut = new AlphaAnimation(1.0f,0.0f);
+        fadeOut.setDuration(500);
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                findViewById(R.id.loaderContainer).setVisibility(View.GONE);
+                findViewById(R.id.entireContainer).setVisibility(View.VISIBLE);
+
+
+                Animation fadeInMain = new AlphaAnimation(0.0f,1.0f);
+                fadeInMain.setDuration(500);
+
+                findViewById(R.id.entireContainer).startAnimation(fadeInMain);
 
         TextView mynameTextView = ((TextView)findViewById(R.id.myname));
         TextView mylevelTextView = ((TextView)findViewById(R.id.mylevel));
@@ -81,7 +110,7 @@ public class NewHostGameActivity extends NetworkActivity {
         yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(CommonUtils.waitingFor).getScore()) + " XP");
         ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
+        LocalBroadcastManager.getInstance(NewHostGameActivity.this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
 
         mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);
 
@@ -148,6 +177,15 @@ public class NewHostGameActivity extends NetworkActivity {
         }, 0, 100);
 
 
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        findViewById(R.id.loaderContainer).startAnimation(fadeOut);
 
     }
 

@@ -1,11 +1,7 @@
 package com.iplay.concatenate.common;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import com.iplay.concatenate.MainGameActivity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

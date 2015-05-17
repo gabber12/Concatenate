@@ -1,23 +1,15 @@
 package com.iplay.concatenate;
 
-import com.iplay.concatenate.common.CommonUtils;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
+
+import com.iplay.concatenate.common.CommonUtils;
 
 
 
@@ -57,10 +49,12 @@ public class NewGameOverActivity extends NetworkActivity {
             }
         });
 
-//        CommonUtils.setScore();
+
 
         int myScore = getIntent().getIntExtra("my_score", 0);
         int yourScore = getIntent().getIntExtra("your_score", 0);
+
+        CommonUtils.setScore(myScore, getApplicationContext());
 
         if ( myScore > yourScore ) mSwitcher.setText("YOU WIN");
         else if ( myScore < yourScore ) mSwitcher.setText("YOU LOSE");

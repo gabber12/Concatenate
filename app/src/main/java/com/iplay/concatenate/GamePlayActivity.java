@@ -1,45 +1,9 @@
 package com.iplay.concatenate;
 
-import com.iplay.concatenate.common.BackgroundURLRequest;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
-import ibt.ortc.extensibility.OnMessage;
-import ibt.ortc.extensibility.OrtcClient;
 
 
-
+@Deprecated
 public class GamePlayActivity extends Activity {
 
 //    private Button bt;

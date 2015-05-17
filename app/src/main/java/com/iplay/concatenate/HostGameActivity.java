@@ -1,50 +1,19 @@
 package com.iplay.concatenate;
 
 
-import com.facebook.FacebookException;
-
-import com.facebook.FacebookOperationCanceledException;
-import com.facebook.Session;
-import com.facebook.widget.WebDialog;
-import com.iplay.concatenate.common.CommonUtils;
-import com.iplay.concatenate.util.SystemUiHider;
-import com.pnikosis.materialishprogress.ProgressWheel;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.iplay.concatenate.common.CommonUtils;
+import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
-import ibt.ortc.extensibility.OrtcClient;
 
-
-
+@Deprecated
 public class HostGameActivity extends NetworkActivity {
 
     public ProgressWheel pw ;

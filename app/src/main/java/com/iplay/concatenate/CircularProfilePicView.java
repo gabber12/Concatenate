@@ -3,6 +3,7 @@ package com.iplay.concatenate;
 /**
  * Created by gabber12 on 11/04/15.
  */
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -17,7 +18,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -434,6 +434,11 @@ public class CircularProfilePicView extends FrameLayout {
 
             if(profileId.equalsIgnoreCase(CommonUtils.userId)) {
                 processResponse(CommonUtils.imageResponse,true);
+                return ;
+            }
+
+            if ( profileId.equalsIgnoreCase(CommonUtils.waitingForPicId) ) {
+                processResponse(CommonUtils.waitingForPic,true);
                 return ;
             }
 

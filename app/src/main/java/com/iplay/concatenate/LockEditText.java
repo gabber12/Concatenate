@@ -7,8 +7,6 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
-import com.iplay.concatenate.common.CommonUtils;
-
 /**
  * Created by divanshu on 08/04/15.
  */

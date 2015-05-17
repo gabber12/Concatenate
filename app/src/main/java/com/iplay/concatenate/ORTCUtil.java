@@ -1,19 +1,13 @@
 package com.iplay.concatenate;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-
 import com.iplay.concatenate.common.CommonUtils;
 
 import java.util.HashMap;
 
 import ibt.ortc.api.ChannelPermissions;
 import ibt.ortc.api.Ortc;
-import ibt.ortc.extensibility.OnConnected;
 import ibt.ortc.extensibility.OnDisconnected;
 import ibt.ortc.extensibility.OnException;
-import ibt.ortc.extensibility.OnMessage;
 import ibt.ortc.extensibility.OnReconnected;
 import ibt.ortc.extensibility.OnReconnecting;
 import ibt.ortc.extensibility.OnSubscribed;

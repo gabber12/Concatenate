@@ -1,58 +1,30 @@
 package com.iplay.concatenate;
 
-import com.facebook.FacebookException;
-import com.facebook.FacebookOperationCanceledException;
-import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphUser;
-
-import com.facebook.widget.ProfilePictureView;
-import com.facebook.widget.WebDialog;
-import com.iplay.concatenate.common.CommonUtils;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.util.Pair;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.Session;
+import com.facebook.widget.WebDialog;
+import com.iplay.concatenate.common.CommonUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import ibt.ortc.extensibility.OrtcClient;
 

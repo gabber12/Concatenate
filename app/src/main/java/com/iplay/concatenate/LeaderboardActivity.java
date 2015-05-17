@@ -1,45 +1,18 @@
 package com.iplay.concatenate;
 
-import com.facebook.FacebookRequestError;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphObjectList;
-import com.facebook.model.OpenGraphObject;
-import com.facebook.widget.LoginButton;
-import com.iplay.concatenate.common.CommonUtils;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import com.iplay.concatenate.common.CommonUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 
 public class LeaderboardActivity extends Fragment implements DataListener {

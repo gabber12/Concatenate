@@ -1,25 +1,13 @@
 package com.iplay.concatenate;
 
-import com.afollestad.materialdialogs.GravityEnum;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
-import com.iplay.concatenate.common.BackgroundURLRequest;
-import com.iplay.concatenate.common.CommonUtils;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -29,11 +17,16 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
+
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.iplay.concatenate.common.BackgroundURLRequest;
+import com.iplay.concatenate.common.CommonUtils;
 
 import org.json.simple.JSONObject;
 
@@ -46,9 +39,13 @@ public class NewQuickGame extends NetworkActivity {
 
     private TextSwitcher mSwitcher;
 
+    private int allAvailable = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        allAvailable = 0;
 
         setContentView(R.layout.activity_new_quick_game);
 
@@ -131,11 +128,11 @@ public class NewQuickGame extends NetworkActivity {
 
     private void onGameStarted(final String senderId, final boolean isBot) {
 
+        // TODO: Fetch other persons name and score
+
         CommonUtils.onQuickGame = false;
         CommonUtils.onStartingGame = true;
         findViewById(R.id.progress_wheel_quick).setVisibility(View.GONE);
-
-        // TODO: Add the joining users pic and cover
 
                 mSwitcher.clearAnimation();
                 Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(),0);
@@ -177,34 +174,8 @@ public class NewQuickGame extends NetworkActivity {
                             public void run() {
                                 // Do some stuff
 
-                                Interpolator decelerate = new DecelerateInterpolator();
-                                Interpolator accelerate = new AccelerateInterpolator();
-                                Animation compressIn = new ScaleAnimation(1.0f, 0f, 1.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                                Animation compressOut = new ScaleAnimation(0f, 1.0f, 1.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                                compressIn.setDuration(500); compressIn.setInterpolator(decelerate);
-                                compressOut.setDuration(500); compressOut.setInterpolator(accelerate);
-//                                compressIn.setStartOffset(3200);
-                                compressOut.setStartOffset(500);
-//                                mSwitcher.setOutAnimation(compressIn);
-//                                mSwitcher.setInAnimation(compressOut);
-
-                                findViewById(R.id.textSwitcherrel).setVisibility(View.GONE);
-                                findViewById(R.id.textBoxrel).setVisibility(View.VISIBLE);
-                                findViewById(R.id.barRightrel).setVisibility(View.VISIBLE);
-                                findViewById(R.id.barLeftrel).setVisibility(View.VISIBLE);
-                                findViewById(R.id.yourinfolayout).setVisibility(View.VISIBLE);
-                                findViewById(R.id.myinfolayout).setVisibility(View.VISIBLE);
-
-                                Animation moveLeft = new TranslateAnimation(-600, 0, 0, 0);
-                                Animation moveRight = new TranslateAnimation(600, 0, 0, 0);
-                                moveLeft.setDuration(500); moveRight.setDuration(500);
-                                findViewById(R.id.barLeftrel).startAnimation(moveLeft);
-                                findViewById(R.id.barRightrel).startAnimation(moveRight);
-
-                                findViewById(R.id.yourinfolayout).startAnimation(moveLeft);
-                                findViewById(R.id.myinfolayout).startAnimation(moveRight);
-
-
+                                allAvailable++;
+                                animateNameAndLevel();
 
                             }
                         });
@@ -254,6 +225,40 @@ public class NewQuickGame extends NetworkActivity {
                     }
                 }, new Long(0), new Long(1000));
 
+
+    }
+
+
+    private void animateNameAndLevel() {
+
+        if ( allAvailable == 1 ) return; //TODO: Update to < 3 once we get callback from user name and score
+
+        Interpolator decelerate = new DecelerateInterpolator();
+        Interpolator accelerate = new AccelerateInterpolator();
+        Animation compressIn = new ScaleAnimation(1.0f, 0f, 1.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        Animation compressOut = new ScaleAnimation(0f, 1.0f, 1.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        compressIn.setDuration(500); compressIn.setInterpolator(decelerate);
+        compressOut.setDuration(500); compressOut.setInterpolator(accelerate);
+//                                compressIn.setStartOffset(3200);
+        compressOut.setStartOffset(500);
+//                                mSwitcher.setOutAnimation(compressIn);
+//                                mSwitcher.setInAnimation(compressOut);
+
+        findViewById(R.id.textSwitcherrel).setVisibility(View.GONE);
+        findViewById(R.id.textBoxrel).setVisibility(View.VISIBLE);
+        findViewById(R.id.barRightrel).setVisibility(View.VISIBLE);
+        findViewById(R.id.barLeftrel).setVisibility(View.VISIBLE);
+        findViewById(R.id.yourinfolayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.myinfolayout).setVisibility(View.VISIBLE);
+
+        Animation moveLeft = new TranslateAnimation(-600, 0, 0, 0);
+        Animation moveRight = new TranslateAnimation(600, 0, 0, 0);
+        moveLeft.setDuration(500); moveRight.setDuration(500);
+        findViewById(R.id.barLeftrel).startAnimation(moveLeft);
+        findViewById(R.id.barRightrel).startAnimation(moveRight);
+
+        findViewById(R.id.yourinfolayout).startAnimation(moveLeft);
+        findViewById(R.id.myinfolayout).startAnimation(moveRight);
 
     }
 

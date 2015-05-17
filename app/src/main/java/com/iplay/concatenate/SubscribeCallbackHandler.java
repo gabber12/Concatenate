@@ -2,17 +2,14 @@ package com.iplay.concatenate;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.iplay.concatenate.common.CommonUtils;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.text.ParseException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -1,27 +1,14 @@
 package com.iplay.concatenate;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
-import com.iplay.concatenate.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
 
 import org.json.simple.JSONObject;
 
@@ -29,7 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-
+@Deprecated
 public class StartingGame extends NetworkActivity {
 
 

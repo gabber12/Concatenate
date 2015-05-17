@@ -1,38 +1,28 @@
 package com.iplay.concatenate.common;
 
-import android.app.Activity;
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Pair;
-import android.widget.ListView;
 
 import com.facebook.FacebookGraphObjectException;
 import com.facebook.FacebookRequestError;
-import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.internal.ImageDownloader;
 import com.facebook.internal.ImageRequest;
 import com.facebook.internal.ImageResponse;
-import com.facebook.internal.Logger;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphObjectList;
 import com.facebook.widget.LoginButton;
 import com.iplay.concatenate.DataListener;
-import com.iplay.concatenate.FriendListAdapter;
 import com.iplay.concatenate.FriendModel;
 import com.iplay.concatenate.R;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +30,6 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -256,14 +245,15 @@ public class CommonUtils {
 
     }
 
-    public static ImageResponse waitingForPic;
+    public static ImageResponse waitingForPic = null;
+    public static String waitingForPicId = null;
 
-    public static void getPic(String userId, final Context ctx) {
+    public static void getPic(final String userId, final Context ctx) {
         try {
             ImageRequest.Builder requestBuilder = new ImageRequest.Builder(
                     ctx
                     ,
-                    ImageRequest.getProfilePictureUrl(CommonUtils.userId, 800, 800));
+                    ImageRequest.getProfilePictureUrl(userId, 800, 800));
 
 
             ImageRequest request = requestBuilder.setAllowCachedRedirects(false)
@@ -273,6 +263,7 @@ public class CommonUtils {
                                 @Override
                                 public void onCompleted(ImageResponse response) {
                                     CommonUtils.waitingForPic = response;
+                                    CommonUtils.waitingForPicId = userId;
                                     Intent in = new Intent("pic_loaded");
                                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(in);
 
