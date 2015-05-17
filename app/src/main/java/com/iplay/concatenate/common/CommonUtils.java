@@ -1,5 +1,6 @@
 package com.iplay.concatenate.common;
 
+import android.app.Activity;
 import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +13,14 @@ import android.widget.ListView;
 
 import com.facebook.FacebookGraphObjectException;
 import com.facebook.FacebookRequestError;
+import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.internal.ImageDownloader;
+import com.facebook.internal.ImageRequest;
+import com.facebook.internal.ImageResponse;
+import com.facebook.internal.Logger;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphObjectList;
 import com.facebook.widget.LoginButton;
@@ -28,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +47,7 @@ import java.util.TreeMap;
  * Created by divanshu on 06/04/15.
  */
 public class CommonUtils {
-
+    public static ImageResponse imageResponse;
 //    concaty.tk
     public final static String SERVER_BASE = "http://concaty.tk/";
 
@@ -87,7 +94,7 @@ public class CommonUtils {
 
         subscribers.add(dl);
     }
-    public static void fetchFriendScore() {
+    public static void fetchFriendScore(final DataListener sub) {
 
             if (friendsMap == null) {
             friendsMap = new TreeMap<String, FriendModel>();
@@ -135,6 +142,11 @@ public class CommonUtils {
                             if(dl != null)
                             dl.dataSetAvailable();
                         }
+
+
+                        if (sub != null) {
+                            sub.dataSetAvailable();
+                        }
                     }
 
 
@@ -149,7 +161,8 @@ public class CommonUtils {
         }
         return friendsMap.get(id);
     }
-    public static void setScore() {
+    public static void setScore(int score) {
+        CommonUtils.score = score+CommonUtils.score;
         GraphObject go = new GraphObject() {
             String score;
             JSONObject jobj = new JSONObject();
@@ -169,7 +182,7 @@ public class CommonUtils {
             public JSONObject getInnerJSONObject() {
                 JSONObject jobj = new JSONObject();
                 try {
-                    jobj.put("score", 123);
+                    jobj.put("score", CommonUtils.score);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -223,4 +236,5 @@ public class CommonUtils {
         return (netInfo != null && netInfo.isConnected());
 
     }
+
 }

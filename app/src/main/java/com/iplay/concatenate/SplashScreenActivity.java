@@ -1,13 +1,20 @@
 package com.iplay.concatenate;
 
+import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.common.UserInfoFetcher;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;

@@ -12,16 +12,21 @@ import com.facebook.widget.LoginButton;
 import com.facebook.widget.ProfilePictureView;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.common.UserInfoFetcher;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -113,7 +118,7 @@ public class FullscreenActivity extends NetworkActivity {
                                     CommonUtils.name = user.getName();
                                     new BackgroundURLRequest().execute("subscribe_user/", userId);
 
-                                    CommonUtils.fetchFriendScore();
+                                    CommonUtils.fetchFriendScore(null);
                                     OrtcClient cli = ORTCUtil.getClient();
 
                                     cli.onConnected = new OnConnected() {
@@ -126,6 +131,27 @@ public class FullscreenActivity extends NetworkActivity {
                             };
 
                                     ORTCUtil.connect();
+
+                                    UserInfoFetcher uif = new UserInfoFetcher(getApplicationContext());
+                                    uif.fetchUserInfo();
+                                    IntentFilter ifl = new IntentFilter();
+                                    ifl.addAction("data_loaded");
+                                    LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+                                        @Override
+                                        public void onReceive(Context context, Intent intent) {
+                                            Log.v("Info", "Brodcast Recienved for user Info");
+                                            if (CommonUtils.imageResponse != null){
+                                                Log.v("Info loaded", "Image loaded");
+                                            }
+                                            if(CommonUtils.friendsMap.size() > 0) {
+                                                Log.v("Info loaded", "Friend List loaded");
+                                            }
+                                            if(CommonUtils.name != null) {
+                                                Log.v("Info loaded", "Name loaded "+CommonUtils.name);
+                                            }
+                                        }
+                                    }, ifl);
+
 
 
                                 } catch(Exception e){

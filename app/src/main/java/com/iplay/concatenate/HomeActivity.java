@@ -7,6 +7,7 @@ import com.facebook.Response;
 import com.facebook.Session;
 
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.common.UserInfoFetcher;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -22,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -380,6 +382,10 @@ public class HomeActivity extends FragmentActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
+
+
+
+
 
     }
 
