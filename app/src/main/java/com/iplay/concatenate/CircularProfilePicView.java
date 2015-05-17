@@ -30,6 +30,7 @@ import com.facebook.internal.ImageRequest;
 import com.facebook.internal.ImageResponse;
 import com.facebook.internal.Logger;
 import com.facebook.internal.Utility;
+import com.iplay.concatenate.common.CommonUtils;
 
 import java.net.URISyntaxException;
 
@@ -431,6 +432,10 @@ public class CircularProfilePicView extends FrameLayout {
                     getContext(),
                     ImageRequest.getProfilePictureUrl(profileId, queryWidth, queryHeight));
 
+            if(profileId.equalsIgnoreCase(CommonUtils.userId)) {
+                processResponse(CommonUtils.imageResponse,true);
+                return ;
+            }
 
             ImageRequest request = requestBuilder.setAllowCachedRedirects(allowCachedResponse)
                     .setCallerTag(this)
@@ -439,7 +444,7 @@ public class CircularProfilePicView extends FrameLayout {
                                 @Override
                                 public void onCompleted(ImageResponse response) {
                                     // TODO: Make a call here if required, otherwise not.
-                                    processResponse(response);
+                                    processResponse(response,false);
                                 }
                             }
                     )
@@ -459,11 +464,11 @@ public class CircularProfilePicView extends FrameLayout {
         }
     }
 
-    private void processResponse(ImageResponse response) {
+    private void processResponse(ImageResponse response,boolean checkNotNeeded) {
         // First check if the response is for the right request. We may have:
         // 1. Sent a new request, thus super-ceding this one.
         // 2. Detached this view, in which case the response should be discarded.
-        if (response.getRequest() == lastRequest) {
+        if (response.getRequest() == lastRequest || checkNotNeeded) {
             lastRequest = null;
             Bitmap responseImage = response.getBitmap();
             Exception error = response.getError();

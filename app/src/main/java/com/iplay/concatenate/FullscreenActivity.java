@@ -82,8 +82,7 @@ public class FullscreenActivity extends NetworkActivity {
         super.onSaveInstanceState(outState);
         fbUiLifecycleHelper.onSaveInstanceState(outState);
     }
-    private ProfilePictureView userImage;
-    private TextView welcomeTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         token = null;

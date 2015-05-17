@@ -99,7 +99,7 @@ public class  UserInfoFetcher  implements DataListener{
     @Override
     public void dataSetAvailable() {
         Log.e("Info", "Data set Available");
-        if(count >= 2) {
+        if(count >= 3) {
             Log.e("Info", "Data set Available INN");
             Intent intent = new Intent("data_loaded");
 

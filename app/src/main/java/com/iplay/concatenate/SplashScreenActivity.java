@@ -1,5 +1,14 @@
 package com.iplay.concatenate;
 
+import com.facebook.AccessToken;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.LoginButton;
+import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.common.UserInfoFetcher;
 import com.iplay.concatenate.util.SystemUiHider;
@@ -21,20 +30,37 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ibt.ortc.extensibility.OnConnected;
 import ibt.ortc.extensibility.OrtcClient;
 
 
 public class SplashScreenActivity extends NetworkActivity {
+
+    private AccessToken token;
+    private LoginButton loginButton;
+    private UiLifecycleHelper fbUiLifecycleHelper;
+
+    public UiLifecycleHelper getFbUiLifecycleHelper() {
+        return fbUiLifecycleHelper;
+    }
+    UserInfoFetcher uif;
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        fbUiLifecycleHelper.onSaveInstanceState(outState);
+    }
 
 
     @Override
@@ -43,11 +69,24 @@ public class SplashScreenActivity extends NetworkActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
+        setupFacebook();
+        fbUiLifecycleHelper.onCreate(savedInstanceState);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
 
 
         ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
         Animation scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         scale.setDuration(5000);
+
+        ((Button)loginButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setClickable(false);
+            }
+        });
+
+        uif = new UserInfoFetcher(getApplicationContext());
 
         scale.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -59,7 +98,9 @@ public class SplashScreenActivity extends NetworkActivity {
             public void onAnimationEnd(Animation animation) {
 
                 // start the animation to fullscreen if not logged in otherwise just start your caching.
-                animateToShowLogin();
+                uif.dataSetAvailable();
+                if(!Session.getActiveSession().isOpened())
+                    animateToShowLogin();
 
 //                Intent intent = new Intent(SplashScreenActivity.this, FullscreenActivity.class);
 //                SplashScreenActivity.this.startActivity(intent);
@@ -122,6 +163,91 @@ public class SplashScreenActivity extends NetworkActivity {
 
     }
 
+    private void setupFacebook() {
+        fbUiLifecycleHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                // Add code here to accommodate session changes
 
+                if (exception != null) {
+                    Log.e("Error", "Error loggin in "+exception.getStackTrace());
+                }
+                if(state.isOpened()) {
+                    System.out.println("session" + session.getAccessToken());
+                    Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
+                            System.out.println("Hello------########");
+                            if (user != null) {
+                                try {
+
+                                    System.out.println("Graph Inner Json" + user.getInnerJSONObject().get("id"));
+                                    final String userId = (String) user.getInnerJSONObject().get("id");
+                                    CommonUtils.userId = userId;
+                                    CommonUtils.name = user.getName();
+                                    new BackgroundURLRequest().execute("subscribe_user/", userId);
+
+                                    OrtcClient cli = ORTCUtil.getClient();
+
+                                    cli.onConnected = new OnConnected() {
+                                        @Override
+                                        public void run(OrtcClient ortcClient) {
+                                            System.out.println("Connected to ORTC");
+                                            ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
+                                                    new SubscribeCallbackHandler(getApplicationContext()));
+                                        }
+                                    };
+
+                                    ORTCUtil.connect();
+
+
+                                    uif.fetchUserInfo();
+                                    IntentFilter ifl = new IntentFilter();
+                                    ifl.addAction("data_loaded");
+                                    LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+                                        @Override
+                                        public void onReceive(Context context, Intent intent) {
+                                            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+                                            in.putExtra("userId", CommonUtils.userId);
+                                            startActivity(in);
+                                            overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                                        }
+                                    }, ifl);
+
+                                    // TODO : Do caching
+
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+
+                    });
+
+
+
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        fbUiLifecycleHelper.onResume();
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
+    }
 
 }
+
+
