@@ -142,6 +142,7 @@ public class CommonUtils {
                         }
                         score = friendsMap.get(userId).getScore();
                         for(DataListener dl : subscribers){
+                            if(dl != null)
                             dl.dataSetAvailable();
                         }
                     }
