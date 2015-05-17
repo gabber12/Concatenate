@@ -1,5 +1,6 @@
 package com.iplay.concatenate;
 
+import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -55,6 +56,8 @@ public class NewGameOverActivity extends NetworkActivity {
                 return myText;
             }
         });
+
+//        CommonUtils.setScore();
 
         int myScore = getIntent().getIntExtra("my_score", 0);
         int yourScore = getIntent().getIntExtra("your_score", 0);

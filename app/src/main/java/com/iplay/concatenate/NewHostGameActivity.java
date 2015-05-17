@@ -112,7 +112,7 @@ public class NewHostGameActivity extends NetworkActivity {
 
             @Override
             public void run() {
-
+                CommonUtils.taskThread = Thread.currentThread();
                 NewHostGameActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -238,7 +238,7 @@ public class NewHostGameActivity extends NetworkActivity {
         CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-
+                CommonUtils.taskThread = Thread.currentThread();
                 NewHostGameActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

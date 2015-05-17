@@ -75,6 +75,8 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
+    private static int MAX_MOVES = 10;
+
 
     private LockEditText enterWord;
     private Button submitButton;
@@ -93,6 +95,10 @@ public class MainGameActivity extends NetworkActivity {
 
     private ProgressBar mpb, ypb;
 
+    private int myMoves, yourMoves;
+    private int myTotalTime, yourTotalTime;
+    private int myWrongAttempts, yourWrongAttempts;
+
     Typeface myTypeface = null, myTypefaceLight = null, myTypefaceMedium = null;
 
     @Override
@@ -106,6 +112,8 @@ public class MainGameActivity extends NetworkActivity {
         CommonUtils.startGameIntent = null;
         CommonUtils.disableTimer(CommonUtils.startingGameTimer);
         currentMyScore = currentYourScore = 0;
+        myMoves = yourMoves = myWrongAttempts = yourWrongAttempts = 0;
+        myTotalTime = yourTotalTime = 0;
 
         super.onCreate(savedInstanceState);
 
@@ -237,8 +245,13 @@ public class MainGameActivity extends NetworkActivity {
         if (!CommonUtils.words.contains(str) || maxMatch == 0 || str.equals(lastWord)) {
             System.out.println(maxMatch);
             System.out.println(CommonUtils.words.contains(str));
+            myWrongAttempts++;
             shakeWord();
         } else {
+
+            myTotalTime += (mpb.getMax() - mpb.getProgress());
+            if ( yourMoves < MAX_MOVES ) yourMoves++;
+
             setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
             updateMyScore(str);
             changeTheWord(str);
@@ -421,9 +434,11 @@ public class MainGameActivity extends NetworkActivity {
 
     private void changeEnterWordBox() {
         if (CommonUtils.userId.equals(userTurn)) {
+            myMoves++;
             enterWord.setCursorVisible(true);
             setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
         } else {
+            yourMoves++;
             enterWord.setCursorVisible(false);
             setBackgroundBox(enterWord, R.drawable.enter_word_background_disable);
         }
@@ -588,6 +603,8 @@ public class MainGameActivity extends NetworkActivity {
 //            yourScore.setText("Score: " + points);
             userTurn = CommonUtils.userId;
             changeEnterWordBox();
+            // TODO: Update others metrics by getting info from server.
+            if ( myMoves < MAX_MOVES ) myMoves++;
             resetCountdownTimer();
         }
     };

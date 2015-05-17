@@ -14,6 +14,16 @@
             android:gravity="center" android:src="@drawable/splash_logo"
             />
 
+        <RelativeLayout
+            android:id="@+id/loginlayout"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:background="@color/material_red_500">
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
 

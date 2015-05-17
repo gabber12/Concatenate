@@ -106,6 +106,7 @@ public class NewQuickGame extends NetworkActivity {
 
             @Override
             public void run() {
+                CommonUtils.taskThread = Thread.currentThread();
                 NewQuickGame.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -224,7 +225,7 @@ public class NewQuickGame extends NetworkActivity {
                 CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-//                        CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                        CommonUtils.taskThread = Thread.currentThread();
                         NewQuickGame.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

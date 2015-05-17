@@ -198,7 +198,7 @@ public class NewJoinGameActivity extends NetworkActivity {
         CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-
+                CommonUtils.taskThread = Thread.currentThread();
                 NewJoinGameActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -207,7 +207,7 @@ public class NewJoinGameActivity extends NetworkActivity {
                                 && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
                             startActivity(CommonUtils.startGameIntent);
-                        } else if (System.currentTimeMillis() - startTime >= 30 * 1000) {
+                        } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
                             Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
                             t.show();
                             final Intent intent = new Intent(NewJoinGameActivity.this, HomeActivity.class);

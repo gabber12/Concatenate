@@ -171,31 +171,8 @@ public class FullscreenActivity extends NetworkActivity {
         fbUiLifecycleHelper.onCreate(savedInstanceState);
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
-        String text = loginButton.getText().toString();
-        System.out.println(text);
         CommonUtils.setLoginButton(loginButton);
 
-        // Callback registration
-
-        OrtcClient cli =  ORTCUtil.getClient();
-
-        // Adding dictionary words to store in a static hash set
-
-        if ( CommonUtils.words == null ) {
-            CommonUtils.words = new HashSet<String>();
-            InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.dict);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            try {
-                String line = reader.readLine();
-                while (line != null) {
-                    CommonUtils.words.add( line.toUpperCase() );
-                    line = reader.readLine();
-                }
-            } catch ( Exception e) {
-                System.out.println("error while reading from dictionary of words.");
-            }
-        }
-        
     }
 
     @Override
