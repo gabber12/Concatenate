@@ -92,7 +92,6 @@ public class JoinGameAcitvity extends NetworkActivity {
         String senderId = ((CircularProfilePicView)v.findViewById(R.id.profile_pic)).getProfileId();
         OrtcClient client = ORTCUtil.getClient();
         try {
-            // TODO: Fix this to point to NewJoinGame
             Intent intent = new Intent(that, NewJoinGameActivity.class);
             intent.putExtra("sender_id", senderId);
             JSONObject jsonObject = new JSONObject();

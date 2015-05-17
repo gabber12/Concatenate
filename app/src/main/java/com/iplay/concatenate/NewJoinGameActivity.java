@@ -57,8 +57,22 @@ public class NewJoinGameActivity extends NetworkActivity {
 
         // code begins here
 
+        TextView mynameTextView = ((TextView)findViewById(R.id.myname));
+        TextView mylevelTextView = ((TextView)findViewById(R.id.mylevel));
+
+        mynameTextView.setText(CommonUtils.name);
+        mylevelTextView.setText(String.valueOf(CommonUtils.score) + " XP");
+        ((CircularProfilePicView)findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
+
         String senderId = getIntent().getStringExtra("sender_id");
         CommonUtils.waitingFor = senderId;
+
+        TextView yournameTextView = ((TextView)findViewById(R.id.yourname));
+        TextView yourlevelTextView = ((TextView)findViewById(R.id.yourlevel));
+
+        yournameTextView.setText(CommonUtils.getFriendById(CommonUtils.waitingFor).getName());
+        yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(CommonUtils.waitingFor).getScore()) + " XP");
+        ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
 
         mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);
 

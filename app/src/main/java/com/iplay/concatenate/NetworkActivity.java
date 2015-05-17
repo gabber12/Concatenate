@@ -66,7 +66,7 @@ public class NetworkActivity extends Activity {
                 System.out.println("Network Available");
                 md.dismiss();
                 md = null;
-                Intent in = new Intent(context, FullscreenActivity.class);
+                Intent in = new Intent(context, HomeActivity.class);
                 context.startActivity(in);
             }
 

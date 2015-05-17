@@ -19,6 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -113,6 +114,7 @@ public class SplashScreenActivity extends NetworkActivity {
         });
 
         background_image.startAnimation(scale);
+//        background_image.setColorFilter(Color.argb(255, 255, 255, 255));
         cacheData();
 
     }
@@ -212,10 +214,9 @@ public class SplashScreenActivity extends NetworkActivity {
                                             in.putExtra("userId", CommonUtils.userId);
                                             startActivity(in);
                                             overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                                            SplashScreenActivity.this.finish();
                                         }
                                     }, ifl);
-
-                                    // TODO : Do caching
 
 
                                 } catch (Exception e) {

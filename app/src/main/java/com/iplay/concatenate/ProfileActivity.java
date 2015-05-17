@@ -34,7 +34,7 @@ import java.io.InputStream;
 
 
 public class ProfileActivity extends Fragment {
-    public String url;
+//    public String url;
     View myFragment;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,56 +48,56 @@ public class ProfileActivity extends Fragment {
         ((TextView)myFragment.findViewById(R.id.profile_score)).setText("Score "+CommonUtils.score);
         ((CircularProfilePicView)myFragment.findViewById(R.id.profile_pic_ac)).setProfileId(CommonUtils.userId);
 
-        Bundle bd = new Bundle();
-        bd.putString("fields", "cover");
-        new Request(
-                Session.getActiveSession(),
-                CommonUtils.userId,
-                bd,
-                HttpMethod.GET,
-                new Request.Callback() {
-                    public void onCompleted(Response response) {
-                        Response res = response;
-                        try {
-                            if (response != null) {
-                                url = response.getGraphObject().getInnerJSONObject().getJSONObject("cover").getString("source");
-                                new DownloadImageTask((ImageView)myFragment.findViewById(R.id.cover)).execute(url);
-                                System.out.print(url);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        ).executeAsync();
+//        Bundle bd = new Bundle();
+//        bd.putString("fields", "cover");
+//        new Request(
+//                Session.getActiveSession(),
+//                CommonUtils.userId,
+//                bd,
+//                HttpMethod.GET,
+//                new Request.Callback() {
+//                    public void onCompleted(Response response) {
+//                        Response res = response;
+//                        try {
+//                            if (response != null) {
+//                                url = response.getGraphObject().getInnerJSONObject().getJSONObject("cover").getString("source");
+//                                new DownloadImageTask((ImageView)myFragment.findViewById(R.id.cover)).execute(url);
+//                                System.out.print(url);
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//        ).executeAsync();
 
         return myFragment;
     }
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-
-        }
-    }
+//    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+//        ImageView bmImage;
+//
+//        public DownloadImageTask(ImageView bmImage) {
+//            this.bmImage = bmImage;
+//        }
+//
+//        protected Bitmap doInBackground(String... urls) {
+//            String urldisplay = urls[0];
+//            Bitmap mIcon11 = null;
+//            try {
+//                InputStream in = new java.net.URL(urldisplay).openStream();
+//                mIcon11 = BitmapFactory.decodeStream(in);
+//            } catch (Exception e) {
+//                Log.e("Error", e.getMessage());
+//                e.printStackTrace();
+//            }
+//            return mIcon11;
+//        }
+//
+//        protected void onPostExecute(Bitmap result) {
+//            bmImage.setImageBitmap(result);
+//
+//        }
+//    }
 
 
 }

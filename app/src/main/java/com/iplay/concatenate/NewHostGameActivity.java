@@ -62,10 +62,24 @@ public class NewHostGameActivity extends NetworkActivity {
 
         // my code begins here
 
+
         CommonUtils.onHostGame = true;
+
+        TextView mynameTextView = ((TextView)findViewById(R.id.myname));
+        TextView mylevelTextView = ((TextView)findViewById(R.id.mylevel));
+
+        mynameTextView.setText(CommonUtils.name);
+        mylevelTextView.setText(String.valueOf(CommonUtils.score) + " XP");
+        ((CircularProfilePicView)findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
 
 //        CommonUtils.waitingFor = null; // already set while making this intent
 
+        TextView yournameTextView = ((TextView)findViewById(R.id.yourname));
+        TextView yourlevelTextView = ((TextView)findViewById(R.id.yourlevel));
+
+        yournameTextView.setText(CommonUtils.getFriendById(CommonUtils.waitingFor).getName());
+        yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(CommonUtils.waitingFor).getScore()) + " XP");
+        ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
 
@@ -252,8 +266,9 @@ public class NewHostGameActivity extends NetworkActivity {
                             t.show();
                             final Intent intent = new Intent(NewHostGameActivity.this, HomeActivity.class);
                             CommonUtils.waitingFor = null;
-                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
                             startActivity(intent);
+                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+
                         }
                     }
                 });

@@ -43,13 +43,28 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/yourpic"
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="210dp"
+                >
+            <!--<ImageView-->
+                <!--android:id="@+id/yourpic"-->
+                <!--android:layout_width="180dp"-->
+                <!--android:layout_height="180dp"-->
+                <!--android:layout_margin="30dp"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:src="@drawable/circlepic"/>-->
+
+            <com.iplay.concatenate.CircularProfilePicView
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                android:layout_margin="30dp"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/circlepic"/>
+                android:id ="@+id/yourpic"
+                ></com.iplay.concatenate.CircularProfilePicView>
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
@@ -57,7 +72,9 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_below="@+id/yourpiclayout"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp">
 
             <RelativeLayout
 
@@ -129,14 +146,24 @@
             android:gravity="center"
             android:layout_below="@+id/textSwitcherlayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/mypic"
+            android:layout_height="150dp">
+            <!--<ImageView-->
+                <!--android:id="@+id/mypic"-->
+                <!--android:layout_width="120dp"-->
+                <!--android:layout_height="120dp"-->
+                <!--android:layout_margin="30dp"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:src="@drawable/circlepic"/>-->
+
+            <com.iplay.concatenate.CircularProfilePicView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_margin="30dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/circlepic"/>
+                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:id ="@+id/mypic"
+                ></com.iplay.concatenate.CircularProfilePicView>
+
         </RelativeLayout>
 
         <LinearLayout

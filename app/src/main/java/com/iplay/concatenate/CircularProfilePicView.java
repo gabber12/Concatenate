@@ -443,7 +443,6 @@ public class CircularProfilePicView extends FrameLayout {
                             new ImageRequest.Callback() {
                                 @Override
                                 public void onCompleted(ImageResponse response) {
-                                    // TODO: Make a call here if required, otherwise not.
                                     processResponse(response,false);
                                 }
                             }

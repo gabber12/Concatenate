@@ -59,6 +59,13 @@ public class NewQuickGame extends NetworkActivity {
 
         // my code begins here
 
+        TextView mynameTextView = ((TextView)findViewById(R.id.myname));
+        TextView mylevelTextView = ((TextView)findViewById(R.id.mylevel));
+
+        mynameTextView.setText(CommonUtils.name);
+        mylevelTextView.setText(String.valueOf(CommonUtils.score) + " XP");
+        ((CircularProfilePicView)findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
+
         CommonUtils.onQuickGame = true;
         LocalBroadcastManager.getInstance(this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
 
