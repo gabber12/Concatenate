@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.3"
+        android:background="@color/material_red_500"
+        ></RelativeLayout>
+    <LinearLayout
+        android:layout_width="130dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:id="@+id/spinner"
+        >
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/progress_wheel_quick"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_centerInParent="true"
+            app:matProg_circleRadius="110dp"
+            app:matProg_barWidth="5dp"
+            app:matProg_barColor="#FFFFFF"
+            app:matProg_progressIndeterminate="true"
+            />
+        </LinearLayout>
+</RelativeLayout>
