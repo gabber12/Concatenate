@@ -157,6 +157,53 @@ public class CommonUtils {
         Request.executeBatchAsync(scoresGraphPathRequest);
     }
 
+    public static void fetchFriendScore(String userId, final Context ctx) {
+
+
+
+        final Session session = Session.getActiveSession();
+        Request scoresGraphPathRequest = Request.newGraphPathRequest(session,
+                userId+"/scores",
+                new Request.Callback() {
+
+                    @Override
+                    public void onCompleted(Response response) {
+
+                        FacebookRequestError error = response.getError();
+                        if (error != null) {
+                            Log.e("Error", error.toString());
+
+                            // TODO: Show an error or handle it better.
+                            //((ScoreboardActivity)getActivity()).handleError(error, false);
+                        } else if (session == Session.getActiveSession()) {
+                            if (response != null) {
+                                GraphObject graphObject = response.getGraphObject();
+                                JSONArray dataArray = (JSONArray)graphObject.getProperty("data");
+
+                                final ArrayList<Integer> scoreboardEntriesList = new ArrayList<Integer>();
+                                System.out.println("Number of players: "+dataArray.length());
+                                for (int i=0; i< dataArray.length(); i++) {
+                                    JSONObject oneData = dataArray.optJSONObject(i);
+                                    int score = oneData.optInt("score");
+
+                                    JSONObject userObj = oneData.optJSONObject("user");
+                                    String userID = userObj.optString("id");
+                                    String userName = userObj.optString("name");
+
+                                    Intent in = new Intent("details_fetched");
+                                    in.putExtra("username", userName);
+                                    in.putExtra("score", score);
+                                    LocalBroadcastManager.getInstance(ctx).sendBroadcast(in);
+                                }
+                            }
+                        }
+
+                    }
+
+
+                });
+        Request.executeBatchAsync(scoresGraphPathRequest);
+    }
     public static FriendModel getFriendById(String id) {
         if (friendsMap == null) {
             Log.e("Error", "Friend List not initialized");
