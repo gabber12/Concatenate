@@ -303,6 +303,7 @@ public class HomeActivity extends FragmentActivity {
 
         CircularProfilePicView profile_pic = ((CircularProfilePicView)findViewById(R.id.profile_pic_user));
         profile_pic.setProfileId(CommonUtils.userId);
+//        profile_pic.setProfileId("1403774539942585");
 
 //        leaderboardButton.setOnClickListener(new View.OnClickListener() {
 //            @Override

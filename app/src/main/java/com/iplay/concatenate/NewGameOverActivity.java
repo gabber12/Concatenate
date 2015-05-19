@@ -51,8 +51,11 @@ public class NewGameOverActivity extends NetworkActivity {
 
 
 
-        int myScore = getIntent().getIntExtra("my_score", 0);
-        int yourScore = getIntent().getIntExtra("your_score", 0);
+        int myScore = MainGameActivity.currentMyScore;
+        int yourScore = MainGameActivity.currentYourScore;
+
+        float accuracy = getAccuracy(MainGameActivity.myAttempts, MainGameActivity.myRightAttempts);
+        float avgTime = getAvgTime(MainGameActivity.myTotalTime, MainGameActivity.myRightAttempts);
 
         CommonUtils.setScore(myScore, getApplicationContext());
 
@@ -60,9 +63,19 @@ public class NewGameOverActivity extends NetworkActivity {
         else if ( myScore < yourScore ) mSwitcher.setText("YOU LOSE");
         else mSwitcher.setText("IT'S A DRAW");
 
-        // TODO: Fill required data/ game metrics above and below in two boxes
+        // TODO: Fill required data/game metrics above and below in two boxes
         // TODO: Add a button to go to home.
 
+    }
+
+    float getAccuracy(int total, float right) {
+        if ( total == 0 ) return 0.0f;
+        return right/total;
+    }
+
+    float getAvgTime(float total, int attempts) {
+        if ( attempts == 0 ) return 0.0f;
+        return total/attempts;
     }
 
     @Override

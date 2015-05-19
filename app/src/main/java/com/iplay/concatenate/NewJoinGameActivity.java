@@ -101,6 +101,9 @@ public class NewJoinGameActivity extends NetworkActivity {
         yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(CommonUtils.waitingFor).getScore()) + " XP");
         ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
 
+        CommonUtils.againstUserName = CommonUtils.getFriendById(CommonUtils.waitingFor).getName();
+        CommonUtils.againstUserScore = CommonUtils.getFriendById(CommonUtils.waitingFor).getScore();
+
         mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);
 
         Animation anim = new AlphaAnimation(0.0f, 1.0f);

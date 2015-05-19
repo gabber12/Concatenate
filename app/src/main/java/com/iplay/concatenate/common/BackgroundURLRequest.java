@@ -35,6 +35,7 @@ public class BackgroundURLRequest extends AsyncTask<String, Integer, String> {
             String message = params[1];
             HttpPost post = new HttpPost(CommonUtils.SERVER_BASE + relativeURL);
             StringEntity se = new StringEntity(message);
+            System.out.println("Sending to URL:" + CommonUtils.SERVER_BASE + relativeURL + " - " + message);
             se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             post.setEntity(se);
             HttpResponse response = httpClient.execute(post);

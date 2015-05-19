@@ -152,6 +152,8 @@ public class SubscribeCallbackHandler implements OnMessage {
                             intent = new Intent("starting_game");
                             intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
                             intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
+                            intent.putExtra("sender_name", (String) jsonObject.get("fromUserName"));
+                            intent.putExtra("sender_score", (int)(long) jsonObject.get("fromUserScore"));
                             LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
 //                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                            ctx.startActivity(intent);
@@ -160,6 +162,8 @@ public class SubscribeCallbackHandler implements OnMessage {
                             intent = new Intent("starting_game");
                             intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
                             intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
+                            intent.putExtra("sender_name", (String) jsonObject.get("fromUserName"));
+                            intent.putExtra("sender_score", (int)(long) jsonObject.get("fromUserScore"));
 //                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                            ctx.startActivity(intent);
                             LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);

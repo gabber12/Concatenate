@@ -48,15 +48,33 @@
             android:layout_height="wrap_content">
 <RelativeLayout
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="30dp">
-            <ImageView
-                android:id="@+id/yourpic"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:src="@drawable/circlepic"/>
+    android:layout_height="210dp">
+    <FrameLayout
+        android:id="@+id/yourpic"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content">
+
+        <com.iplay.concatenate.CircularProfilePicView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:id ="@+id/yourpicfb"
+            ></com.iplay.concatenate.CircularProfilePicView>
+        <ImageView
+            android:id="@+id/yourpicimage"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:src="@drawable/circlepic"/>
+
+    </FrameLayout>
+
+
+
     <com.pnikosis.materialishprogress.ProgressWheel
         android:id="@+id/progress_wheel_quick"
         android:layout_width="190dp"
@@ -71,6 +89,8 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
             android:id="@+id/textSwitcherlayout"
             android:gravity="center"
             android:layout_width="match_parent"
@@ -147,7 +167,7 @@
             android:gravity="center"
             android:layout_below="@+id/textSwitcherlayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="150dp">
             <!--<ImageView-->
                 <!--android:id="@+id/mypic"-->
                 <!--android:layout_width="120dp"-->
@@ -160,7 +180,6 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="30dp"
                 android:layout_gravity="center_horizontal"
                 android:id ="@+id/mypic"
                 ></com.iplay.concatenate.CircularProfilePicView>
