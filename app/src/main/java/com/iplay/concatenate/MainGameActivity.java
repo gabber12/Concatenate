@@ -86,8 +86,9 @@ public class MainGameActivity extends NetworkActivity {
     private ProgressBar mpb, ypb;
 
     private int myMoves, yourMoves;
-    private int myTotalTime, yourTotalTime;
-    private int myWrongAttempts, yourWrongAttempts;
+    public static int myTotalTime, yourTotalTime;
+    public static int myRightAttempts, yourRightAttempts;
+    public static int myAttempts, yourAttempts;
 
     Typeface myTypeface = null, myTypefaceLight = null, myTypefaceMedium = null;
 
@@ -102,8 +103,8 @@ public class MainGameActivity extends NetworkActivity {
         CommonUtils.startGameIntent = null;
         CommonUtils.disableTimer(CommonUtils.startingGameTimer);
         currentMyScore = currentYourScore = 0;
-        myMoves = yourMoves = myWrongAttempts = yourWrongAttempts = 0;
-        myTotalTime = yourTotalTime = 0;
+        myMoves = yourMoves = myRightAttempts = yourRightAttempts = 0;
+        myTotalTime = yourTotalTime = myAttempts = yourAttempts = 0;
 
         super.onCreate(savedInstanceState);
 
@@ -229,16 +230,17 @@ public class MainGameActivity extends NetworkActivity {
         if (!CommonUtils.userId.equals(userTurn) || mpb.getProgress() == 0)
             return;
 
+        myAttempts++;
+
         String str = enterWord.getText().toString();
         int maxMatch = getMaxMatch(str, lastWord);
 
         if (!CommonUtils.words.contains(str) || maxMatch == 0 || str.equals(lastWord)) {
             System.out.println(maxMatch);
             System.out.println(CommonUtils.words.contains(str));
-            myWrongAttempts++;
             shakeWord();
         } else {
-
+            myRightAttempts++;
             myTotalTime += (mpb.getMax() - mpb.getProgress());
             if ( yourMoves < MAX_MOVES ) yourMoves++;
 
@@ -608,9 +610,15 @@ public class MainGameActivity extends NetworkActivity {
         TextView myLevelTextView = (TextView) findViewById(R.id.mylevel);
         TextView myScoreTextView = (TextView) findViewById(R.id.myscore);
 
+        myNameTextView.setText(CommonUtils.name);
+        myLevelTextView.setText(CommonUtils.score + " XP");
+
         TextView yourNameTextView = (TextView) findViewById(R.id.yourname);
         TextView yourLevelTextView = (TextView) findViewById(R.id.yourlevel);
         TextView yourScoreTextView = (TextView) findViewById(R.id.yourscore);
+
+        yourNameTextView.setText(CommonUtils.againstUserName);
+        yourLevelTextView.setText(CommonUtils.againstUserScore + " XP");
 
         myNameTextView.setTypeface(myTypefaceMedium);
         myLevelTextView.setTypeface(myTypefaceLight);
@@ -791,7 +799,10 @@ public class MainGameActivity extends NetworkActivity {
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        MainGameActivity.super.onBackPressed();
+                        // TODO: Make it go to Game over activity somehow.
+                        Intent in = new Intent(MainGameActivity.this, HomeActivity.class);
+                        startActivity(in);
+//                        MainGameActivity.super.onBackPressed();
                     }
                 })
                 .title("Leave Game")

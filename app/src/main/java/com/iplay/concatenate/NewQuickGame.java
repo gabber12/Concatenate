@@ -40,6 +40,7 @@ public class NewQuickGame extends NetworkActivity {
     private TextSwitcher mSwitcher;
 
     private int allAvailable = 0;
+    private String against = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +49,22 @@ public class NewQuickGame extends NetworkActivity {
         allAvailable = 0;
 
         setContentView(R.layout.activity_new_quick_game);
+        CommonUtils.onQuickGame = true;
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
 
-
-
         // my code begins here
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("pic_loaded"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mDetailsFetched, new IntentFilter("details_fetched"));
+
+        setupScreen();
+
+    }
+
+    private void setupScreen() {
 
         TextView mynameTextView = ((TextView)findViewById(R.id.myname));
         TextView mylevelTextView = ((TextView)findViewById(R.id.mylevel));
@@ -62,9 +72,6 @@ public class NewQuickGame extends NetworkActivity {
         mynameTextView.setText(CommonUtils.name);
         mylevelTextView.setText(String.valueOf(CommonUtils.score) + " XP");
         ((CircularProfilePicView)findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
-
-        CommonUtils.onQuickGame = true;
-        LocalBroadcastManager.getInstance(this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
 
         mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);
 
@@ -101,8 +108,13 @@ public class NewQuickGame extends NetworkActivity {
 
 
         // add progress bar too.
-
-        new BackgroundURLRequest().execute("add_me_to_wait_pool/", CommonUtils.userId);
+        JSONObject sendjsonObject = new JSONObject();
+        sendjsonObject.put("id", CommonUtils.userId);
+        sendjsonObject.put("name", CommonUtils.name);
+        sendjsonObject.put("score", CommonUtils.score);
+        System.out.println(sendjsonObject.toString());
+        new BackgroundURLRequest().execute("add_me_to_wait_pool/", sendjsonObject.toString());
+//        new BackgroundURLRequest().execute("add_me_to_wait_pool/", CommonUtils.userId);
 
 
         CommonUtils.quickGameTimer = new Timer();
@@ -122,16 +134,57 @@ public class NewQuickGame extends NetworkActivity {
             }
         }, 10000); // TODO: change the time to 30 seconds
 
-
-
     }
 
-    private void onGameStarted(final String senderId, final boolean isBot) {
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ((CircularProfilePicView)findViewById(R.id.yourpicfb)).setProfileId(against);
 
-        // TODO: Fetch other persons name and score
+
+            Animation fadeOut = new AlphaAnimation(1.0f,0.0f);
+            fadeOut.setDuration(1000);
+            Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
+            fadeIn.setDuration(1000);
+            fadeIn.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    findViewById(R.id.yourpicimage).setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+            ((CircularProfilePicView)findViewById(R.id.yourpicfb)).startAnimation(fadeIn);
+            findViewById(R.id.yourpicimage).startAnimation(fadeOut);
+
+        }
+    };
+
+    private void onGameStarted(final String senderId, final String senderName, final int senderScore, final boolean isBot) {
+
+        against = senderId;
+
+        TextView yournameTextView = ((TextView)findViewById(R.id.yourname));
+        TextView yourlevelTextView = ((TextView)findViewById(R.id.yourlevel));
+
+        yournameTextView.setText(senderName);
+        yourlevelTextView.setText(senderScore + " XP");
+        CommonUtils.againstUserName = senderName;
+        CommonUtils.againstUserScore = senderScore;
 
         CommonUtils.onQuickGame = false;
         CommonUtils.onStartingGame = true;
+        CommonUtils.waitingFor = senderId;
+        CommonUtils.getPic(CommonUtils.waitingFor, getApplicationContext());
         findViewById(R.id.progress_wheel_quick).setVisibility(View.GONE);
 
                 mSwitcher.clearAnimation();
@@ -186,7 +239,7 @@ public class NewQuickGame extends NetworkActivity {
 //                final String senderId = getIntent().getStringExtra("sender_id");
 //                final Boolean isBot = getIntent().getBooleanExtra("is_bot", false);
 
-                CommonUtils.waitingFor = senderId;
+
 
                 if ( isBot ) {
 
@@ -207,8 +260,8 @@ public class NewQuickGame extends NetworkActivity {
                         NewQuickGame.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
-                                        && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
+                                if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 15 * 1000
+                                        && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 10 * 1000) {
                                     CommonUtils.disableTimer(CommonUtils.startingGameTimer);
                                     startActivity(CommonUtils.startGameIntent);
                                 } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
@@ -231,7 +284,10 @@ public class NewQuickGame extends NetworkActivity {
 
     private void animateNameAndLevel() {
 
-        if ( allAvailable == 1 ) return; //TODO: Update to < 3 once we get callback from user name and score
+        System.out.println("Calling animate and level");
+
+        // this check is not required. Just for extension.
+        if ( allAvailable != 1 ) return;
 
         Interpolator decelerate = new DecelerateInterpolator();
         Interpolator accelerate = new AccelerateInterpolator();
@@ -293,7 +349,32 @@ public class NewQuickGame extends NetworkActivity {
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             System.out.println("hello!");
-            onGameStarted( intent.getStringExtra("sender_id"), intent.getBooleanExtra("is_bot", false) );
+            String sender_id = intent.getStringExtra("sender_id");
+            String sender_name = intent.getStringExtra("sender_name");
+            int sender_score = intent.getIntExtra("sender_score", 0);
+            onGameStarted( sender_id, sender_name, sender_score, intent.getBooleanExtra("is_bot", false) );
+        }
+    };
+
+    private BroadcastReceiver mDetailsFetched = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String userid = intent.getStringExtra("userid");
+            String username = intent.getStringExtra("username");
+            int score = intent.getIntExtra("score", 0);
+            System.out.println(userid + " " + username);
+            if ( userid.equals(CommonUtils.waitingFor) ) {
+                TextView yournameTextView = ((TextView)findViewById(R.id.yourname));
+                TextView yourlevelTextView = ((TextView)findViewById(R.id.yourlevel));
+
+                yournameTextView.setText(username);
+                yourlevelTextView.setText(String.valueOf(score) + " XP");
+// TODO: Fetch user pic also here.
+//                ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
+                allAvailable++;
+                animateNameAndLevel();
+            }
         }
     };
 

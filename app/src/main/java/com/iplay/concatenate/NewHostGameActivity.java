@@ -110,6 +110,9 @@ public class NewHostGameActivity extends NetworkActivity {
         yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(CommonUtils.waitingFor).getScore()) + " XP");
         ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
 
+        CommonUtils.againstUserName = CommonUtils.getFriendById(CommonUtils.waitingFor).getName();
+        CommonUtils.againstUserScore = CommonUtils.getFriendById(CommonUtils.waitingFor).getScore();
+
         LocalBroadcastManager.getInstance(NewHostGameActivity.this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
 
         mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);

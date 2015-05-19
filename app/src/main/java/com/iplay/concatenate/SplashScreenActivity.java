@@ -221,6 +221,8 @@ public class SplashScreenActivity extends NetworkActivity {
 
 
 
+                } else {
+                    ((Button)loginButton).setClickable(true);
                 }
             }
         });

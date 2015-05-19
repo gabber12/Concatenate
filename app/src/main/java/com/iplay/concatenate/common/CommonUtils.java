@@ -61,6 +61,8 @@ public class CommonUtils {
 
     public static String name;
     public static int score;
+    public static String againstUserName;
+    public static int againstUserScore;
     public static Map<String, FriendModel> friendsMap = null;
     public static String getChannelNameFromUserID(String id) {
         return "user_channel_" + id;
@@ -123,6 +125,8 @@ public class CommonUtils {
                             //((ScoreboardActivity)getActivity()).handleError(error, false);
                         } else if (session == Session.getActiveSession()) {
                             if (response != null) {
+
+                                System.out.println("Details fetched for friends score");
                                 GraphObject graphObject = response.getGraphObject();
                                 JSONArray dataArray = (JSONArray)graphObject.getProperty("data");
 
@@ -159,8 +163,6 @@ public class CommonUtils {
 
     public static void fetchFriendScore(String userId, final Context ctx) {
 
-
-
         final Session session = Session.getActiveSession();
         Request scoresGraphPathRequest = Request.newGraphPathRequest(session,
                 userId+"/scores",
@@ -181,6 +183,7 @@ public class CommonUtils {
                                 JSONArray dataArray = (JSONArray)graphObject.getProperty("data");
 
                                 final ArrayList<Integer> scoreboardEntriesList = new ArrayList<Integer>();
+                                System.out.println("Details fetched for player score");
                                 System.out.println("Number of players: "+dataArray.length());
                                 for (int i=0; i< dataArray.length(); i++) {
                                     JSONObject oneData = dataArray.optJSONObject(i);
@@ -191,6 +194,7 @@ public class CommonUtils {
                                     String userName = userObj.optString("name");
 
                                     Intent in = new Intent("details_fetched");
+                                    in.putExtra("userid", userID);
                                     in.putExtra("username", userName);
                                     in.putExtra("score", score);
                                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(in);
@@ -293,7 +297,7 @@ public class CommonUtils {
     }
 
     public static ImageResponse waitingForPic = null;
-    public static String waitingForPicId = null;
+    public static String waitingForPicId = "";
 
     public static void getPic(final String userId, final Context ctx) {
         try {
