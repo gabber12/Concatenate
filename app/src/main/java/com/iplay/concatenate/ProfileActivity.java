@@ -1,5 +1,6 @@
 package com.iplay.concatenate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.facebook.Session;
+import com.facebook.widget.LoginButton;
 import com.iplay.concatenate.common.CommonUtils;
 
 
@@ -20,13 +26,40 @@ public class ProfileActivity extends Fragment {
         myFragment = inflater.inflate(R.layout.activity_profile, container, false);
         super.onCreate(savedInstanceState);
 
-        ((Button)myFragment.findViewById(R.id.logoutButton)).setBackgroundResource(R.drawable.profile_logout);
+        ((Button)myFragment.findViewById(R.id.logout_button)).setBackgroundResource(R.drawable.profile_logout);
 
 
                 ((TextView)myFragment.findViewById(R.id.profile_name)).setText(CommonUtils.name);
-        ((TextView)myFragment.findViewById(R.id.profile_score)).setText("Score "+CommonUtils.score);
+        ((TextView)myFragment.findViewById(R.id.profile_score)).setText("Score " + CommonUtils.score);
         ((CircularProfilePicView)myFragment.findViewById(R.id.profile_pic_ac)).setProfileId(CommonUtils.userId);
+        Button btn = (Button)myFragment.findViewById(R.id.logout_button);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MaterialDialog md = new MaterialDialog.Builder(getActivity())
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                Session.getActiveSession().closeAndClearTokenInformation();
+                                Intent in = new Intent(getActivity(), SplashScreenActivity.class);
+                                startActivity(in);
+                                getActivity().finish();
 
+                            }
+                        })
+                        .title("Logout")
+                        .titleGravity(GravityEnum.CENTER)
+                        .content("Do you really want to logout?")
+                        .positiveText("Logout")
+                        .negativeText("Cancel")
+                        .theme(Theme.LIGHT)
+                        .negativeColorRes(R.color.material_deep_teal_500)
+                        .positiveColorRes(R.color.material_red_500)
+                        .show();
+
+
+            }
+        });
 //        Bundle bd = new Bundle();
 //        bd.putString("fields", "cover");
 //        new Request(

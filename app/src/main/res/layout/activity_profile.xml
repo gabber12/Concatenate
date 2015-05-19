@@ -35,14 +35,14 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center">
-            <com.facebook.widget.LoginButton
+            <Button
                 android:layout_width="130dp"
                 android:background="@drawable/profile_logout"
                 android:layout_height="45dp"
                 android:gravity="center"
-                fb:login_text=""
-                fb:logout_text=""
-                android:id="@+id/logoutButton"/>
+
+
+                android:id="@+id/logout_button"/>
         </RelativeLayout>
     </RelativeLayout>
 

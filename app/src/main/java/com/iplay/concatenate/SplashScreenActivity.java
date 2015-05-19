@@ -230,6 +230,10 @@ public class SplashScreenActivity extends NetworkActivity {
     protected void onResume(){
         super.onResume();
         fbUiLifecycleHelper.onResume();
+        Session session = Session.getActiveSession();
+        if(session.isClosed()) {
+            System.out.println("Hlle");
+        }
 
 
     }
