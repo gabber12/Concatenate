@@ -221,7 +221,7 @@ public class CommonUtils {
         SharedPreferences settings = ctx.getSharedPreferences(PREFS, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putInt("Score", score);
-
+        edit.commit();
         GraphObject go = new GraphObject() {
             String score;
             JSONObject jobj = new JSONObject();
