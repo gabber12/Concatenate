@@ -50,6 +50,8 @@ public class CommonUtils {
     public static boolean onQuickGame = false;
     public static boolean onStartingGame = false;
     public static boolean onHostGame = false;
+    public static boolean onMainGame = false;
+    public static boolean onGameOver = false;
 
 
     public static Timer startingGameTimer = null;
@@ -61,6 +63,7 @@ public class CommonUtils {
 
     public static String name;
     public static int score;
+    public static String againstId;
     public static String againstUserName;
     public static int againstUserScore;
     public static Map<String, FriendModel> friendsMap = null;
@@ -220,7 +223,7 @@ public class CommonUtils {
         CommonUtils.score = score+CommonUtils.score;
         SharedPreferences settings = ctx.getSharedPreferences(PREFS, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putInt("Score", score);
+        edit.putInt("Score", CommonUtils.score);
 
         GraphObject go = new GraphObject() {
             String score;

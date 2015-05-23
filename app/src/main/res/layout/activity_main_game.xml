@@ -130,12 +130,19 @@
                             android:layout_height="wrap_content" android:layout_width="wrap_content"
                             android:layout_alignParentRight="true" >
 
-                            <ImageView
-                                android:id="@+id/mypic"
+                            <!--<ImageView-->
+                                <!--android:id="@+id/mypic"-->
+                                <!--android:layout_width="50dp"-->
+                                <!--android:layout_height="50dp"-->
+                                <!--android:layout_centerInParent="true"-->
+                                <!--android:src="@drawable/circlepic"/>-->
+
+                            <com.iplay.concatenate.CircularProfilePicView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
                                 android:layout_centerInParent="true"
-                                android:src="@drawable/circlepic"/>
+                                android:id ="@+id/mypic"
+                                ></com.iplay.concatenate.CircularProfilePicView>
 
                             <ProgressBar
                                 android:id="@+id/myProgressBarTimeout"
@@ -144,7 +151,7 @@
                                 android:layout_height="50dp"
                                 android:layout_centerInParent="true"
                                 android:indeterminate="false"
-                                android:max="30000"
+                                android:max="20000"
                                 android:progress="0"
                                 android:progressDrawable="@drawable/circular_progress_bar" />
 
@@ -170,12 +177,19 @@
                             android:layout_height="wrap_content" android:layout_width="wrap_content"
                             android:layout_alignParentLeft="true" >
 
-                            <ImageView
-                                android:id="@+id/yourpic"
+                            <com.iplay.concatenate.CircularProfilePicView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
                                 android:layout_centerInParent="true"
-                                android:src="@drawable/circlepic"/>
+                                android:id ="@+id/yourpic"
+                                ></com.iplay.concatenate.CircularProfilePicView>
+
+                            <!--<ImageView-->
+                                <!--android:id="@+id/yourpic"-->
+                                <!--android:layout_width="50dp"-->
+                                <!--android:layout_height="50dp"-->
+                                <!--android:layout_centerInParent="true"-->
+                                <!--android:src="@drawable/circlepic"/>-->
 
                             <ProgressBar
                                 android:id="@+id/yourProgressBarTimeout"
@@ -184,7 +198,7 @@
                                 android:layout_height="50dp"
                                 android:layout_centerInParent="true"
                                 android:indeterminate="false"
-                                android:max="30000"
+                                android:max="20000"
                                 android:progress="0"
                                 android:progressDrawable="@drawable/circular_progress_bar" />
 

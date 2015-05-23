@@ -65,7 +65,7 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
-    private static int MAX_MOVES = 10;
+    private static int MAX_MOVES = 5;
 
 
     private LockEditText enterWord;
@@ -99,6 +99,8 @@ public class MainGameActivity extends NetworkActivity {
         myTypefaceLight = Typeface.createFromAsset(getAssets(), "BrandonText-Light.otf");
         myTypefaceMedium = Typeface.createFromAsset(getAssets(), "BrandonText-Medium.otf");
 
+        CommonUtils.onMainGame = true;
+
         CommonUtils.waitingFor = null;
         CommonUtils.startGameIntent = null;
         CommonUtils.disableTimer(CommonUtils.startingGameTimer);
@@ -123,6 +125,9 @@ public class MainGameActivity extends NetworkActivity {
 
         mpb = (ProgressBar) findViewById(R.id.myProgressBarTimeout);
         ypb = (ProgressBar) findViewById(R.id.yourProgressBarTimeout);
+
+        ((CircularProfilePicView)findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
+
 
         myScore = (TextView) findViewById(R.id.myscore);
         yourScore = (TextView) findViewById(R.id.yourscore);
@@ -205,6 +210,8 @@ public class MainGameActivity extends NetworkActivity {
 
         userTurn = getIntent().getStringExtra("user_turn");
         against = getIntent().getStringExtra("against_user");
+        CommonUtils.againstId = against;
+        ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.againstId);
         gameId = getIntent().getIntExtra("game_id", 0);
         isBot = getIntent().getBooleanExtra("is_bot", false);
         setWords(getIntent().getStringExtra("game_word"));
@@ -242,7 +249,8 @@ public class MainGameActivity extends NetworkActivity {
         } else {
             myRightAttempts++;
             myTotalTime += (mpb.getMax() - mpb.getProgress());
-            if ( yourMoves < MAX_MOVES ) yourMoves++;
+            yourMoves++;
+            isGameOver();
 
             setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
             updateMyScore(str);
@@ -275,6 +283,12 @@ public class MainGameActivity extends NetworkActivity {
 
         CommonUtils.disableTimer(CommonUtils.mainGameTimer);
         CommonUtils.mainGameTimer = new Timer();
+
+        if ( myMoves > MAX_MOVES || yourMoves > MAX_MOVES) {
+            mpb.setProgress(0); ypb.setProgress(0);
+            return;
+        }
+
         ProgressBar temp = null;
         if ( userTurn.equals(CommonUtils.userId) ) {
             mpb.setProgress(mpb.getMax());
@@ -294,7 +308,7 @@ public class MainGameActivity extends NetworkActivity {
                     @Override
                     public void run() {
                         long left = (pb.getMax() - System.currentTimeMillis() + startTime);
-                        if (left < 15 * 1000 && isBot && !word_request_sent && userTurn.equals(against) ) {
+                        if (left < 18 * 1000 && isBot && !word_request_sent && userTurn.equals(against) ) {
 
                             new BackgroundURLRequestMainGame().execute("get_random_word/", lastWord);
                             word_request_sent = true;
@@ -305,18 +319,31 @@ public class MainGameActivity extends NetworkActivity {
                         if (left <= 0) {
                             pb.setProgress(0);
                             if (userTurn.equals(CommonUtils.userId)) {
+                                // pass the chance instead of ending the game
+
+                                myTotalTime += (mpb.getMax() - mpb.getProgress());
+                                yourMoves++;
+                                isGameOver();
+
                                 try {
-                                    org.json.JSONObject jsonObject = new org.json.JSONObject();
-                                    jsonObject.put("typeFlag", 7);
-                                    jsonObject.put("toUser", against);
+                                    JSONObject jsonObject = new JSONObject();
                                     jsonObject.put("fromUser", CommonUtils.userId);
+                                    jsonObject.put("toUser", against);
                                     jsonObject.put("gameId", gameId);
-                                    jsonObject.put("userTurn", userTurn);
-                                    ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
-                                } catch (JSONException je) {
-                                    System.out.println("Unable to encode json: " + je.getMessage());
+                                    jsonObject.put("gameWord", "");
+                                    jsonObject.put("typeFlag", 5);
+                                    jsonObject.put("myScore", currentMyScore);
+
+                                    // send to other player
+                                    userTurn = against;
+                                    changeEnterWordBox();
+                                    if (!isBot)
+                                        ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
+
+                                } catch (Exception e) {
+                                    Log.e("json", "error while generating a json file and sending to server");
                                 }
-                                CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+                                resetCountdownTimer();
                             }
                         }
                         if (left <= -15 * 1000) {
@@ -328,12 +355,16 @@ public class MainGameActivity extends NetworkActivity {
                                     jsonObject.put("fromUser", CommonUtils.userId);
                                     jsonObject.put("gameId", gameId);
                                     jsonObject.put("userTurn", userTurn);
+                                    jsonObject.put("surrender", against);
                                     ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
                                 } catch (JSONException je) {
                                     System.out.println("Unable to encode json: " + je.getMessage());
                                 }
                             }
                             CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+                            CommonUtils.onMainGame = false;
+                            Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
+                            startActivity(in);
                         }
                     }
                 });
@@ -426,11 +457,11 @@ public class MainGameActivity extends NetworkActivity {
 
     private void changeEnterWordBox() {
         if (CommonUtils.userId.equals(userTurn)) {
-            myMoves++;
+//            myMoves++;
             enterWord.setCursorVisible(true);
             setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
         } else {
-            yourMoves++;
+//            yourMoves++;
             enterWord.setCursorVisible(false);
             setBackgroundBox(enterWord, R.drawable.enter_word_background_disable);
         }
@@ -587,19 +618,41 @@ public class MainGameActivity extends NetworkActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            changeTheWord(intent.getStringExtra("game_word"));
-            animateScore(yourScore, currentYourScore, Math.max(currentYourScore, intent.getIntExtra("your_score", 0)));
-            currentYourScore = Math.max(currentYourScore, intent.getIntExtra("your_score", 0));
-//            String points = String.valueOf(currentYourScore);
-//            while (points.length() < 3) points = "0" + points;
-//            yourScore.setText("Score: " + points);
+            String word = intent.getStringExtra("game_word");
+            if ( !word.equals("") ) {
+                changeTheWord(word);
+                animateScore(yourScore, currentYourScore, Math.max(currentYourScore, intent.getIntExtra("your_score", 0)));
+                currentYourScore = Math.max(currentYourScore, intent.getIntExtra("your_score", 0));
+            }
             userTurn = CommonUtils.userId;
             changeEnterWordBox();
-            // TODO: Update others metrics by getting info from server.
-            if ( myMoves < MAX_MOVES ) myMoves++;
+            myMoves++;
+            isGameOver();
             resetCountdownTimer();
         }
     };
+
+    private void isGameOver() {
+        System.out.println(myMoves + " "  + yourMoves);
+        if ( myMoves > MAX_MOVES || yourMoves > MAX_MOVES ) {
+                try {
+                    org.json.JSONObject jsonObject = new org.json.JSONObject();
+                    jsonObject.put("typeFlag", 7);
+                    jsonObject.put("toUser", against);
+                    jsonObject.put("fromUser", CommonUtils.userId);
+                    jsonObject.put("gameId", gameId);
+                    jsonObject.put("userTurn", userTurn);
+                    jsonObject.put("surrender", "");
+                    ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
+                } catch (JSONException je) {
+                    System.out.println("Unable to encode json: " + je.getMessage());
+                }
+                CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+                CommonUtils.onMainGame = false;
+                Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
+                startActivity(in);
+        }
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -739,7 +792,7 @@ public class MainGameActivity extends NetworkActivity {
         protected String doInBackground(String... params) {
 
             HttpClient httpClient = new DefaultHttpClient();
-            HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
+            HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 20000);
             try {
                 String relativeURL = params[0];
                 String message = params[1];
@@ -800,14 +853,28 @@ public class MainGameActivity extends NetworkActivity {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         // TODO: Make it go to Game over activity somehow.
-                        Intent in = new Intent(MainGameActivity.this, HomeActivity.class);
+                        CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+                        try {
+                            org.json.JSONObject jsonObject = new org.json.JSONObject();
+                            jsonObject.put("typeFlag", 7);
+                            jsonObject.put("toUser", against);
+                            jsonObject.put("fromUser", CommonUtils.userId);
+                            jsonObject.put("gameId", gameId);
+                            jsonObject.put("userTurn", userTurn);
+                            jsonObject.put("surrender", CommonUtils.userId);
+                            ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
+                        } catch (JSONException je) {
+                            System.out.println("Unable to encode json: " + je.getMessage());
+                        }
+                        CommonUtils.onMainGame = false;
+                        Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
                         startActivity(in);
 //                        MainGameActivity.super.onBackPressed();
                     }
                 })
                 .title("Leave Game")
                 .titleGravity(GravityEnum.CENTER)
-                .content("You will lose if you leave the game. Still continue?")
+                .content("You will lose if you leave the game. Surrender?")
                 .positiveText("YES")
                 .negativeText("NO")
                 .theme(Theme.LIGHT)

@@ -123,15 +123,21 @@ public class SubscribeCallbackHandler implements OnMessage {
                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     break;
                 case 6:
-                    CommonUtils.disableTimer(CommonUtils.mainGameTimer);
-                    Intent in = new Intent(ctx, NewGameOverActivity.class);
-                    in.putExtra("my_score", MainGameActivity.currentMyScore);
-                    in.putExtra("your_score", MainGameActivity.currentYourScore);
-                    in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    ctx.startActivity(in);
+                    if ( CommonUtils.onMainGame ) {
+                        CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+                        Intent in = new Intent(ctx, NewGameOverActivity.class);
+                        in.putExtra("surrender", (String)jsonObject.get("surrender"));
+                        in.putExtra("server_request", true);
+                        in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        ctx.startActivity(in);
+                    } else if ( CommonUtils.onGameOver ) {
+                        intent = new Intent("gameover_received");
+                        intent.putExtra("surrender", (String)jsonObject.get("surrender"));
+                        LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
+                    }
                     break;
                 case 7:
-                    // Ignoring the word timed out request
+                    // Ignoring the word timed out request - server should handle this
                     break;
                 case 8:
                     if ( CommonUtils.onQuickGame ) {

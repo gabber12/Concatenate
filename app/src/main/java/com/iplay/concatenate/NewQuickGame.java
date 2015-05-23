@@ -187,96 +187,96 @@ public class NewQuickGame extends NetworkActivity {
         CommonUtils.getPic(CommonUtils.waitingFor, getApplicationContext());
         findViewById(R.id.progress_wheel_quick).setVisibility(View.GONE);
 
-                mSwitcher.clearAnimation();
-                Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(),0);
-                fadeOutCustom.setDuration(500);
-                mSwitcher.setOutAnimation(fadeOutCustom);
-                mSwitcher.setText("CONCATY !");
+            mSwitcher.clearAnimation();
+            Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(),0);
+            fadeOutCustom.setDuration((long)(mSwitcher.getAlpha()*500));
+            mSwitcher.setOutAnimation(fadeOutCustom);
+            mSwitcher.setText("CONCATY !");
 
-                long duration = 2000; long offset = 1200;
-                Animation zoomOut = new ScaleAnimation(1.0f, 1.25f, 1.0f, 1.25f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                Animation zoomIn = new ScaleAnimation(1.0f, 0.83333f, 1.0f, 0.83333f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                zoomIn.setDuration(duration); zoomOut.setDuration(duration);
-                zoomIn.setStartOffset(offset); zoomOut.setStartOffset(offset);
-                zoomIn.setFillEnabled(true); zoomOut.setFillEnabled(true);
-                zoomIn.setFillAfter(true); zoomOut.setFillAfter(true);
+            long duration = 2000; long offset = 1200;
+            Animation zoomOut = new ScaleAnimation(1.0f, 1.25f, 1.0f, 1.25f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            Animation zoomIn = new ScaleAnimation(1.0f, 0.83333f, 1.0f, 0.83333f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            zoomIn.setDuration(duration); zoomOut.setDuration(duration);
+            zoomIn.setStartOffset(offset); zoomOut.setStartOffset(offset);
+            zoomIn.setFillEnabled(true); zoomOut.setFillEnabled(true);
+            zoomIn.setFillAfter(true); zoomOut.setFillAfter(true);
 
-                Interpolator bounceInterpolator = new BounceInterpolator();
-                zoomIn.setInterpolator(bounceInterpolator);
-                zoomOut.setInterpolator(bounceInterpolator);
+            Interpolator bounceInterpolator = new BounceInterpolator();
+            zoomIn.setInterpolator(bounceInterpolator);
+            zoomOut.setInterpolator(bounceInterpolator);
 
-                Animation moveUp = new TranslateAnimation(0,0,0,-30);
-                moveUp.setFillAfter(true); moveUp.setFillAfter(true);
-                moveUp.setDuration(800); moveUp.setStartOffset(offset);
+            Animation moveUp = new TranslateAnimation(0,0,0,-30);
+            moveUp.setFillAfter(true); moveUp.setFillAfter(true);
+            moveUp.setDuration(800); moveUp.setStartOffset(offset);
 
-                findViewById(R.id.mypic).startAnimation(zoomOut);
-                findViewById(R.id.yourpic).startAnimation(zoomIn);
-                findViewById(R.id.textSwitcherlayout).startAnimation(moveUp);
+            findViewById(R.id.mypic).startAnimation(zoomOut);
+            findViewById(R.id.yourpic).startAnimation(zoomIn);
+            findViewById(R.id.textSwitcherlayout).startAnimation(moveUp);
 
 
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(4000);
-                        } catch (InterruptedException e) {
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Do some stuff
-
-                                allAvailable++;
-                                animateNameAndLevel();
-
-                            }
-                        });
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(4000);
+                    } catch (InterruptedException e) {
                     }
-                };
-                thread.start();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Do some stuff
+
+                            allAvailable++;
+                            animateNameAndLevel();
+
+                        }
+                    });
+                }
+            };
+            thread.start();
 
 //                final String senderId = getIntent().getStringExtra("sender_id");
 //                final Boolean isBot = getIntent().getBooleanExtra("is_bot", false);
 
 
 
-                if ( isBot ) {
+            if ( isBot ) {
 
-                    JSONObject sendjsonObject = new JSONObject();
-                    sendjsonObject.put("fromUser", CommonUtils.userId );
-                    sendjsonObject.put("toUser", senderId);
-                    System.out.println(sendjsonObject.toString());
-                    new BackgroundURLRequest().execute("start_game_with_bot/", sendjsonObject.toString());
+                JSONObject sendjsonObject = new JSONObject();
+                sendjsonObject.put("fromUser", CommonUtils.userId );
+                sendjsonObject.put("toUser", senderId);
+                System.out.println(sendjsonObject.toString());
+                new BackgroundURLRequest().execute("start_game_with_bot/", sendjsonObject.toString());
+
+            }
+            // say the opponent left after 20 secs
+            final long startTime = System.currentTimeMillis();
+            CommonUtils.startingGameTimer = new Timer();
+            CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    CommonUtils.taskThread = Thread.currentThread();
+                    NewQuickGame.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 15 * 1000
+                                    && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 10 * 1000) {
+                                CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                                startActivity(CommonUtils.startGameIntent);
+                            } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
+                                Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
+                                t.show();
+                                final Intent intent = new Intent(NewQuickGame.this, HomeActivity.class);
+                                CommonUtils.waitingFor = null;
+                                CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                                startActivity(intent);
+                            }
+                        }
+                    });
 
                 }
-                // say the opponent left after 20 secs
-                final long startTime = System.currentTimeMillis();
-                CommonUtils.startingGameTimer = new Timer();
-                CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        CommonUtils.taskThread = Thread.currentThread();
-                        NewQuickGame.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 15 * 1000
-                                        && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 10 * 1000) {
-                                    CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                                    startActivity(CommonUtils.startGameIntent);
-                                } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
-                                    Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
-                                    t.show();
-                                    final Intent intent = new Intent(NewQuickGame.this, HomeActivity.class);
-                                    CommonUtils.waitingFor = null;
-                                    CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                                    startActivity(intent);
-                                }
-                            }
-                        });
-
-                    }
-                }, new Long(0), new Long(1000));
+            }, new Long(0), new Long(1000));
 
 
     }
