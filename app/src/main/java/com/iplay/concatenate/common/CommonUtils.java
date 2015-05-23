@@ -224,7 +224,7 @@ public class CommonUtils {
         SharedPreferences settings = ctx.getSharedPreferences(PREFS, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putInt("Score", CommonUtils.score);
-
+        edit.commit();
         GraphObject go = new GraphObject() {
             String score;
             JSONObject jobj = new JSONObject();
@@ -236,7 +236,7 @@ public class CommonUtils {
             @Override
             public Map<String, Object> asMap() {
                 Map<String, Object> ma = new TreeMap<String, Object>();
-                ma.put("score", 123);
+                ma.put("score", CommonUtils.score);
                 return ma;
             }
 
