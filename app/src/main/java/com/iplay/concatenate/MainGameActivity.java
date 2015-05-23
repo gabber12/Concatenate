@@ -66,7 +66,7 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
-    private static int MAX_MOVES = 5;
+    public static final int MAX_MOVES = 5;
 
 
     private LockEditText enterWord;
@@ -86,7 +86,7 @@ public class MainGameActivity extends NetworkActivity {
 
     private ProgressBar mpb, ypb;
 
-    private int myMoves, yourMoves;
+    public static int myMoves, yourMoves;
     public static int myTotalTime, yourTotalTime;
     public static int myRightAttempts, yourRightAttempts;
     public static int myAttempts, yourAttempts;
@@ -328,7 +328,7 @@ public class MainGameActivity extends NetworkActivity {
                             if (userTurn.equals(CommonUtils.userId)) {
                                 // pass the chance instead of ending the game
 
-                                myTotalTime += (mpb.getMax() - mpb.getProgress());
+                                myTotalTime += mpb.getMax();
                                 yourMoves++;
                                 isGameOver();
 

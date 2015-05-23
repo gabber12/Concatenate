@@ -118,7 +118,7 @@ public class NewGameOverActivity extends NetworkActivity {
             int yourScore = MainGameActivity.currentYourScore;
 
             float accuracy = getAccuracy(MainGameActivity.myAttempts, MainGameActivity.myRightAttempts);
-            float avgTime = getAvgTime(MainGameActivity.myTotalTime, MainGameActivity.myRightAttempts);
+            float avgTime = getAvgTime(MainGameActivity.myTotalTime, Math.min(MainGameActivity.myMoves, MainGameActivity.MAX_MOVES));
 
             mSwitcher.clearAnimation();
             Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(),0);
@@ -140,8 +140,7 @@ public class NewGameOverActivity extends NetworkActivity {
             }
 
             CommonUtils.setScore(myScore, getApplicationContext());
-            // TODO: set score for bot also here
-
+            // set score for bot also here
             JSONObject sendjsonObject = new JSONObject();
             sendjsonObject.put("id", CommonUtils.againstId);
             sendjsonObject.put("score", yourScore);
