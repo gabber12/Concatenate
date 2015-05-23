@@ -19,6 +19,8 @@ import android.widget.ViewSwitcher;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 
+import org.json.simple.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -89,7 +91,7 @@ public class NewGameOverActivity extends NetworkActivity {
 
         mSwitcher.setText("FETCHING SCORE...");
 
-        CommonUtils.setScore(MainGameActivity.currentMyScore, getApplicationContext());
+
 
         Timer gameOverTimer = new Timer();
         gameOverTimer.schedule(new TimerTask() {
@@ -137,6 +139,15 @@ public class NewGameOverActivity extends NetworkActivity {
                 else mSwitcher.setText("ITS A DRAW");
             }
 
+            CommonUtils.setScore(myScore, getApplicationContext());
+            // TODO: set score for bot also here
+
+            JSONObject sendjsonObject = new JSONObject();
+            sendjsonObject.put("id", CommonUtils.againstId);
+            sendjsonObject.put("score", yourScore);
+            new BackgroundURLRequest().execute("update_score_for_bot/", sendjsonObject.toString());
+
+
             ((TextView)(findViewById(R.id.myname))).setText(CommonUtils.name);
             ((TextView)(findViewById(R.id.mylevel))).setText("Score - " + myScore);
             ((TextView)(findViewById(R.id.myaccuracy))).setText("Accuracy: " + String.format("%.2f",accuracy) + "%");
@@ -178,6 +189,8 @@ public class NewGameOverActivity extends NetworkActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if ( !intent.getStringExtra("surrender").equals("") )
+                surrender = intent.getStringExtra("surrender");
             animateShowScore();
         }
     };

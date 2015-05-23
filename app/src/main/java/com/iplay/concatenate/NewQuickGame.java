@@ -132,7 +132,7 @@ public class NewQuickGame extends NetworkActivity {
                     }
                 });
             }
-        }, 10000); // TODO: change the time to 30 seconds
+        }, 3000); // TODO: change the time to 30 seconds
 
     }
 
@@ -260,8 +260,8 @@ public class NewQuickGame extends NetworkActivity {
                     NewQuickGame.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 15 * 1000
-                                    && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 10 * 1000) {
+                            if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
+                                    && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
                                 CommonUtils.disableTimer(CommonUtils.startingGameTimer);
                                 startActivity(CommonUtils.startGameIntent);
                             } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
@@ -379,18 +379,13 @@ public class NewQuickGame extends NetworkActivity {
     };
 
     @Override
-    public void onPause() {
+    protected void onDestroy() {
         new BackgroundURLRequest().execute("remove_me_from_pool/", CommonUtils.userId);
         CommonUtils.onQuickGame = false;
         CommonUtils.disableTimer(CommonUtils.quickGameTimer);
         CommonUtils.waitingFor = null;
         CommonUtils.onStartingGame = false;
         CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
         // Unregister since the activity is about to be closed.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mGameStarting);
         super.onDestroy();

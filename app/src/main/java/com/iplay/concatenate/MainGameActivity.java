@@ -34,6 +34,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -69,7 +70,7 @@ public class MainGameActivity extends NetworkActivity {
 
 
     private LockEditText enterWord;
-    private Button submitButton;
+    private ImageView submitButton;
     private LinearLayout wordsLayout;
 
     private static MainGameActivity that;
@@ -207,6 +208,12 @@ public class MainGameActivity extends NetworkActivity {
         };
         enterWord.setFilters(new InputFilter[]{new InputFilter.AllCaps(), filter});
         wordsLayout = (LinearLayout) findViewById(R.id.LinearLayoutWords);
+        findViewById(R.id.clear_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enterWord.setText("");
+            }
+        });
 
         userTurn = getIntent().getStringExtra("user_turn");
         against = getIntent().getStringExtra("against_user");
@@ -219,7 +226,7 @@ public class MainGameActivity extends NetworkActivity {
 
         System.out.println(CommonUtils.userId + " " + against + " " + userTurn);
 
-        submitButton = (Button) findViewById(R.id.submit);
+        submitButton = (ImageView) findViewById(R.id.submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -252,7 +259,7 @@ public class MainGameActivity extends NetworkActivity {
             yourMoves++;
             isGameOver();
 
-            setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
+            setBackgroundBox(enterWord, R.drawable.game_textback);
             updateMyScore(str);
             changeTheWord(str);
 
@@ -459,7 +466,7 @@ public class MainGameActivity extends NetworkActivity {
         if (CommonUtils.userId.equals(userTurn)) {
 //            myMoves++;
             enterWord.setCursorVisible(true);
-            setBackgroundBox(enterWord, R.drawable.enter_word_background_black);
+            setBackgroundBox(enterWord, R.drawable.game_textback);
         } else {
 //            yourMoves++;
             enterWord.setCursorVisible(false);
