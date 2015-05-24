@@ -66,8 +66,7 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
-    public static final int MAX_MOVES = 5;
-
+    public static final int MAX_MOVES = 10;
 
     private LockEditText enterWord;
     private ImageView submitButton;

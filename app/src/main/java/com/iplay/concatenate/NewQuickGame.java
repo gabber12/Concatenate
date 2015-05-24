@@ -132,7 +132,7 @@ public class NewQuickGame extends NetworkActivity {
                     }
                 });
             }
-        }, 3000); // TODO: change the time to 30 seconds
+        }, 5000); // TODO: change the time to 30 seconds
 
     }
 
