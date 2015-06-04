@@ -29,7 +29,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
                 android:orientation="vertical"
                 android:layout_above="@+id/LinearLayoutWords"
                 android:layout_marginBottom="10dp" >
@@ -279,11 +278,11 @@
             android:id="@+id/LinearLayout01">
             <com.iplay.concatenate.LockEditText
                 android:id="@+id/enter_word"
-                android:layout_height="wrap_content"
+                android:layout_height="46dp"
                 android:layout_width="fill_parent"
                 android:background="@drawable/main_text_enabled"
-                android:padding="8dp"
-                android:textSize="20dp"
+                android:textSize="18sp"
+                android:text="Enter word"
                 android:paddingLeft="15dp"
                 android:paddingRight="30dp"
                 android:inputType="textVisiblePassword">

@@ -26,10 +26,13 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
@@ -69,7 +72,7 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
-    public static final int MAX_MOVES = 10;
+    public static final int MAX_MOVES = 5;
     private static float WORD_HEIGHT_WIDTH_RATIO = 1.173f;
 
     private LockEditText enterWord;
@@ -94,6 +97,8 @@ public class MainGameActivity extends NetworkActivity {
     public static int myRightAttempts, yourRightAttempts;
     public static int myAttempts, yourAttempts;
 
+    private boolean gameInPlay = true;
+
     Typeface myTypeface = null, myTypefaceLight = null, myTypefaceMedium = null;
 
     @Override
@@ -104,6 +109,7 @@ public class MainGameActivity extends NetworkActivity {
         myTypefaceMedium = Typeface.createFromAsset(getAssets(), "BrandonText-Medium.otf");
 
         CommonUtils.onMainGame = true;
+        gameInPlay = true;
 
         CommonUtils.waitingFor = null;
         CommonUtils.startGameIntent = null;
@@ -247,7 +253,7 @@ public class MainGameActivity extends NetworkActivity {
 
     private void sendTheWrittenWord() {
 
-        if (!CommonUtils.userId.equals(userTurn) || mpb.getProgress() < 1e-5 )
+        if (!CommonUtils.userId.equals(userTurn) || mpb.getProgress() < 1e-5 || !gameInPlay )
             return;
 
         myAttempts++;
@@ -262,10 +268,8 @@ public class MainGameActivity extends NetworkActivity {
         } else {
             myRightAttempts++;
             myTotalTime += (mpb.getMax() - mpb.getProgress());
-            yourMoves++;
-            isGameOver();
+            myMoves++;
 
-            setBackgroundBox(enterWord, R.drawable.main_text_enabled);
             updateMyScore(str);
             changeTheWord(str);
 
@@ -280,14 +284,16 @@ public class MainGameActivity extends NetworkActivity {
 
                 // send to other player
                 userTurn = against;
-                changeEnterWordBox();
                 if (!isBot)
                     ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
 
             } catch (Exception e) {
                 Log.e("json", "error while generating a json file and sending to server");
             }
+
+            isGameOver();
             resetCountdownTimer();
+            changeEnterWordBox();
         }
 
     }
@@ -295,36 +301,41 @@ public class MainGameActivity extends NetworkActivity {
     private void resetCountdownTimer() {
 
         CommonUtils.disableTimer(CommonUtils.mainGameTimer);
-        CommonUtils.mainGameTimer = new Timer();
 
-        if ( myMoves > MAX_MOVES || yourMoves > MAX_MOVES) {
-            mpb.setProgress(0); ypb.setProgress(0);
+        if ( !gameInPlay ) {
             return;
         }
 
-        ProgressBar temp = null;
+        CommonUtils.mainGameTimer = new Timer();
+
+        ProgressBar temp = null, othertemp = null;
         if ( userTurn.equals(CommonUtils.userId) ) {
             mpb.setProgress(mpb.getMax());
-            ypb.setProgress(0); temp = mpb;
+            ypb.setProgress(0);
+            temp = mpb; othertemp = ypb;
 
         } else {
             ypb.setProgress(ypb.getMax());
-            mpb.setProgress(0); temp = ypb;
+            mpb.setProgress(0);
+            temp = ypb; othertemp = ypb;
         }
 
         temp.setProgressDrawable( getResources().getDrawable(R.drawable.circular_progress_bar) );
 
-        final ProgressBar pb = temp;
+        final ProgressBar pb = temp, otherpb = othertemp;
         final long startTime = System.currentTimeMillis();
         CommonUtils.mainGameTimer.scheduleAtFixedRate(new TimerTask() {
             boolean word_request_sent = false;
+            boolean changed_background = false;
+            boolean send_pass_request = false;
             @Override
             public void run() {
                 that.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        otherpb.setProgress(0);
                         long left = (pb.getMax() - System.currentTimeMillis() + startTime);
-                        if (left < 18 * 1000 && isBot && !word_request_sent && userTurn.equals(against) ) {
+                        if (left < 15 * 1000 && isBot && !word_request_sent && userTurn.equals(against) ) {
 
                             new BackgroundURLRequestMainGame().execute("get_random_word/", lastWord);
                             word_request_sent = true;
@@ -332,18 +343,20 @@ public class MainGameActivity extends NetworkActivity {
 
                         }
 
-                        if ( left < 6*1000 && left > 5*1000 )
-                            pb.setProgressDrawable( getResources().getDrawable(R.drawable.circular_progress_bar_end) );
+                        if ( left < 6*1000 && !changed_background ) {
+                            pb.setProgressDrawable(getResources().getDrawable(R.drawable.circular_progress_bar_end));
+                            changed_background = true;
+                        }
 
                         if (left > 0) pb.setProgress((int) left);
-                        if (left <= 0) {
+                        if (left <= 0 ) {
                             pb.setProgress(0);
-                            if (userTurn.equals(CommonUtils.userId)) {
+                            if (userTurn.equals(CommonUtils.userId) && !send_pass_request ) {
                                 // pass the chance instead of ending the game
+                                send_pass_request = true;
 
                                 myTotalTime += mpb.getMax();
-                                yourMoves++;
-                                isGameOver();
+                                myMoves++;
 
                                 try {
                                     JSONObject jsonObject = new JSONObject();
@@ -356,40 +369,49 @@ public class MainGameActivity extends NetworkActivity {
 
                                     // send to other player
                                     userTurn = against;
-                                    changeEnterWordBox();
                                     if (!isBot)
                                         ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
 
                                 } catch (Exception e) {
                                     Log.e("json", "error while generating a json file and sending to server");
                                 }
+                                isGameOver();
+                                changeEnterWordBox();
                                 resetCountdownTimer();
                             }
                         }
                         if (left <= -15 * 1000) {
                             if (userTurn.equals(against)) {
-                                try {
-                                    org.json.JSONObject jsonObject = new org.json.JSONObject();
-                                    jsonObject.put("typeFlag", 7);
-                                    jsonObject.put("toUser", against);
-                                    jsonObject.put("fromUser", CommonUtils.userId);
-                                    jsonObject.put("gameId", gameId);
-                                    jsonObject.put("userTurn", userTurn);
-                                    jsonObject.put("surrender", against);
-                                    ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
-                                } catch (JSONException je) {
-                                    System.out.println("Unable to encode json: " + je.getMessage());
-                                }
+                                overTheGameAndShowScore(against);
                             }
-                            CommonUtils.disableTimer(CommonUtils.mainGameTimer);
-                            CommonUtils.onMainGame = false;
-                            Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
-                            startActivity(in);
+
                         }
                     }
                 });
             }
         }, new Long(0), new Long(500));
+
+    }
+
+    private void overTheGameAndShowScore(String surrender) {
+
+        try {
+            org.json.JSONObject jsonObject = new org.json.JSONObject();
+            jsonObject.put("typeFlag", 7);
+            jsonObject.put("toUser", against);
+            jsonObject.put("fromUser", CommonUtils.userId);
+            jsonObject.put("gameId", gameId);
+            jsonObject.put("userTurn", userTurn);
+            jsonObject.put("surrender", surrender);
+            ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
+        } catch (JSONException je) {
+            System.out.println("Unable to encode json: " + je.getMessage());
+        }
+
+        CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+        CommonUtils.onMainGame = false;
+        Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
+        startActivity(in);
 
     }
 
@@ -483,7 +505,9 @@ public class MainGameActivity extends NetworkActivity {
     }
 
     private void changeEnterWordBox() {
-        if (CommonUtils.userId.equals(userTurn)) {
+        enterWord.setText("");
+
+        if ( gameInPlay && CommonUtils.userId.equals(userTurn) ) {
 //            myMoves++;
             enterWord.setCursorVisible(true);
             setBackgroundBox(enterWord, R.drawable.main_text_enabled);
@@ -677,32 +701,58 @@ public class MainGameActivity extends NetworkActivity {
                 currentYourScore = Math.max(currentYourScore, intent.getIntExtra("your_score", 0));
             }
             userTurn = CommonUtils.userId;
-            changeEnterWordBox();
-            myMoves++;
+            yourMoves++;
             isGameOver();
+            changeEnterWordBox();
             resetCountdownTimer();
         }
     };
 
     private void isGameOver() {
         System.out.println(myMoves + " "  + yourMoves);
-        if ( myMoves > MAX_MOVES || yourMoves > MAX_MOVES ) {
-                try {
-                    org.json.JSONObject jsonObject = new org.json.JSONObject();
-                    jsonObject.put("typeFlag", 7);
-                    jsonObject.put("toUser", against);
-                    jsonObject.put("fromUser", CommonUtils.userId);
-                    jsonObject.put("gameId", gameId);
-                    jsonObject.put("userTurn", userTurn);
-                    jsonObject.put("surrender", "");
-                    ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
-                } catch (JSONException je) {
-                    System.out.println("Unable to encode json: " + je.getMessage());
+        if ( gameInPlay && myMoves >= MAX_MOVES && yourMoves >= MAX_MOVES ) {
+
+            gameInPlay = false;
+            setBackgroundBox(enterWord, R.drawable.main_text_disabled);
+
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Do some stuff
+
+                            overTheGameAndShowScore("");
+
+//                            try {
+//                                org.json.JSONObject jsonObject = new org.json.JSONObject();
+//                                jsonObject.put("typeFlag", 7);
+//                                jsonObject.put("toUser", against);
+//                                jsonObject.put("fromUser", CommonUtils.userId);
+//                                jsonObject.put("gameId", gameId);
+//                                jsonObject.put("userTurn", userTurn);
+//                                jsonObject.put("surrender", "");
+//                                ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
+//                            } catch (JSONException je) {
+//                                System.out.println("Unable to encode json: " + je.getMessage());
+//                            }
+//                            CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+//                            CommonUtils.onMainGame = false;
+//                            Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
+//                            startActivity(in);
+
+                        }
+                    });
                 }
-                CommonUtils.disableTimer(CommonUtils.mainGameTimer);
-                CommonUtils.onMainGame = false;
-                Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
-                startActivity(in);
+            };
+            thread.start();
+
         }
     }
 

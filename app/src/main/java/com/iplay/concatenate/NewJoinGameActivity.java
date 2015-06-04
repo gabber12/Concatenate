@@ -49,10 +49,13 @@ public class NewJoinGameActivity extends NetworkActivity {
 
         // code begins here
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("pic_loaded"));
         String senderId = getIntent().getStringExtra("sender_id");
+        System.out.println(senderId);
         CommonUtils.waitingFor = senderId;
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("pic_loaded"));
         CommonUtils.getPic(CommonUtils.waitingFor, getApplicationContext());
+        System.out.println("hfushd -- " + CommonUtils.waitingFor);
 
     }
 
@@ -96,6 +99,8 @@ public class NewJoinGameActivity extends NetworkActivity {
 
         TextView yournameTextView = ((TextView)findViewById(R.id.yourname));
         TextView yourlevelTextView = ((TextView)findViewById(R.id.yourlevel));
+
+        System.out.println(CommonUtils.waitingFor);
 
         yournameTextView.setText(CommonUtils.getFriendById(CommonUtils.waitingFor).getName());
         yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(CommonUtils.waitingFor).getScore()) + " XP");
