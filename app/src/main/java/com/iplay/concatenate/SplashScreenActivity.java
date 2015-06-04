@@ -193,6 +193,7 @@ public class SplashScreenActivity extends NetworkActivity {
                                     cli.onConnected = new OnConnected() {
                                         @Override
                                         public void run(OrtcClient ortcClient) {
+                                            uif.dataSetAvailable();
                                             System.out.println("Connected to ORTC");
                                             ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
                                                     new SubscribeCallbackHandler(getApplicationContext()));

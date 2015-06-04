@@ -26,7 +26,7 @@ import ibt.ortc.extensibility.OnConnected;
 import ibt.ortc.extensibility.OrtcClient;
 
 
-
+@Deprecated
 public class FullscreenActivity extends NetworkActivity {
 
     private AccessToken token;

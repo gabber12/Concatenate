@@ -73,7 +73,7 @@ import java.util.TimerTask;
 public class MainGameActivity extends NetworkActivity {
 
     public static final int MAX_MOVES = 5;
-    private static float WORD_HEIGHT_WIDTH_RATIO = 1.173f;
+    private static float WORD_HEIGHT_WIDTH_RATIO = 1.148f;
 
     private LockEditText enterWord;
     private ImageView submitButton;
@@ -153,6 +153,9 @@ public class MainGameActivity extends NetworkActivity {
 
                 // you can call or do what you want with your EditText here
                 String str = enterWord.getText().toString();
+
+                if ( str.equals("") ) return;
+
                 int maxMatch = 0;
                 for (int i = 0; i < lastWord.length(); ++i) {
                     if (str.startsWith(lastWord.substring(i))) {
@@ -161,12 +164,14 @@ public class MainGameActivity extends NetworkActivity {
                     }
                 }
 
-                // TODO: change background to light up the current matches in suffix
                 for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
                     TextView textView = (TextView) wordsLayout.getChildAt(i);
+                    String schar = Character.toString(lastWord.charAt(i));
                     if (i + maxMatch >= wordsLayout.getChildCount()) {
+                        setBackgroundBox(textView, getDrawable(getApplicationContext(), "match" + schar.toLowerCase() ));
 //                        setBackgroundBox(textView, R.drawable.enter_word_background_red);
                     } else {
+                        setBackgroundBox(textView, getDrawable(getApplicationContext(), "letter" + schar.toLowerCase() ));
 //                        setBackgroundBox(textView, R.drawable.enter_word_background_black);
                     }
                 }
@@ -334,6 +339,13 @@ public class MainGameActivity extends NetworkActivity {
                     @Override
                     public void run() {
                         otherpb.setProgress(0);
+
+                        if ( !gameInPlay ) {
+                            pb.setProgress(0);
+                            return;
+                        }
+
+
                         long left = (pb.getMax() - System.currentTimeMillis() + startTime);
                         if (left < 15 * 1000 && isBot && !word_request_sent && userTurn.equals(against) ) {
 
@@ -565,6 +577,8 @@ public class MainGameActivity extends NetworkActivity {
 
         for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
             TextView textView = (TextView) wordsLayout.getChildAt(i);
+            String schar = Character.toString(lastWord.charAt(i));
+            setBackgroundBox(textView, getDrawable(getApplicationContext(), "letter" + schar.toLowerCase() ));
             Animation animateToExtremeLeft = new TranslateAnimation(0, -800, 0, 0);
             animateToExtremeLeft.setDuration(800);
             Animation fadeOutAnimation = new AlphaAnimation(1.0f, 0.0f);
@@ -652,7 +666,6 @@ public class MainGameActivity extends NetworkActivity {
             animationSet.addAnimation(fadeOutAnimation);
             newTextView.startAnimation(animationSet);
         }
-        enterWord.setText("");
         lastWord = str;
 
 //        for (int i = 0; i < wordsLayout.getChildCount(); ++i) {

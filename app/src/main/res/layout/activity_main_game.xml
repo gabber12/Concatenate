@@ -246,22 +246,22 @@
                 android:gravity="center"
                 android:layout_marginTop="25dp"
                 android:id="@+id/LinearLayoutWords">
-                <TextView
-                    android:layout_height="35dp"
-                    android:layout_width="30dp"
-                    android:background="@drawable/lettera"
-                    android:gravity="center"
-                    android:text="A"
-                    android:textSize="22sp"
-                    android:textColor="#0000FF"
-                    android:layout_margin="5dp">
-                </TextView>
-                <TextView
-                    android:layout_height="35dp"
-                    android:layout_width="30dp"
-                    android:background="@drawable/lettera"
-                    android:gravity="center">
-                </TextView>
+                <!--<TextView-->
+                    <!--android:layout_height="35dp"-->
+                    <!--android:layout_width="30dp"-->
+                    <!--android:background="@drawable/lettera"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="A"-->
+                    <!--android:textSize="22sp"-->
+                    <!--android:textColor="#0000FF"-->
+                    <!--android:layout_margin="5dp">-->
+                <!--</TextView>-->
+                <!--<TextView-->
+                    <!--android:layout_height="35dp"-->
+                    <!--android:layout_width="30dp"-->
+                    <!--android:background="@drawable/lettera"-->
+                    <!--android:gravity="center">-->
+                <!--</TextView>-->
 
             </LinearLayout>
 
