@@ -86,6 +86,7 @@ public class JoinGameAcitvity extends NetworkActivity {
         OrtcClient client = ORTCUtil.getClient();
         try {
             Intent intent = new Intent(that, NewJoinGameActivity.class);
+
             intent.putExtra("sender_id", senderId);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("typeFlag", 2);

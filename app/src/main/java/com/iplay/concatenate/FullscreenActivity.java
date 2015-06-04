@@ -138,6 +138,8 @@ public class FullscreenActivity extends NetworkActivity {
             }
         });
         fbUiLifecycleHelper.onCreate(savedInstanceState);
+        CommonUtils.setFbUiLifecycleHelper(fbUiLifecycleHelper);
+
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
         CommonUtils.setLoginButton(loginButton);
