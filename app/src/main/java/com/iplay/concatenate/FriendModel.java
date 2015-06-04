@@ -1,9 +1,11 @@
 package com.iplay.concatenate;
 
+import java.util.Comparator;
+
 /**
  * Created by gabber12 on 18/04/15.
  */
-public class FriendModel {
+public class FriendModel  implements Comparable{
     public int Score;
 
     public int getScore() {
@@ -50,4 +52,10 @@ public class FriendModel {
 
     public String id;
 
+
+
+    @Override
+    public int compareTo(Object another) {
+        return ((FriendModel)another).getScore() - getScore();
+    }
 }

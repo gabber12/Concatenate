@@ -4,11 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInstaller;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -17,6 +20,13 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.Session;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.WebDialog;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 
@@ -174,7 +184,12 @@ public class NewGameOverActivity extends NetworkActivity {
                     onBackPressed();
                 }
             });
-
+            findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sendBrag();
+                }
+            });
 
         }
     }
@@ -189,6 +204,69 @@ public class NewGameOverActivity extends NetworkActivity {
         return (float)((total/attempts)/1000.0);
     }
 
+
+    void sendBrag() {
+
+        // This first parameter is used for deep linking so that anyone who clicks the link will start smashing this user
+        // who sent the post
+        String link = "https://apps.facebook.com/friendsmashsample/?challenge_brag=";
+
+            link += CommonUtils.userId;
+
+        // Define the other parameters
+        String name = "Checkout my Concaty!";
+        String caption = "Come concatenate me back!";
+        String description = "I just scored " + CommonUtils.score + " friends! Can you beat my score?";
+        String picture = "http://www.friendsmash.com/images/logo_large.jpg";
+
+        if (FacebookDialog.canPresentShareDialog(this, FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+
+            // Create the Native Share dialog
+            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+                    .setLink(link)
+                    .setName(name)
+                    .setCaption(caption)
+                    .setPicture(picture)
+                    .build();
+
+            // Show the Native Share dialog
+
+            (CommonUtils.getFbUiLifecycleHelper()   ).trackPendingDialogCall(shareDialog.present());
+        } else {
+
+            // Prepare the web dialog parameters
+            Bundle params = new Bundle();
+            params.putString("link", link);
+            params.putString("name", name);
+            params.putString("caption", caption);
+            params.putString("description", description);
+            params.putString("picture", picture);
+
+            // Show FBDialog without a notification bar
+            showDialogWithoutNotificationBar("feed", params);
+        }
+    }
+    private void showDialogWithoutNotificationBar(String action , Bundle params){
+
+        WebDialog dialog = new WebDialog.Builder(this, Session.getActiveSession(), action, params).
+                setOnCompleteListener(new WebDialog.OnCompleteListener() {
+                    @Override
+                    public void onComplete(Bundle values, FacebookException error) {
+                        if (error != null && !(error instanceof FacebookOperationCanceledException)) {
+
+                        }
+
+                    }
+                }).build();
+
+        Window dialog_window = dialog.getWindow();
+        dialog_window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+
+        dialog.show();
+    }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

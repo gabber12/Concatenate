@@ -9,6 +9,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.iplay.concatenate.common.CommonUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +112,10 @@ public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filt
         }
         // TODO replace findViewById by ViewHolder
 
+        TextView rank = (TextView)result.findViewById(R.id.rank);
+        if(rank != null) {
+            rank.setText("#"+(position+1));
+        }
         System.out.println("-------=Hello"+ list.get(position).getId());
         ((CircularProfilePicView) result.findViewById(R.id.profile_pic)).setProfileId(list.get(position).getId());
         ((TextView) result.findViewById(R.id.profile_name)).setText(list.get(position).getName());

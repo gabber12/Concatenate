@@ -15,6 +15,7 @@ import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.internal.ImageDownloader;
 import com.facebook.internal.ImageRequest;
 import com.facebook.internal.ImageResponse;
@@ -78,6 +79,17 @@ public class CommonUtils {
     public static LoginButton getLoginButton() { if (loginButton == null) throw new FacebookGraphObjectException(); return loginButton; }
     public static void setLoginButton(LoginButton lb) { loginButton = lb; }
     public static Thread taskThread;
+
+    public static UiLifecycleHelper getFbUiLifecycleHelper() {
+        return fbUiLifecycleHelper;
+    }
+
+    public static void setFbUiLifecycleHelper(UiLifecycleHelper fbUiLifecycleHelper) {
+        CommonUtils.fbUiLifecycleHelper = fbUiLifecycleHelper;
+    }
+
+    private static UiLifecycleHelper fbUiLifecycleHelper;
+
     public static void disableTimer(Timer t) {
         if ( t != null ) {
             t.cancel();

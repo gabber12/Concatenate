@@ -66,10 +66,11 @@ public class SplashScreenActivity extends NetworkActivity {
 
         setupFacebook();
         fbUiLifecycleHelper.onCreate(savedInstanceState);
+        CommonUtils.setFbUiLifecycleHelper(fbUiLifecycleHelper);
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
         loginButton.setBackgroundResource(R.drawable.profile_login);
-        loginButton.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+        loginButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
 
         ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
