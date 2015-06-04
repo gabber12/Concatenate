@@ -3,6 +3,7 @@ package com.iplay.concatenate.common;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
@@ -70,6 +71,8 @@ public class CommonUtils {
     public static String getChannelNameFromUserID(String id) {
         return "user_channel_" + id;
     }
+
+    public static Typeface FreightSansFont = null;
 
     private static LoginButton loginButton = null;
     public static LoginButton getLoginButton() { if (loginButton == null) throw new FacebookGraphObjectException(); return loginButton; }

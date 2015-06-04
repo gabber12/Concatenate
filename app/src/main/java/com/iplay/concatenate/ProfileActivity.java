@@ -26,11 +26,11 @@ public class ProfileActivity extends Fragment {
         myFragment = inflater.inflate(R.layout.activity_profile, container, false);
         super.onCreate(savedInstanceState);
 
-        ((Button)myFragment.findViewById(R.id.logout_button)).setBackgroundResource(R.drawable.profile_logout);
+        ((TextView)myFragment.findViewById(R.id.profile_heading)).setTypeface(CommonUtils.FreightSansFont);
 
 
                 ((TextView)myFragment.findViewById(R.id.profile_name)).setText(CommonUtils.name);
-        ((TextView)myFragment.findViewById(R.id.profile_score)).setText("Score " + CommonUtils.score);
+        ((TextView)myFragment.findViewById(R.id.profile_score)).setText(CommonUtils.score + " XP");
         ((CircularProfilePicView)myFragment.findViewById(R.id.profile_pic_ac)).setProfileId(CommonUtils.userId);
         Button btn = (Button)myFragment.findViewById(R.id.logout_button);
         btn.setOnClickListener(new View.OnClickListener() {

@@ -3,12 +3,12 @@
         <shape
             android:innerRadiusRatio="2.6"
             android:shape="ring"
-            android:thicknessRatio="9"
+            android:thicknessRatio="14"
             android:useLevel="true">
             <gradient
-                android:endColor="#000000"
-                android:startColor="#FF0000"
-                android:centerColor="#990000"
+                android:endColor="#009900"
+                android:startColor="#009900"
+                android:centerColor="#009900"
                 android:type="sweep" />
         </shape>
     </item>

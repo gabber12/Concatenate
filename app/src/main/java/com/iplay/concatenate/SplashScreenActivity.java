@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -61,10 +62,14 @@ public class SplashScreenActivity extends NetworkActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
+        CommonUtils.FreightSansFont = Typeface.createFromAsset(getAssets(), "FreightSans-BoldSC.ttf");
+
         setupFacebook();
         fbUiLifecycleHelper.onCreate(savedInstanceState);
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
+        loginButton.setBackgroundResource(R.drawable.profile_login);
+        loginButton.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
 
 
         ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
@@ -75,6 +80,7 @@ public class SplashScreenActivity extends NetworkActivity {
             @Override
             public void onClick(View v) {
                 v.setClickable(false);
+                v.setBackgroundResource(R.drawable.profile_logging);
             }
         });
 
@@ -222,7 +228,9 @@ public class SplashScreenActivity extends NetworkActivity {
 
 
                 } else {
-                    ((Button)loginButton).setClickable(true);
+                    // TODO: Set this on canceling fb dialog or failure to connect
+//                    loginButton.setBackgroundResource(R.drawable.profile_login);
+//                    ((Button)loginButton).setClickable(true);
                 }
             }
         });

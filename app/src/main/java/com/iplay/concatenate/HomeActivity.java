@@ -14,6 +14,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -210,6 +211,8 @@ public class HomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         cr = new ConnectivityReciever();
+
+        ((TextView)findViewById(R.id.home_title)).setTypeface(CommonUtils.FreightSansFont);
 
         SharedPreferences settings = getSharedPreferences(CommonUtils.PREFS, 0);
         int score = settings.getInt("score", CommonUtils.score);

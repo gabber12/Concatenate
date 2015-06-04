@@ -2,8 +2,12 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="material_red_500">#F44336</color>
-    <color name="touchcolor">#DDDDDD</color>
+    <color name="touchcolor">#AAAAAA</color>
     <drawable name="transperent_color">#00000000</drawable>
+    <color name="list_background">#20000000</color>
+
+    <drawable name="dark_green_progress">#009900</drawable>
+    <drawable name="dark_red_progress">#990000</drawable>
     
 
 </resources>

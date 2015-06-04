@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
@@ -41,6 +42,8 @@ public class InviteFriends extends NetworkActivity implements DataListener{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_invite_friends);
+
+        ((TextView) findViewById(R.id.host_title)).setTypeface(CommonUtils.FreightSansFont);
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away

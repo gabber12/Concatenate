@@ -1,4 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:background="@drawable/game_back"
     tools:context="com.iplay.concatenate.MainGameActivity">
@@ -106,6 +107,17 @@
                                 android:id ="@+id/mypic"
                                 ></com.iplay.concatenate.CircularProfilePicView>
 
+                            <!--<com.pnikosis.materialishprogress.ProgressWheel-->
+                                <!--android:id="@+id/myProgressBarTimeout"-->
+                                <!--android:layout_width="55dp"-->
+                                <!--android:layout_height="55dp"-->
+                                <!--android:layout_centerInParent="true"-->
+                                <!--app:matProg_circleRadius="110dp"-->
+                                <!--app:matProg_barWidth="3dp"-->
+                                <!--app:matProg_barColor="#009900"-->
+                                <!--app:matProg_linearProgress="true"-->
+                                <!--/>-->
+
                             <ProgressBar
                                 android:id="@+id/myProgressBarTimeout"
                                 style="?android:attr/progressBarStyleHorizontal"
@@ -125,6 +137,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
+                        android:id="@+id/game_vs"
                         android:text="vs"
                         android:textColor="#000000"
                         android:textSize="14sp"/>
@@ -152,6 +165,17 @@
                                 <!--android:layout_height="50dp"-->
                                 <!--android:layout_centerInParent="true"-->
                                 <!--android:src="@drawable/circlepic"/>-->
+
+                            <!--<com.pnikosis.materialishprogress.ProgressWheel-->
+                                <!--android:id="@+id/yourProgressBarTimeout"-->
+                                <!--android:layout_width="55dp"-->
+                                <!--android:layout_height="55dp"-->
+                                <!--android:layout_centerInParent="true"-->
+                                <!--app:matProg_circleRadius="110dp"-->
+                                <!--app:matProg_barWidth="3dp"-->
+                                <!--app:matProg_barColor="#009900"-->
+                                <!--app:matProg_linearProgress="true"-->
+                                <!--/>-->
 
                             <ProgressBar
                                 android:id="@+id/yourProgressBarTimeout"
@@ -224,9 +248,9 @@
                 android:layout_marginTop="25dp"
                 android:id="@+id/LinearLayoutWords">
                 <TextView
-                    android:layout_height="40dp"
-                    android:layout_width="40dp"
-                    android:background="@drawable/enter_word_background_black"
+                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:background="@drawable/lettera"
                     android:gravity="center"
                     android:text="A"
                     android:textSize="22sp"
@@ -234,13 +258,10 @@
                     android:layout_margin="5dp">
                 </TextView>
                 <TextView
-                    android:layout_height="40dp"
-                    android:layout_width="40dp"
-                    android:background="@drawable/enter_word_background_black"
-                    android:gravity="center"
-                    android:text="B"
-                    android:textColor="#0000FF"
-                    android:layout_margin="5dp">
+                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:background="@drawable/lettera"
+                    android:gravity="center">
                 </TextView>
 
             </LinearLayout>
@@ -260,7 +281,7 @@
                 android:id="@+id/enter_word"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
-                android:background="@drawable/game_textback"
+                android:background="@drawable/main_text_enabled"
                 android:padding="8dp"
                 android:textSize="20dp"
                 android:paddingLeft="15dp"

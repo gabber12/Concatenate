@@ -28,10 +28,12 @@
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"/>
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="35dp"
-            android:src="@drawable/leader_title"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HALL OF FAME"
+            android:textSize="14sp"
+            android:textColor="#333333"
             android:id="@+id/leader_title"
             android:layout_below="@+id/leader_logo"
             android:layout_centerInParent="true"/>
@@ -61,21 +63,22 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_below="@id/leader_title"
             android:layout_above="@id/leader_cup"
             android:layout_margin="5dp"
             android:layout_marginBottom="5dp"
             android:id="@+id/leader_box"
+            android:background="@drawable/leader_box_new"
             android:layout_centerInParent="true">
-            <ImageView
-                android:layout_width="match_parent"
-                android:src="@drawable/leader_box"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:scaleType="fitEnd"
-                android:gravity="center"
-                />
+            <!--<ImageView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:src="@drawable/leader_box"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:scaleType="fitXY"-->
+                <!--android:gravity="center"-->
+                <!--/>-->
             <!--<View-->
                 <!--android:layout_marginTop="10dp"-->
                 <!--android:layout_marginRight="10dp"-->
@@ -98,7 +101,7 @@
                 android:alwaysDrawnWithCache="true"
                 android:scrollingCache="true"
                 android:smoothScrollbar="true"
-                android:divider="@color/touchcolor"
+                android:divider="#DDDDDD"
                 app:carbon_overScroll="ifContentScrolls"
                 android:dividerHeight="1dp"
                 android:textAlignment="4" android:id="@+id/friendsView1"/>

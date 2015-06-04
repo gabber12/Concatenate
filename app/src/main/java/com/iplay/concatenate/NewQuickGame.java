@@ -92,6 +92,7 @@ public class NewQuickGame extends NetworkActivity {
                 myText.setGravity(Gravity.CENTER_HORIZONTAL);
                 myText.setTextSize(20);
                 myText.setTextColor(Color.WHITE);
+                myText.setTypeface(CommonUtils.FreightSansFont);
                 return myText;
             }
         });
@@ -105,6 +106,8 @@ public class NewQuickGame extends NetworkActivity {
         mSwitcher.setOutAnimation(fadeOut);
 
         mSwitcher.setText("SEARCHING OPPONENT");
+
+        ((TextView)findViewById(R.id.textBox)).setTypeface(CommonUtils.FreightSansFont);
 
 
         // add progress bar too.
@@ -139,6 +142,7 @@ public class NewQuickGame extends NetworkActivity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            ((CircularProfilePicView)findViewById(R.id.yourpicfb)).setVisibility(View.VISIBLE);
             ((CircularProfilePicView)findViewById(R.id.yourpicfb)).setProfileId(against);
 
 
@@ -370,8 +374,6 @@ public class NewQuickGame extends NetworkActivity {
 
                 yournameTextView.setText(username);
                 yourlevelTextView.setText(String.valueOf(score) + " XP");
-// TODO: Fetch user pic also here.
-//                ((CircularProfilePicView)findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
                 allAvailable++;
                 animateNameAndLevel();
             }

@@ -52,19 +52,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/yourname"
                 android:text="Divanshu Garg"
                 android:textSize="15sp"
+                app:carbon_textStyle="regular"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/yourlevel"
                 android:text="Level 12"
                 android:textSize="15sp"
+                app:carbon_textStyle="light"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@android:color/white"
@@ -82,7 +84,7 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="210dp"
+                android:layout_height="200dp"
                 >
             <!--<ImageView-->
                 <!--android:id="@+id/yourpic"-->
@@ -109,8 +111,8 @@
             android:layout_width="match_parent"
             android:layout_below="@+id/yourpiclayout"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp">
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp">
 
             <RelativeLayout
 
@@ -207,23 +209,25 @@
             android:id="@+id/myinfolayout"
             android:layout_below="@+id/mypiclayout"
             android:gravity="center"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="25dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/myname"
                 android:text="Aman Choudhary"
                 android:textSize="15sp"
+                app:carbon_textStyle="regular"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/mylevel"
                 android:text="Level 10"
+                app:carbon_textStyle="light"
                 android:textSize="15sp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"

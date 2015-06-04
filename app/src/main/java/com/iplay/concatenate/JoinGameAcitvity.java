@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.iplay.concatenate.common.CommonUtils;
 
@@ -37,6 +38,8 @@ public class JoinGameAcitvity extends NetworkActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("invite_received"));
 
         setContentView(R.layout.activity_join_game_acitvity);
+
+        ((TextView)findViewById(R.id.join_title)).setTypeface(CommonUtils.FreightSansFont);
 
         //Add id to channel
 

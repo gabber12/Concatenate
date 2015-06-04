@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -68,6 +69,7 @@ public class NewGameOverActivity extends NetworkActivity {
                 myText.setGravity(Gravity.CENTER_HORIZONTAL);
                 myText.setTextSize(20);
                 myText.setTextColor(Color.WHITE);
+                myText.setTypeface(CommonUtils.FreightSansFont);
                 return myText;
             }
         });
@@ -164,6 +166,15 @@ public class NewGameOverActivity extends NetworkActivity {
 
             findViewById(R.id.yourinfolayout).startAnimation(moveRight);
             findViewById(R.id.myinfolayout).startAnimation(moveLeft);
+
+
+            ((Button) findViewById(R.id.main_menu_button)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+
 
         }
     }

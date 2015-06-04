@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.iplay.concatenate.common.CommonUtils;
 
+import junit.framework.Assert;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -67,6 +70,7 @@ import java.util.TimerTask;
 public class MainGameActivity extends NetworkActivity {
 
     public static final int MAX_MOVES = 10;
+    private static float WORD_HEIGHT_WIDTH_RATIO = 1.173f;
 
     private LockEditText enterWord;
     private ImageView submitButton;
@@ -83,7 +87,7 @@ public class MainGameActivity extends NetworkActivity {
     private TextView myScore, yourScore;
     public static int currentMyScore = 0, currentYourScore = 0;
 
-    private ProgressBar mpb, ypb;
+    ProgressBar mpb, ypb;
 
     public static int myMoves, yourMoves;
     public static int myTotalTime, yourTotalTime;
@@ -151,12 +155,13 @@ public class MainGameActivity extends NetworkActivity {
                     }
                 }
 
+                // TODO: change background to light up the current matches in suffix
                 for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
                     TextView textView = (TextView) wordsLayout.getChildAt(i);
                     if (i + maxMatch >= wordsLayout.getChildCount()) {
-                        setBackgroundBox(textView, R.drawable.enter_word_background_red);
+//                        setBackgroundBox(textView, R.drawable.enter_word_background_red);
                     } else {
-                        setBackgroundBox(textView, R.drawable.enter_word_background_black);
+//                        setBackgroundBox(textView, R.drawable.enter_word_background_black);
                     }
                 }
 
@@ -214,6 +219,8 @@ public class MainGameActivity extends NetworkActivity {
             }
         });
 
+        ((TextView)findViewById(R.id.game_vs)).setTypeface(CommonUtils.FreightSansFont);
+
         userTurn = getIntent().getStringExtra("user_turn");
         against = getIntent().getStringExtra("against_user");
         CommonUtils.againstId = against;
@@ -240,7 +247,7 @@ public class MainGameActivity extends NetworkActivity {
 
     private void sendTheWrittenWord() {
 
-        if (!CommonUtils.userId.equals(userTurn) || mpb.getProgress() == 0)
+        if (!CommonUtils.userId.equals(userTurn) || mpb.getProgress() < 1e-5 )
             return;
 
         myAttempts++;
@@ -258,7 +265,7 @@ public class MainGameActivity extends NetworkActivity {
             yourMoves++;
             isGameOver();
 
-            setBackgroundBox(enterWord, R.drawable.game_textback);
+            setBackgroundBox(enterWord, R.drawable.main_text_enabled);
             updateMyScore(str);
             changeTheWord(str);
 
@@ -304,6 +311,9 @@ public class MainGameActivity extends NetworkActivity {
             ypb.setProgress(ypb.getMax());
             mpb.setProgress(0); temp = ypb;
         }
+
+        temp.setProgressDrawable( getResources().getDrawable(R.drawable.circular_progress_bar) );
+
         final ProgressBar pb = temp;
         final long startTime = System.currentTimeMillis();
         CommonUtils.mainGameTimer.scheduleAtFixedRate(new TimerTask() {
@@ -321,6 +331,10 @@ public class MainGameActivity extends NetworkActivity {
 
 
                         }
+
+                        if ( left < 6*1000 && left > 5*1000 )
+                            pb.setProgressDrawable( getResources().getDrawable(R.drawable.circular_progress_bar_end) );
+
                         if (left > 0) pb.setProgress((int) left);
                         if (left <= 0) {
                             pb.setProgress(0);
@@ -379,6 +393,7 @@ public class MainGameActivity extends NetworkActivity {
 
     }
 
+    // scroing logic here :)
     public int getScoreForThisWord(String str, String lastWord) {
         int maxMatch = getMaxMatch(str, lastWord);
         int earned = str.length();
@@ -428,15 +443,14 @@ public class MainGameActivity extends NetworkActivity {
 
         System.out.println(str);
 
-        float layout_margin = 1f;
-        int layout_width = getPixelsfromDP(40f);
+        int layout_width = getPixelsfromDP(30f);
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
         int parentWidth = size.x;
         int probableWidth = (parentWidth - getPixelsfromDP(10f))/str.length();
         layout_width = Math.min(probableWidth, layout_width);
-        int margin = getPixelsfromDP(layout_margin);
-        int blockWidth = layout_width - margin - margin;
+        int blockWidth = layout_width;
+        int blockHeight = (int)(blockWidth*WORD_HEIGHT_WIDTH_RATIO + 0.5);
 
         System.out.println(parentWidth + " " + blockWidth);
 
@@ -445,15 +459,13 @@ public class MainGameActivity extends NetworkActivity {
         for (int i = 0; i < str.length(); ++i) {
             TextView newTextView = new TextView(this);
             String s = Character.toString(str.charAt(i));
-            newTextView.setText(s);
+//            newTextView.setText(s);
             newTextView.setGravity(Gravity.CENTER);
-            setBackgroundBox(newTextView, R.drawable.enter_word_background_black);
-            newTextView.setHeight(blockWidth);
+            setBackgroundBox(newTextView,getDrawable(getApplicationContext(), "letter" + s.toLowerCase()));
+            newTextView.setHeight(blockHeight);
             newTextView.setWidth(blockWidth);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(getPixelsfromDP(layout_margin), getPixelsfromDP(layout_margin), getPixelsfromDP(layout_margin), getPixelsfromDP(layout_margin));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(blockWidth,blockHeight);
             newTextView.setLayoutParams(params);
-            newTextView.setTextColor(Color.BLUE);
             wordsLayout.addView(newTextView);
         }
         lastWord = str;
@@ -461,15 +473,24 @@ public class MainGameActivity extends NetworkActivity {
 
     }
 
+    public static int getDrawable(Context context, String name)
+    {
+        Assert.assertNotNull(context);
+        Assert.assertNotNull(name);
+
+        return context.getResources().getIdentifier(name,
+                "drawable", context.getPackageName());
+    }
+
     private void changeEnterWordBox() {
         if (CommonUtils.userId.equals(userTurn)) {
 //            myMoves++;
             enterWord.setCursorVisible(true);
-            setBackgroundBox(enterWord, R.drawable.game_textback);
+            setBackgroundBox(enterWord, R.drawable.main_text_enabled);
         } else {
 //            yourMoves++;
             enterWord.setCursorVisible(false);
-            setBackgroundBox(enterWord, R.drawable.enter_word_background_disable);
+            setBackgroundBox(enterWord, R.drawable.main_text_disabled);
         }
     }
 
@@ -493,15 +514,16 @@ public class MainGameActivity extends NetworkActivity {
     private void changeTheWord(String str) {
         int maxMatch = getMaxMatch(str, lastWord);
 
-        float layout_margin = 1f;
-        int layout_width = getPixelsfromDP(40f);
+//        float layout_margin = 1f
+        int layout_width = getPixelsfromDP(30f);
 
         int parentWidth = wordsLayout.getWidth();
         int probableWidth = (parentWidth - getPixelsfromDP(10f))/str.length();
         probableWidth = Math.min(probableWidth, layout_width);
         layout_width = probableWidth;
-        int margin = getPixelsfromDP(layout_margin);
-        int blockWidth = layout_width - margin - margin;
+//        int margin = getPixelsfromDP(layout_margin);
+        int blockWidth = layout_width;
+        int blockHeight = (int)(blockWidth*WORD_HEIGHT_WIDTH_RATIO + 0.5);
         int viewWidth = layout_width;
         int length = str.length();
         int totalWidth = viewWidth*length;
@@ -519,10 +541,10 @@ public class MainGameActivity extends NetworkActivity {
 
         for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
             TextView textView = (TextView) wordsLayout.getChildAt(i);
-            Animation animateToExtremeLeft = new TranslateAnimation(0, -600 - i * 50, 0, 0);
+            Animation animateToExtremeLeft = new TranslateAnimation(0, -800, 0, 0);
             animateToExtremeLeft.setDuration(800);
             Animation fadeOutAnimation = new AlphaAnimation(1.0f, 0.0f);
-            fadeOutAnimation.setDuration(800);
+            fadeOutAnimation.setDuration(700);
             AnimationSet animationSet = new AnimationSet(true);
             animationSet.addAnimation(animateToExtremeLeft);
             animationSet.addAnimation(fadeOutAnimation);
@@ -537,46 +559,70 @@ public class MainGameActivity extends NetworkActivity {
         int diff = 0;
 
         for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
-            TextView textView = (TextView) wordsLayout.getChildAt(i);
-            Integer curLeftPosition = textView.getLeft();
+            final TextView textView = (TextView) wordsLayout.getChildAt(i);
+//            Integer curLeftPosition = textView.getLeft();
             AnimationSet animationSet = new AnimationSet(true);
             Animation animateToStart = new TranslateAnimation(leftPosition.get(lastWord.length() - maxMatch + i) - newLeftPosition.get(i), 0, 0, 0);
             animateToStart.setDuration(800);
-            animateToStart.setStartOffset(200);
+//            animateToStart.setStartOffset(200);
             animateToStart.setInterpolator(new OvershootInterpolator());
             animationSet.addAnimation(animateToStart);
             diff += blockWidth - textView.getWidth();
-            float blockWidthf = blockWidth;
-            float lastWidthf = textView.getHeight();
+            final float blockWidthf = blockWidth;
+            float lastWidthf = textView.getWidth();
             float scale = (blockWidthf/lastWidthf);
             Animation scaleForChange = new ScaleAnimation(1.0f,scale,1.0f,scale,Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             scaleForChange.setDuration(800);
-            scaleForChange.setStartOffset(200);
+//            scaleForChange.setStartOffset(200);
+            scaleForChange.setAnimationListener(new Animation.AnimationListener() {
+                int finalWidth, finalHeight;
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    finalWidth = (int)(blockWidthf+0.5);
+                    finalHeight = (int)(finalWidth*WORD_HEIGHT_WIDTH_RATIO + 0.5);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    textView.setHeight(finalHeight);
+                    textView.setWidth(finalWidth);
+                    textView.getLayoutParams().height = finalHeight;
+                    textView.getLayoutParams().width = finalWidth;
+//                                textView.requestLayout();
+                    System.out.println("here: " + finalWidth + " " + textView.getWidth());
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
             animationSet.addAnimation(scaleForChange);
-            animationSet.setFillEnabled(true); animationSet.setFillAfter(true);
+//            animationSet.setFillEnabled(true); animationSet.setFillAfter(true);
             textView.startAnimation(animationSet);
         }
 
         for (int i = maxMatch; i < str.length(); ++i) {
-            TextView newTextView = new TextView(that);
+            TextView newTextView = new TextView(MainGameActivity.this);
             String s = Character.toString(str.charAt(i));
-            newTextView.setText(s);
+//            newTextView.setText(s);
             newTextView.setGravity(Gravity.CENTER);
-            setBackgroundBox(newTextView, R.drawable.enter_word_background_black);
-            newTextView.setHeight(blockWidth);
+            setBackgroundBox(newTextView, getDrawable(getApplicationContext(), "letter" + s.toLowerCase()));
+            newTextView.setHeight(blockHeight);
             newTextView.setWidth(blockWidth);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(margin, margin, margin, margin);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(blockWidth, blockHeight);
+//            params.setMargins(margin, margin, margin, margin);
             newTextView.setLayoutParams(params);
-            newTextView.setTextColor(Color.BLUE);
+//            newTextView.setTextColor(Color.BLUE);
             wordsLayout.addView(newTextView);
 
 //            System.out.println("new left :" + newTextView.getText().toString() + " " + newTextView.getLeft() );
 
-            Animation animateFromExtremeRight = new TranslateAnimation(600 - i * 50, diff, 0, 0);
+            Animation animateFromExtremeRight = new TranslateAnimation(800, 0, 0, 0);
             animateFromExtremeRight.setDuration(800);
             Animation fadeOutAnimation = new AlphaAnimation(0.0f, 1.0f);
-            fadeOutAnimation.setDuration(800);
+            fadeOutAnimation.setDuration(1200);
             AnimationSet animationSet = new AnimationSet(true);
             animationSet.addAnimation(animateFromExtremeRight);
             animationSet.addAnimation(fadeOutAnimation);
@@ -585,11 +631,11 @@ public class MainGameActivity extends NetworkActivity {
         enterWord.setText("");
         lastWord = str;
 
-        for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
-            TextView textView = (TextView) wordsLayout.getChildAt(i);
-            Integer curLeftPosition = textView.getLeft();
-//            System.out.println("final left :" + textView.getText().toString() + " " + curLeftPosition );
-        }
+//        for (int i = 0; i < wordsLayout.getChildCount(); ++i) {
+//            TextView textView = (TextView) wordsLayout.getChildAt(i);
+//            Integer curLeftPosition = textView.getLeft();
+////            System.out.println("final left :" + textView.getText().toString() + " " + curLeftPosition );
+//        }
     }
 
     private int getPixelsfromDP(float dp) {
@@ -605,7 +651,7 @@ public class MainGameActivity extends NetworkActivity {
     }
 
     private void shakeWord() {
-        setBackgroundBox(enterWord, R.drawable.enter_word_background_red);
+        setBackgroundBox(enterWord, R.drawable.main_text_wrong);
         Animation shake = AnimationUtils.loadAnimation(MainGameActivity.this, R.anim.shake);
         enterWord.startAnimation(shake);
     }

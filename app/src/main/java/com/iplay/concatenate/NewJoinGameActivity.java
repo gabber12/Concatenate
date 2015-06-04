@@ -123,9 +123,12 @@ public class NewJoinGameActivity extends NetworkActivity {
                 myText.setGravity(Gravity.CENTER_HORIZONTAL);
                 myText.setTextSize(20);
                 myText.setTextColor(Color.WHITE);
+                myText.setTypeface(CommonUtils.FreightSansFont);
                 return myText;
             }
         });
+
+        ((TextView)findViewById(R.id.textBox)).setTypeface(CommonUtils.FreightSansFont);
 
         Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
         fadeIn.setDuration(500);

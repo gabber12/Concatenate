@@ -19,20 +19,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/yourname"
-                android:text="Divanshu Garg"
+                android:text="Opponent"
                 android:textSize="15sp"
-                android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
+                app:carbon_textStyle="regular"
                 android:layout_height="wrap_content" />
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/yourlevel"
                 android:text="100 XP"
                 android:textSize="15sp"
-                android:layout_centerInParent="true"
+                app:carbon_textStyle="light"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content">
 <RelativeLayout
     android:layout_width="wrap_content"
-    android:layout_height="210dp">
+    android:layout_height="200dp">
     <FrameLayout
         android:id="@+id/yourpic"
         android:layout_width="wrap_content"
@@ -56,6 +56,7 @@
         android:layout_height="wrap_content">
 
         <com.iplay.concatenate.CircularProfilePicView
+            android:visibility="invisible"
             android:layout_width="180dp"
             android:layout_height="180dp"
             android:layout_centerHorizontal="true"
@@ -69,7 +70,7 @@
             android:layout_height="180dp"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:src="@drawable/circlepic"/>
+            android:src="@drawable/logo_white"/>
 
     </FrameLayout>
 
@@ -77,20 +78,20 @@
 
     <com.pnikosis.materialishprogress.ProgressWheel
         android:id="@+id/progress_wheel_quick"
-        android:layout_width="190dp"
-        android:layout_height="190dp"
+        android:layout_width="195dp"
+        android:layout_height="195dp"
         android:layout_centerInParent="true"
         app:matProg_circleRadius="110dp"
         app:matProg_barWidth="5dp"
-        app:matProg_barColor="#000000"
+        app:matProg_barColor="#FFFFFF"
         app:matProg_progressIndeterminate="true"
         />
 </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
             android:id="@+id/textSwitcherlayout"
             android:gravity="center"
             android:layout_width="match_parent"
@@ -191,12 +192,12 @@
             android:id="@+id/myinfolayout"
             android:layout_below="@+id/mypiclayout"
             android:gravity="center"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="25dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/myname"
                 android:text="Aman Choudhary"
                 android:textSize="15sp"
@@ -204,8 +205,9 @@
                 android:layout_gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
+                app:carbon_textStyle="regular"
                 android:layout_height="wrap_content" />
-            <TextView
+            <carbon.widget.TextView
                 android:id="@+id/mylevel"
                 android:text="Level 10"
                 android:textSize="15sp"
@@ -213,6 +215,7 @@
                 android:layout_gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
+                app:carbon_textStyle="light"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
