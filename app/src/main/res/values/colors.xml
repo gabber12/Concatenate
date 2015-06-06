@@ -2,7 +2,7 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="material_red_500">#F44336</color>
-    <color name="touchcolor">#AAAAAA</color>
+    <color name="touchcolor">#72AAAAAA</color>
     <drawable name="transperent_color">#00000000</drawable>
     <color name="list_background">#20000000</color>
 

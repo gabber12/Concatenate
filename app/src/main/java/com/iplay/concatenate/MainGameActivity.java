@@ -72,7 +72,7 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
-    public static final int MAX_MOVES = 5;
+    public static final int MAX_MOVES = 7;
     private static float WORD_HEIGHT_WIDTH_RATIO = 1.148f;
 
     private LockEditText enterWord;
@@ -307,9 +307,12 @@ public class MainGameActivity extends NetworkActivity {
 
         CommonUtils.disableTimer(CommonUtils.mainGameTimer);
 
+
         if ( !gameInPlay ) {
             return;
         }
+
+        mpb.setProgress(0); ypb.setProgress(0);
 
         CommonUtils.mainGameTimer = new Timer();
 
@@ -322,7 +325,7 @@ public class MainGameActivity extends NetworkActivity {
         } else {
             ypb.setProgress(ypb.getMax());
             mpb.setProgress(0);
-            temp = ypb; othertemp = ypb;
+            temp = ypb; othertemp = mpb;
         }
 
         temp.setProgressDrawable( getResources().getDrawable(R.drawable.circular_progress_bar) );
@@ -423,6 +426,7 @@ public class MainGameActivity extends NetworkActivity {
         CommonUtils.disableTimer(CommonUtils.mainGameTimer);
         CommonUtils.onMainGame = false;
         Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
         startActivity(in);
 
     }
@@ -531,10 +535,16 @@ public class MainGameActivity extends NetworkActivity {
     }
 
     private void setBackgroundBox(View view, int background) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            view.setBackgroundDrawable(getResources().getDrawable(background));
-        } else {
-            view.setBackground(getResources().getDrawable(background));
+        try {
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                view.setBackgroundDrawable(getResources().getDrawable(background));
+            } else {
+                view.setBackground(getResources().getDrawable(background));
+            }
+        } catch ( OutOfMemoryError e ) {
+            System.out.println("CAught out of memory.. Retrying!");
+            System.gc();
+            setBackgroundBox(view, background);
         }
     }
 
@@ -983,6 +993,7 @@ public class MainGameActivity extends NetworkActivity {
                         }
                         CommonUtils.onMainGame = false;
                         Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
+                        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                         startActivity(in);
 //                        MainGameActivity.super.onBackPressed();
                     }

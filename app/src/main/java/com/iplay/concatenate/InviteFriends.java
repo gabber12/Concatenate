@@ -118,6 +118,7 @@ public class InviteFriends extends NetworkActivity implements DataListener{
                             CommonUtils.hostGameTimer = new Timer();
                             Intent in = new Intent(getApplicationContext(), NewHostGameActivity.class);
                             in.putExtra("id", opponentId);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(in);
                         }
 
@@ -170,6 +171,7 @@ public class InviteFriends extends NetworkActivity implements DataListener{
     @Override
     public void onBackPressed() {
         Intent in = new Intent(this, HomeActivity.class);
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
         startActivity(in);
     }
 

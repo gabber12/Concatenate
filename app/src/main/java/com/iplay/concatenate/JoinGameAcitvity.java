@@ -96,6 +96,7 @@ public class JoinGameAcitvity extends NetworkActivity {
             client.send(CommonUtils.getChannelNameFromUserID(senderId), jsonObject.toString());
             ListAdapterUtil.removeInviteById( senderId );
             ma.notifyDataSetChanged();
+            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(intent);
         } catch (Exception e) {
             Log.e("json", "error while generating a json file and sending to server: " + e.getMessage());
@@ -112,6 +113,7 @@ public class JoinGameAcitvity extends NetworkActivity {
     @Override
     public void onBackPressed() {
         Intent in = new Intent(this, HomeActivity.class);
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
         startActivity(in);
     }
 

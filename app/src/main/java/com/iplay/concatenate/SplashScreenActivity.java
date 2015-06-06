@@ -212,7 +212,7 @@ public class SplashScreenActivity extends NetworkActivity {
                                             Intent in = new Intent(getApplicationContext(), HomeActivity.class);
                                             in.putExtra("userId", CommonUtils.userId);
                                             startActivity(in);
-                                            overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                                             SplashScreenActivity.this.finish();
                                         }
                                     }, ifl);
@@ -244,7 +244,7 @@ public class SplashScreenActivity extends NetworkActivity {
         fbUiLifecycleHelper.onResume();
         Session session = Session.getActiveSession();
         if(session.isClosed()) {
-            System.out.println("Hlle");
+            System.out.println("hello");
         }
 
 

@@ -175,6 +175,7 @@ public class NewHostGameActivity extends NetworkActivity {
                             final Intent intent = new Intent(NewHostGameActivity.this, HomeActivity.class);
                             CommonUtils.onHostGame = false;
                             CommonUtils.disableTimer(CommonUtils.hostGameTimer);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(intent);
                         }
                     }
@@ -304,12 +305,14 @@ public class NewHostGameActivity extends NetworkActivity {
                         if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
                                 && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(CommonUtils.startGameIntent);
                         } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
                             Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
                             t.show();
                             final Intent intent = new Intent(NewHostGameActivity.this, HomeActivity.class);
                             CommonUtils.waitingFor = null;
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(intent);
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
 
@@ -330,7 +333,9 @@ public class NewHostGameActivity extends NetworkActivity {
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
-                            NewHostGameActivity.super.onBackPressed();
+                            Intent in = new Intent(NewHostGameActivity.this, HomeActivity.class);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                            startActivity(in);
                         }
                     })
                     .title("Leave Game")
@@ -344,6 +349,7 @@ public class NewHostGameActivity extends NetworkActivity {
                     .show();
         } else {
             Intent in = new Intent(this, HomeActivity.class);
+            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(in);
         }
     }

@@ -287,6 +287,7 @@ public class NewGameOverActivity extends NetworkActivity {
     public void onBackPressed() {
         CommonUtils.onGameOver = false;
         Intent in = new Intent(this, HomeActivity.class);
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
         startActivity(in);
     }
 

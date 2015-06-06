@@ -23,7 +23,7 @@
         <ImageView
             android:layout_width="123dp"
             android:layout_height="146dp"
-            android:src="@drawable/splash_logo"
+            android:src="@drawable/hof_logo"
             android:id="@+id/leader_logo"
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"/>
@@ -69,7 +69,7 @@
             android:layout_margin="5dp"
             android:layout_marginBottom="5dp"
             android:id="@+id/leader_box"
-            android:background="@drawable/leader_box_new"
+            android:background="@drawable/leader_box_new_2"
             android:layout_centerInParent="true">
             <!--<ImageView-->
                 <!--android:layout_width="match_parent"-->

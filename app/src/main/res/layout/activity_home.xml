@@ -31,6 +31,7 @@
             <carbon.widget.ImageActionButton
                 android:layout_width="140dp"
                 android:layout_height="140dp"
+                android:clickable="true"
                 android:src="@drawable/home_quick_copy"
                 android:id="@+id/quick_game"
                 app:carbon_touchMargin="6dp"
@@ -44,6 +45,7 @@
 
             <carbon.widget.ImageActionButton
                 android:layout_width="140dp"
+                android:clickable="true"
                 android:layout_height="140dp"
                 android:src="@drawable/home_join_copy"
                 android:id="@+id/join_game"
@@ -58,6 +60,7 @@
 
             <carbon.widget.ImageActionButton
                 android:layout_width="140dp"
+                android:clickable="true"
                 android:layout_height="140dp"
                 android:src="@drawable/home_host_copy"
                 android:id="@+id/host_game"
@@ -99,10 +102,10 @@
     </io.codetail.widget.RevealFrameLayout>
 
     <com.iplay.concatenate.CircularProfilePicView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="13dp"
         android:id ="@+id/profile_pic_user"
 
         android:layout_gravity="top|left"

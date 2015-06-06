@@ -319,10 +319,13 @@ public class CommonUtils {
 
     public static void getPic(final String userId, final Context ctx) {
         try {
+
+            int width = ctx.getResources().getDisplayMetrics().widthPixels;
+            width = (int)(0.8*width);
             ImageRequest.Builder requestBuilder = new ImageRequest.Builder(
                     ctx
                     ,
-                    ImageRequest.getProfilePictureUrl(userId, 800, 800));
+                    ImageRequest.getProfilePictureUrl(userId, Math.min(800,width), Math.min(800,width)));
 
 
             ImageRequest request = requestBuilder.setAllowCachedRedirects(false)

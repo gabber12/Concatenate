@@ -267,6 +267,7 @@ public class NewJoinGameActivity extends NetworkActivity {
                         if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
                                 && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(CommonUtils.startGameIntent);
                         } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
                             Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
@@ -274,6 +275,7 @@ public class NewJoinGameActivity extends NetworkActivity {
                             final Intent intent = new Intent(NewJoinGameActivity.this, HomeActivity.class);
                             CommonUtils.waitingFor = null;
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(intent);
                         }
                     }
@@ -292,7 +294,9 @@ public class NewJoinGameActivity extends NetworkActivity {
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
-                            NewJoinGameActivity.super.onBackPressed();
+                            Intent in = new Intent(NewJoinGameActivity.this, HomeActivity.class);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                            startActivity(in);
                         }
                     })
                     .title("Leave Game")
@@ -306,6 +310,7 @@ public class NewJoinGameActivity extends NetworkActivity {
                     .show();
         } else {
             Intent in = new Intent(this, HomeActivity.class);
+            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(in);
         }
     }

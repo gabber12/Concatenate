@@ -2,6 +2,7 @@ package com.iplay.concatenate.common;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -49,10 +50,15 @@ public class  UserInfoFetcher  implements DataListener{
     private static ImageRequest lastRequest = null;
     public void fetchProfilePic() {
         try {
+
+            int width = ctx.getResources().getDisplayMetrics().widthPixels;
+            width = (int)(0.8*width);
+            System.out.println(width);
+
             ImageRequest.Builder requestBuilder = new ImageRequest.Builder(
                     ctx
                     ,
-                    ImageRequest.getProfilePictureUrl(CommonUtils.userId, 800, 800));
+                    ImageRequest.getProfilePictureUrl(CommonUtils.userId, Math.min(800,width), Math.min(800,width)));
 
 
             ImageRequest request = requestBuilder.setAllowCachedRedirects(false)

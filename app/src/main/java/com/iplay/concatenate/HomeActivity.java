@@ -34,7 +34,7 @@ public class HomeActivity extends FragmentActivity {
     public Boolean trans;
     public Boolean trans1;
 
-    public void radialTransitionShow(final View fragment, final View viewButton , final View otherButton) {
+    public void radialTransitionShow(final View fragment, final View viewButton , final View otherButton, final View container) {
         final int cx = (viewButton.getLeft() + viewButton.getRight()) / 2;
         final int cy = (viewButton.getTop() + viewButton.getBottom()) / 2;
 
@@ -44,8 +44,8 @@ public class HomeActivity extends FragmentActivity {
 
         fragment.setVisibility(View.VISIBLE);
 
-
-        SupportAnimator animator = ViewAnimationUtils.createCircularReveal(fragment,  cx, cy, 0, finalRadius);
+        System.out.println(fragment.getParent());
+        SupportAnimator animator = ViewAnimationUtils.createCircularReveal(container,  cx, cy, 0, finalRadius);
 
 
 
@@ -87,7 +87,7 @@ public class HomeActivity extends FragmentActivity {
         animator.start();
     }
 
-    public void radialTransitionHide(final View fragment, final View viewButton, final View otherButton) {
+    public void radialTransitionHide(final View fragment, final View viewButton, final View otherButton, final View container) {
         final int cx = (viewButton.getLeft() + viewButton.getRight()) / 2;
         final int cy = (viewButton.getTop() + viewButton.getBottom()) / 2;
 
@@ -95,7 +95,7 @@ public class HomeActivity extends FragmentActivity {
         final int finalRadius = (int)Math.sqrt(fragment.getWidth() * fragment.getWidth() + fragment.getHeight() * fragment.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
 
         SupportAnimator animator =
-                ViewAnimationUtils.createCircularReveal(fragment, cx, cy, finalRadius, 0);
+                ViewAnimationUtils.createCircularReveal(container, cx, cy, finalRadius, 0);
 
         animator.addListener(new SupportAnimator.AnimatorListener() {
             @Override
@@ -159,6 +159,8 @@ public class HomeActivity extends FragmentActivity {
     }
     RevealFrameLayout transitionView1;
     RevealFrameLayout transitionView;
+    View transitionViewContainer;
+    View transitionViewContainer1;
 
     ImageActionButton iab ;
 
@@ -228,7 +230,10 @@ public class HomeActivity extends FragmentActivity {
 
 
         transitionView = (RevealFrameLayout) findViewById(R.id.transition);
+        transitionViewContainer = findViewById(R.id.container);
         transitionView1 = (RevealFrameLayout) findViewById(R.id.transition1);
+        transitionViewContainer1 = findViewById(R.id.container_profile);
+
         transitionView.setVisibility(View.INVISIBLE);
         transitionView1.setVisibility(View.INVISIBLE);
 
@@ -243,9 +248,9 @@ public class HomeActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 if (trans) {
-                    radialTransitionShow(transitionView, iab, iab1);
+                    radialTransitionShow(transitionView, iab, iab1, transitionViewContainer);
                 } else {
-                    radialTransitionHide(transitionView, iab, iab1);
+                    radialTransitionHide(transitionView, iab, iab1, transitionViewContainer);
                 }
                 trans = !trans;
             }
@@ -256,9 +261,9 @@ public class HomeActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 if(trans1) {
-                    radialTransitionShow(transitionView1, iab1, iab);
+                    radialTransitionShow(transitionView1, iab1, iab, transitionViewContainer1);
                 } else {
-                    radialTransitionHide(transitionView1, iab1, iab);
+                    radialTransitionHide(transitionView1, iab1, iab, transitionViewContainer1);
                 }
                 trans1 = !trans1;
             }
@@ -335,8 +340,8 @@ public class HomeActivity extends FragmentActivity {
 //                rippleDrawable.setAlpha(0);
 
                 Intent in = new Intent(getApplicationContext(), JoinGameAcitvity.class);
+                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 startActivity(in);
-                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
             }
         });
 
@@ -344,8 +349,8 @@ public class HomeActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), InviteFriends.class);
+                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 startActivity(in);
-                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
             }
         });
 		
@@ -353,6 +358,7 @@ public class HomeActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), NewQuickGame.class);
+                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 startActivity(in);
 
             }
@@ -383,10 +389,10 @@ public class HomeActivity extends FragmentActivity {
     public void onBackPressed() {
         if(!trans || !trans1) {
             if(!trans) {
-                radialTransitionHide(transitionView, iab, iab1);
+                radialTransitionHide(transitionView, iab, iab1, transitionViewContainer);
                 trans = !trans;
             } else {
-                radialTransitionHide(transitionView1, iab1, iab);
+                radialTransitionHide(transitionView1, iab1, iab, transitionViewContainer1);
                 trans1 = !trans1;
             }
 
