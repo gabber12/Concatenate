@@ -173,6 +173,43 @@ public class NewGameOverActivity extends NetworkActivity {
             Animation moveLeft = new TranslateAnimation(-600, 0, 0, 0);
             Animation moveRight = new TranslateAnimation(600, 0, 0, 0);
             moveLeft.setDuration(500); moveRight.setDuration(500);
+            moveLeft.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    findViewById(R.id.metrics_layout).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.share_button).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.main_menu_button).setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                    findViewById(R.id.metrics_layout).setVisibility(View.VISIBLE);
+                    findViewById(R.id.share_button).setVisibility(View.VISIBLE);
+                    findViewById(R.id.main_menu_button).setVisibility(View.VISIBLE);
+
+                    Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
+                    fadeIn.setDuration(500); fadeIn.setStartOffset(500);
+                    fadeIn.setFillEnabled(true); fadeIn.setFillAfter(true);
+                    findViewById(R.id.metrics_layout).startAnimation(fadeIn);
+
+                    Animation fadeIn2 = new AlphaAnimation(0.0f,1.0f);
+                    fadeIn2.setDuration(500); fadeIn2.setStartOffset(900);
+                    fadeIn2.setFillEnabled(true); fadeIn2.setFillAfter(true);
+                    findViewById(R.id.share_button).startAnimation(fadeIn2);
+
+                    Animation fadeIn3 = new AlphaAnimation(0.0f,1.0f);
+                    fadeIn3.setDuration(500); fadeIn3.setStartOffset(1400);
+                    fadeIn3.setFillEnabled(true); fadeIn3.setFillAfter(true);
+                    findViewById(R.id.main_menu_button).startAnimation(fadeIn3);
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
 
             findViewById(R.id.yourinfolayout).startAnimation(moveRight);
             findViewById(R.id.myinfolayout).startAnimation(moveLeft);
@@ -214,9 +251,9 @@ public class NewGameOverActivity extends NetworkActivity {
             link += CommonUtils.userId;
 
         // Define the other parameters
-        String name = "Checkout my Concaty!";
-        String caption = "Come concatenate me back!";
-        String description = "I just scored " + CommonUtils.score + " friends! Can you beat my score?";
+        String name = "Checkout my Concaty achievement!";
+        String caption = "Join me for the fun.";
+        String description = "I just gained " + MainGameActivity.currentMyScore + "XP friends! Can you beat this?";
         String picture = "http://www.friendsmash.com/images/logo_large.jpg";
 
         if (FacebookDialog.canPresentShareDialog(this, FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {

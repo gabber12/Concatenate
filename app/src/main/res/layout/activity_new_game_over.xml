@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content" />
 
             <RelativeLayout
+                android:id="@+id/metrics_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -162,8 +163,8 @@
             android:id="@+id/yourinfolayout"
             android:layout_below="@+id/yourpiclayout"
             android:gravity="center"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -194,15 +195,15 @@
 
                 <Button
                     android:id="@+id/share_button"
-                    android:layout_height="35dp"
-                    android:layout_width="140dp"
+                    android:layout_height="44dp"
+                    android:layout_width="150dp"
                     android:layout_alignParentLeft="true"
                     android:background="@drawable/over_share"/>
 
                 <Button
                     android:id="@+id/main_menu_button"
-                    android:layout_height="35dp"
-                    android:layout_width="140dp"
+                    android:layout_height="44dp"
+                    android:layout_width="150dp"
                     android:layout_alignParentRight="true"
                     android:background="@drawable/over_main_menu"/>
 

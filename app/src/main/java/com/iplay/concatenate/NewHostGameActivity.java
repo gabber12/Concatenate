@@ -169,8 +169,9 @@ public class NewHostGameActivity extends NetworkActivity {
                         com.pnikosis.materialishprogress.ProgressWheel pw = (com.pnikosis.materialishprogress.ProgressWheel) findViewById(R.id.progress_wheel_host);
                         pw.setProgress((float) (left / 30000));
                         if (left >= 30000) {
+                            pw.setProgress(0);
                             System.out.println("Wait for friend over. Did not join.");
-                            Toast t = Toast.makeText(getApplicationContext(), "Opponent did not join :(", Toast.LENGTH_LONG);
+                            Toast t = Toast.makeText(getApplicationContext(), "Friend did not join..", Toast.LENGTH_LONG);
                             t.show();
                             final Intent intent = new Intent(NewHostGameActivity.this, HomeActivity.class);
                             CommonUtils.onHostGame = false;
