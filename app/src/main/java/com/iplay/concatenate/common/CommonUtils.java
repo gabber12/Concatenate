@@ -45,7 +45,7 @@ public class CommonUtils {
     public static ImageResponse imageResponse;
 //    concaty.tk
     public final static String SERVER_BASE = "http://concaty.tk/";
-
+    public static UserInfoFetcher uif;
     public static String userId = null;
 	public static String waitingFor = null;
 
