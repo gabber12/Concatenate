@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -67,6 +68,7 @@ public class SplashScreenActivity extends NetworkActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         CommonUtils.FreightSansFont = Typeface.createFromAsset(getAssets(), "FreightSans-BoldSC.ttf");
 
@@ -83,7 +85,7 @@ public class SplashScreenActivity extends NetworkActivity {
 
         background_image = (ImageView) findViewById(R.id.splash_logo);
         scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(6000);
+        scale.setDuration(4000);
 
         ((Button) loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,7 +282,6 @@ public class SplashScreenActivity extends NetworkActivity {
             startActivity(in);
         } else {
             cacheData();
-            CommonUtils.uif.fetchUserInfo(); //TODO: Crashing when logging out.
         }
 
 

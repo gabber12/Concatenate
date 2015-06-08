@@ -47,6 +47,7 @@ public class InviteFriends extends NetworkActivity implements DataListener {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_invite_friends);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ((TextView) findViewById(R.id.host_title)).setTypeface(CommonUtils.FreightSansFont);
 
@@ -109,32 +110,40 @@ public class InviteFriends extends NetworkActivity implements DataListener {
 
                             final OrtcClient client = ORTCUtil.getClient();
 
-                            // TODO: Can be optimized via callback
-                            while (true) {
-                                if (client.getIsConnected())
-                                    break;
-                                try {
-                                    Thread.sleep(1 * 1000);
-                                } catch (InterruptedException e) {
-                                    System.out.println("error in check connected thread: " + e);
-                                }
-                            }
+                            Thread thread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
 
-                            try {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("typeFlag", 1);
-                                jsonObject.put("toUser", opponentId);
-                                jsonObject.put("fromUser", CommonUtils.userId);
-                                client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
-                            } catch (JSONException je) {
-                                System.out.println("Unable to encode json: " + je.getMessage());
-                            }
-                            CommonUtils.waitingFor = opponentId;
-                            CommonUtils.hostGameTimer = new Timer();
-                            Intent in = new Intent(getApplicationContext(), NewHostGameActivity.class);
-                            in.putExtra("id", opponentId);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
-                            startActivity(in);
+                                    while (true) {
+                                        if (client.getIsConnected())
+                                            break;
+                                        try {
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            System.out.println("error in check connected thread: " + e);
+                                        }
+                                    }
+
+                                    try {
+                                        JSONObject jsonObject = new JSONObject();
+                                        jsonObject.put("typeFlag", 1);
+                                        jsonObject.put("toUser", opponentId);
+                                        jsonObject.put("fromUser", CommonUtils.userId);
+                                        client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                                    } catch (JSONException je) {
+                                        System.out.println("Unable to encode json: " + je.getMessage());
+                                    }
+                                    CommonUtils.waitingFor = opponentId;
+                                    CommonUtils.hostGameTimer = new Timer();
+                                    Intent in = new Intent(getApplicationContext(), NewHostGameActivity.class);
+                                    in.putExtra("id", opponentId);
+                                    overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                                    startActivity(in);
+
+                                }
+                            });
+                            thread.start();
+
                         }
 
                     }

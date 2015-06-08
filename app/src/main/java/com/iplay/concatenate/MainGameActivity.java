@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -154,7 +155,8 @@ public class MainGameActivity extends NetworkActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main_game);
-        setupActionBar();
+//        setupActionBar();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);

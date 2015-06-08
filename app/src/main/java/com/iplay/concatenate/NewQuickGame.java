@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -116,11 +117,7 @@ public class NewQuickGame extends NetworkActivity {
 
         setContentView(R.layout.activity_new_quick_game);
         CommonUtils.onQuickGame = true;
-
-        final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final View contentView = findViewById(R.id.fullscreen_content);
-
-        // my code begins here
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("pic_loaded"));
         LocalBroadcastManager.getInstance(this).registerReceiver(mGameStarting, new IntentFilter("starting_game"));
@@ -182,40 +179,48 @@ public class NewQuickGame extends NetworkActivity {
         sendjsonObject.put("id", CommonUtils.userId);
         sendjsonObject.put("name", CommonUtils.name);
         sendjsonObject.put("score", CommonUtils.score);
+        final String sendJSONString = sendjsonObject.toString();
         System.out.println(sendjsonObject.toString());
 
 
-        // TODO: Can be optimized via callback
-        while (true) {
-            if (ORTCUtil.getClient().getIsConnected()) {
-                new BackgroundURLRequest().execute("add_me_to_wait_pool/", sendjsonObject.toString());
-                break;
-            }
-            try {
-                Thread.sleep(2 * 1000);
-            } catch (InterruptedException e) {
-                System.out.println("error in check connected thread: " + e);
-            }
-        }
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                while (true) {
+                    if (ORTCUtil.getClient().getIsConnected()) {
+                        new BackgroundURLRequest().execute("add_me_to_wait_pool/", sendJSONString);
+                        break;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        System.out.println("error in check connected thread: " + e);
+                    }
+                }
 //        new BackgroundURLRequest().execute("add_me_to_wait_pool/", CommonUtils.userId);
 
 
-        CommonUtils.quickGameTimer = new Timer();
-        CommonUtils.quickGameTimer.schedule(new TimerTask() {
+                CommonUtils.quickGameTimer = new Timer();
+                CommonUtils.quickGameTimer.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                CommonUtils.taskThread = Thread.currentThread();
-                NewQuickGame.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("Sending bot request");
-                        new BackgroundURLRequest().execute("give_me_bot/", CommonUtils.userId);
-                        CommonUtils.disableTimer(CommonUtils.quickGameTimer);
+                        CommonUtils.taskThread = Thread.currentThread();
+                        NewQuickGame.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                System.out.println("Sending bot request");
+                                new BackgroundURLRequest().execute("give_me_bot/", CommonUtils.userId);
+                                CommonUtils.disableTimer(CommonUtils.quickGameTimer);
+                            }
+                        });
                     }
-                });
+                }, 22000);
+
             }
-        }, 22000);
+        });
+        thread.start();
 
     }
 
@@ -380,11 +385,13 @@ public class NewQuickGame extends NetworkActivity {
 
     @Override
     public void onBackPressed() {
+
         if (CommonUtils.onStartingGame) {
             new MaterialDialog.Builder(this)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
+                            closeTheState();
                             Intent in = new Intent(NewQuickGame.this, HomeActivity.class);
                             overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(in);
@@ -400,6 +407,7 @@ public class NewQuickGame extends NetworkActivity {
                     .positiveColorRes(R.color.material_red_500)
                     .show();
         } else {
+            closeTheState();
             Intent in = new Intent(this, HomeActivity.class);
             overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(in);
@@ -409,14 +417,18 @@ public class NewQuickGame extends NetworkActivity {
     @Override
     protected void onDestroy() {
         new BackgroundURLRequest().execute("remove_me_from_pool/", CommonUtils.userId);
+        closeTheState();
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGameStarting);
+        super.onDestroy();
+    }
+
+    private void closeTheState() {
         CommonUtils.onQuickGame = false;
         CommonUtils.disableTimer(CommonUtils.quickGameTimer);
         CommonUtils.waitingFor = null;
         CommonUtils.onStartingGame = false;
         CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-        // Unregister since the activity is about to be closed.
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGameStarting);
-        super.onDestroy();
     }
 
     @Override

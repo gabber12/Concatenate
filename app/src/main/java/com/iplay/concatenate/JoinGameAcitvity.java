@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -49,6 +50,7 @@ public class JoinGameAcitvity extends NetworkActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("invite_received"));
 
         setContentView(R.layout.activity_join_game_acitvity);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ((TextView) findViewById(R.id.join_title)).setTypeface(CommonUtils.FreightSansFont);
 

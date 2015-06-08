@@ -59,6 +59,7 @@ public class NewGameOverActivity extends NetworkActivity {
         CommonUtils.onGameOver = true;
 
         setContentView(R.layout.activity_new_game_over);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceivedGameOver, new IntentFilter("gameover_received"));
 
