@@ -55,6 +55,8 @@ public class SplashScreenActivity extends NetworkActivity {
         fbUiLifecycleHelper.onSaveInstanceState(outState);
     }
 
+    private long startTime;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +74,12 @@ public class SplashScreenActivity extends NetworkActivity {
         loginButton.setBackgroundResource(R.drawable.profile_login);
         loginButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
+        startTime = System.currentTimeMillis();
+
 
         ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
         Animation scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(5000);
+        scale.setDuration(3000);
 
         ((Button)loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,9 +101,11 @@ public class SplashScreenActivity extends NetworkActivity {
             public void onAnimationEnd(Animation animation) {
 
                 // start the animation to fullscreen if not logged in otherwise just start your caching.
+
                 uif.dataSetAvailable();
                 if(!Session.getActiveSession().isOpened())
                     animateToShowLogin();
+
 
 //                Intent intent = new Intent(SplashScreenActivity.this, FullscreenActivity.class);
 //                SplashScreenActivity.this.startActivity(intent);
@@ -145,21 +151,36 @@ public class SplashScreenActivity extends NetworkActivity {
     private void cacheData() {
 
         // Adding dictionary words to store in a static hash set
+//        System.out.println(System.currentTimeMillis());
 
-        if ( CommonUtils.words == null ) {
-            CommonUtils.words = new HashSet<String>();
-            InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.dict);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            try {
-                String line = reader.readLine();
-                while (line != null) {
-                    CommonUtils.words.add( line.toUpperCase() );
-                    line = reader.readLine();
+        // Loading dictionary from a thread - assuming will be loaded till game loads
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                long currentTime = System.currentTimeMillis();
+
+                if ( CommonUtils.words == null ) {
+                    CommonUtils.words = new HashSet<String>();
+                    InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.dict);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    try {
+                        String line = reader.readLine();
+                        while (line != null) {
+                            CommonUtils.words.add( line.toUpperCase() );
+                            line = reader.readLine();
+                        }
+                    } catch ( Exception e) {
+                        System.out.println("error while reading from dictionary of words.");
+                    }
                 }
-            } catch ( Exception e) {
-                System.out.println("error while reading from dictionary of words.");
+
+                System.out.println("Time - " + (System.currentTimeMillis() - currentTime)/1000);
+
             }
-        }
+        });
+        thread.start();
 
     }
 
@@ -193,7 +214,7 @@ public class SplashScreenActivity extends NetworkActivity {
                                     cli.onConnected = new OnConnected() {
                                         @Override
                                         public void run(OrtcClient ortcClient) {
-                                            uif.dataSetAvailable();
+                                            System.out.println("Fetch ortc - " + System.currentTimeMillis());
                                             System.out.println("Connected to ORTC");
                                             ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
                                                     new SubscribeCallbackHandler(getApplicationContext()));
@@ -201,6 +222,7 @@ public class SplashScreenActivity extends NetworkActivity {
                                     };
 
                                     ORTCUtil.connect();
+                                    uif.dataSetAvailable();
 
 
                                     uif.fetchUserInfo();
@@ -209,6 +231,9 @@ public class SplashScreenActivity extends NetworkActivity {
                                     LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
                                         @Override
                                         public void onReceive(Context context, Intent intent) {
+
+                                            System.out.println("Total time -- " + (System.currentTimeMillis() - startTime)/1000.0);
+
                                             Intent in = new Intent(getApplicationContext(), HomeActivity.class);
                                             in.putExtra("userId", CommonUtils.userId);
                                             startActivity(in);

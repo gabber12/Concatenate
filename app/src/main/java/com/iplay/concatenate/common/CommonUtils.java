@@ -164,12 +164,15 @@ public class CommonUtils {
                         }
                         score = friendsMap.get(userId).getScore();
                         for(DataListener dl : subscribers){
-                            if(dl != null)
-                            dl.dataSetAvailable();
+                            if(dl != null) {
+//                                System.out.println("Fetch dl friends - " + System.currentTimeMillis());
+                                dl.dataSetAvailable();
+                            }
                         }
 
 
                         if (sub != null) {
+                            System.out.println("Fetch sub friends - " + System.currentTimeMillis());
                             sub.dataSetAvailable();
                         }
                     }

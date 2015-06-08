@@ -246,15 +246,13 @@ public class NewGameOverActivity extends NetworkActivity {
 
         // This first parameter is used for deep linking so that anyone who clicks the link will start smashing this user
         // who sent the post
-        String link = "https://apps.facebook.com/friendsmashsample/?challenge_brag=";
-
-            link += CommonUtils.userId;
+        String link = "https://play.google.com/store/apps/details?id=com.iplay.concatenate";
 
         // Define the other parameters
         String name = "Checkout my Concaty achievement!";
         String caption = "Join me for the fun.";
         String description = "I just gained " + MainGameActivity.currentMyScore + "XP friends! Can you beat this?";
-        String picture = "http://www.friendsmash.com/images/logo_large.jpg";
+        String picture = "http://concaty.tk/static/logo.png";
 
         if (FacebookDialog.canPresentShareDialog(this, FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 

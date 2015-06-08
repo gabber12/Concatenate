@@ -14,6 +14,7 @@ import com.facebook.internal.ImageRequest;
 import com.facebook.internal.ImageResponse;
 import com.facebook.model.GraphObject;
 import com.iplay.concatenate.DataListener;
+import com.iplay.concatenate.util.SystemUiHider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +43,7 @@ public class  UserInfoFetcher  implements DataListener{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                System.out.println("Fetch name - " + System.currentTimeMillis());
                 dataSetAvailable();
             }
         });
@@ -68,6 +70,7 @@ public class  UserInfoFetcher  implements DataListener{
                                 @Override
                                 public void onCompleted(ImageResponse response) {
                                     CommonUtils.imageResponse = response;
+                                    System.out.println("Fetch pic - " + System.currentTimeMillis());
                                     dataSetAvailable();
 
                                 }

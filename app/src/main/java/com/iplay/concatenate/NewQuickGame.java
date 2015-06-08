@@ -116,7 +116,20 @@ public class NewQuickGame extends NetworkActivity {
         sendjsonObject.put("name", CommonUtils.name);
         sendjsonObject.put("score", CommonUtils.score);
         System.out.println(sendjsonObject.toString());
-        new BackgroundURLRequest().execute("add_me_to_wait_pool/", sendjsonObject.toString());
+
+
+        // TODO: Can be optimized via callback
+        while ( true ) {
+            if ( ORTCUtil.getClient().getIsConnected() ) {
+                new BackgroundURLRequest().execute("add_me_to_wait_pool/", sendjsonObject.toString());
+                break;
+            }
+            try {
+                Thread.sleep(1 * 1000);
+            } catch ( InterruptedException e ) {
+                System.out.println("error in check connected thread: " + e);
+            }
+        }
 //        new BackgroundURLRequest().execute("add_me_to_wait_pool/", CommonUtils.userId);
 
 
@@ -135,7 +148,7 @@ public class NewQuickGame extends NetworkActivity {
                     }
                 });
             }
-        }, 30000); // TODO: change the time to 30 seconds
+        }, 22000);
 
     }
 

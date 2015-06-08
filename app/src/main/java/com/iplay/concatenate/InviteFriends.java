@@ -17,6 +17,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
 import com.facebook.widget.WebDialog;
+import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 
 import org.json.JSONException;
@@ -104,7 +105,20 @@ public class InviteFriends extends NetworkActivity implements DataListener{
 
                             final String opponentId = values.getString("to[0]");
                             dialog = null;
+
                             final OrtcClient client = ORTCUtil.getClient();
+
+                            // TODO: Can be optimized via callback
+                            while ( true ) {
+                                if ( client.getIsConnected() )
+                                    break;
+                                try {
+                                    Thread.sleep(1 * 1000);
+                                } catch ( InterruptedException e ) {
+                                    System.out.println("error in check connected thread: " + e);
+                                }
+                            }
+
                             try {
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("typeFlag", 1);
