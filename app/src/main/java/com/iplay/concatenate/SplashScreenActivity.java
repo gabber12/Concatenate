@@ -64,6 +64,7 @@ public class SplashScreenActivity extends NetworkActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
+
         CommonUtils.FreightSansFont = Typeface.createFromAsset(getAssets(), "FreightSans-BoldSC.ttf");
 
         setupFacebook();
@@ -90,7 +91,7 @@ public class SplashScreenActivity extends NetworkActivity {
         });
 
         uif = new UserInfoFetcher(getApplicationContext());
-
+        CommonUtils.uif = uif;
         scale.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -270,6 +271,14 @@ public class SplashScreenActivity extends NetworkActivity {
         Session session = Session.getActiveSession();
         if(session.isClosed()) {
             System.out.println("hello");
+        }
+        if(CommonUtils.uif == null) CommonUtils.uif = new UserInfoFetcher(getApplicationContext());
+        if(CommonUtils.uif.count >= 4){
+            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(in);
+        } else {
+            CommonUtils.uif.count = 1;
+            CommonUtils.uif.fetchUserInfo();
         }
 
 
