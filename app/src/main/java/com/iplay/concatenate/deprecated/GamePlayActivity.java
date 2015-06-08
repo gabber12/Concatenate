@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.deprecated;
 
 import android.app.Activity;
 

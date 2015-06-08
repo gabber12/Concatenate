@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.support;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +17,15 @@ import java.util.List;
 /**
  * Created by gabber12 on 12/04/15.
  */
-public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filterable{
+public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filterable {
     List<FriendModel> list;
     List<FriendModel> tlist;
-    private LayoutInflater mInflater;
     Context mContext;
     int resource;
     Filter customFilter;
-    public FriendListAdapter(Context ctx,int resource, List<FriendModel> list) {
+    private LayoutInflater mInflater;
+
+    public FriendListAdapter(Context ctx, int resource, List<FriendModel> list) {
         super(ctx, resource, list);
         this.list = list;
         this.resource = resource;
@@ -32,6 +33,7 @@ public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filt
         tlist = new ArrayList<FriendModel>(list);
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
     @Override
     public int getCount() {
         return list.size();
@@ -53,22 +55,22 @@ public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filt
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new Filter.FilterResults();
-                ArrayList<FriendModel> tempList=new ArrayList<FriendModel>();
+                ArrayList<FriendModel> tempList = new ArrayList<FriendModel>();
                 //constraint is the result from text you want to filter against.
                 //objects is your data set you will filter from
-                if(constraint != null && tlist!=null) {
-                    int length=tlist.size();
+                if (constraint != null && tlist != null) {
+                    int length = tlist.size();
                     int i = 0;
 
-                    while(i<length){
-                        FriendModel item=tlist.get(i);
-                        System.out.println("=="+constraint);
+                    while (i < length) {
+                        FriendModel item = tlist.get(i);
+                        System.out.println("==" + constraint);
                         String ct = constraint.toString().toLowerCase();
-                        String [] nameComp = item.getName().split(" ");
-                        for(int j = 0; j < nameComp.length; j++) {
+                        String[] nameComp = item.getName().split(" ");
+                        for (int j = 0; j < nameComp.length; j++) {
                             nameComp[j] = nameComp[j].toLowerCase();
-                            System.out.println(j+" => "+ nameComp[j]+ " "+ nameComp[j].startsWith(ct));
-                            if(nameComp[j].startsWith(ct)) {
+                            System.out.println(j + " => " + nameComp[j] + " " + nameComp[j].startsWith(ct));
+                            if (nameComp[j].startsWith(ct)) {
                                 tempList.add(item);
                                 break;
                             }
@@ -112,14 +114,16 @@ public class FriendListAdapter extends ArrayAdapter<FriendModel> implements Filt
         }
         // TODO replace findViewById by ViewHolder
 
-        TextView rank = (TextView)result.findViewById(R.id.rank);
-        if(rank != null) {
-            rank.setText("#"+(position+1));
+        TextView rank = (TextView) result.findViewById(R.id.rank);
+        if (rank != null) {
+            rank.setText("#" + (position + 1));
         }
-        System.out.println("-------=Hello"+ list.get(position).getId());
-        ((CircularProfilePicView) result.findViewById(R.id.profile_pic)).setProfileId(list.get(position).getId());
+        System.out.println("-------=Hello" + list.get(position).getId());
+        if (result.findViewById(R.id.profile_pic) != null) {
+            ((CircularProfilePicView) result.findViewById(R.id.profile_pic)).setProfileId(list.get(position).getId());
+        }
         ((TextView) result.findViewById(R.id.profile_name)).setText(list.get(position).getName());
-        ((TextView) result.findViewById(R.id.profile_score)).setText("Score "+list.get(position).getScore());
+        ((TextView) result.findViewById(R.id.profile_score)).setText("Score " + list.get(position).getScore());
         return result;
 
 

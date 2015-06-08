@@ -27,6 +27,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.CircularProfilePicView;
+import com.iplay.concatenate.support.NetworkActivity;
+import com.iplay.concatenate.support.ORTCUtil;
 
 import org.json.simple.JSONObject;
 
@@ -34,13 +37,76 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-
 public class NewQuickGame extends NetworkActivity {
 
     private TextSwitcher mSwitcher;
 
     private int allAvailable = 0;
+    private BroadcastReceiver mDetailsFetched = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String userid = intent.getStringExtra("userid");
+            String username = intent.getStringExtra("username");
+            int score = intent.getIntExtra("score", 0);
+            System.out.println(userid + " " + username);
+            if (userid.equals(CommonUtils.waitingFor)) {
+                TextView yournameTextView = ((TextView) findViewById(R.id.yourname));
+                TextView yourlevelTextView = ((TextView) findViewById(R.id.yourlevel));
+
+                yournameTextView.setText(username);
+                yourlevelTextView.setText(String.valueOf(score) + " XP");
+                allAvailable++;
+                animateNameAndLevel();
+            }
+        }
+    };
     private String against = "";
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ((CircularProfilePicView) findViewById(R.id.yourpicfb)).setVisibility(View.VISIBLE);
+            ((CircularProfilePicView) findViewById(R.id.yourpicfb)).setProfileId(against);
+
+
+            Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+            fadeOut.setDuration(1000);
+            Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
+            fadeIn.setDuration(1000);
+            fadeIn.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    findViewById(R.id.yourpicimage).setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+            ((CircularProfilePicView) findViewById(R.id.yourpicfb)).startAnimation(fadeIn);
+            findViewById(R.id.yourpicimage).startAnimation(fadeOut);
+
+        }
+    };
+    private BroadcastReceiver mGameStarting = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            System.out.println("hello!");
+            String sender_id = intent.getStringExtra("sender_id");
+            String sender_name = intent.getStringExtra("sender_name");
+            int sender_score = intent.getIntExtra("sender_score", 0);
+            onGameStarted(sender_id, sender_name, sender_score, intent.getBooleanExtra("is_bot", false));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +132,12 @@ public class NewQuickGame extends NetworkActivity {
 
     private void setupScreen() {
 
-        TextView mynameTextView = ((TextView)findViewById(R.id.myname));
-        TextView mylevelTextView = ((TextView)findViewById(R.id.mylevel));
+        TextView mynameTextView = ((TextView) findViewById(R.id.myname));
+        TextView mylevelTextView = ((TextView) findViewById(R.id.mylevel));
 
         mynameTextView.setText(CommonUtils.name);
         mylevelTextView.setText(String.valueOf(CommonUtils.score) + " XP");
-        ((CircularProfilePicView)findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
+        ((CircularProfilePicView) findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
 
         mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);
 
@@ -97,17 +163,18 @@ public class NewQuickGame extends NetworkActivity {
             }
         });
 
-        Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
+        Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
         fadeIn.setDuration(500);
-        Animation fadeOut = new AlphaAnimation(1.0f,0.0f);
-        fadeOut.setDuration(500); fadeOut.setStartOffset(500);
+        Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+        fadeOut.setDuration(500);
+        fadeOut.setStartOffset(500);
 
         mSwitcher.setInAnimation(fadeIn);
         mSwitcher.setOutAnimation(fadeOut);
 
         mSwitcher.setText("SEARCHING OPPONENT");
 
-        ((TextView)findViewById(R.id.textBox)).setTypeface(CommonUtils.FreightSansFont);
+        ((TextView) findViewById(R.id.textBox)).setTypeface(CommonUtils.FreightSansFont);
 
 
         // add progress bar too.
@@ -119,14 +186,14 @@ public class NewQuickGame extends NetworkActivity {
 
 
         // TODO: Can be optimized via callback
-        while ( true ) {
-            if ( ORTCUtil.getClient().getIsConnected() ) {
+        while (true) {
+            if (ORTCUtil.getClient().getIsConnected()) {
                 new BackgroundURLRequest().execute("add_me_to_wait_pool/", sendjsonObject.toString());
                 break;
             }
             try {
-                Thread.sleep(1 * 1000);
-            } catch ( InterruptedException e ) {
+                Thread.sleep(2 * 1000);
+            } catch (InterruptedException e) {
                 System.out.println("error in check connected thread: " + e);
             }
         }
@@ -152,46 +219,12 @@ public class NewQuickGame extends NetworkActivity {
 
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ((CircularProfilePicView)findViewById(R.id.yourpicfb)).setVisibility(View.VISIBLE);
-            ((CircularProfilePicView)findViewById(R.id.yourpicfb)).setProfileId(against);
-
-
-            Animation fadeOut = new AlphaAnimation(1.0f,0.0f);
-            fadeOut.setDuration(1000);
-            Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
-            fadeIn.setDuration(1000);
-            fadeIn.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    findViewById(R.id.yourpicimage).setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-
-            ((CircularProfilePicView)findViewById(R.id.yourpicfb)).startAnimation(fadeIn);
-            findViewById(R.id.yourpicimage).startAnimation(fadeOut);
-
-        }
-    };
-
     private void onGameStarted(final String senderId, final String senderName, final int senderScore, final boolean isBot) {
 
         against = senderId;
 
-        TextView yournameTextView = ((TextView)findViewById(R.id.yourname));
-        TextView yourlevelTextView = ((TextView)findViewById(R.id.yourlevel));
+        TextView yournameTextView = ((TextView) findViewById(R.id.yourname));
+        TextView yourlevelTextView = ((TextView) findViewById(R.id.yourlevel));
 
         yournameTextView.setText(senderName);
         yourlevelTextView.setText(senderScore + " XP");
@@ -204,116 +237,123 @@ public class NewQuickGame extends NetworkActivity {
         CommonUtils.getPic(CommonUtils.waitingFor, getApplicationContext());
         findViewById(R.id.progress_wheel_quick).setVisibility(View.GONE);
 
-            mSwitcher.clearAnimation();
-            Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(),0);
-            fadeOutCustom.setDuration((long)(mSwitcher.getAlpha()*500));
-            mSwitcher.setOutAnimation(fadeOutCustom);
-            mSwitcher.setText("CONCATY !");
+        mSwitcher.clearAnimation();
+        Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(), 0);
+        fadeOutCustom.setDuration((long) (mSwitcher.getAlpha() * 500));
+        mSwitcher.setOutAnimation(fadeOutCustom);
+        mSwitcher.setText("CONCATY !");
 
-            long duration = 2000; long offset = 1200;
-            Animation zoomOut = new ScaleAnimation(1.0f, 1.25f, 1.0f, 1.25f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            Animation zoomIn = new ScaleAnimation(1.0f, 0.83333f, 1.0f, 0.83333f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            zoomIn.setDuration(duration); zoomOut.setDuration(duration);
-            zoomIn.setStartOffset(offset); zoomOut.setStartOffset(offset);
-            zoomIn.setFillEnabled(true); zoomOut.setFillEnabled(true);
-            zoomIn.setFillAfter(true); zoomOut.setFillAfter(true);
+        long duration = 2000;
+        long offset = 1200;
+        Animation zoomOut = new ScaleAnimation(1.0f, 1.25f, 1.0f, 1.25f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        Animation zoomIn = new ScaleAnimation(1.0f, 0.83333f, 1.0f, 0.83333f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        zoomIn.setDuration(duration);
+        zoomOut.setDuration(duration);
+        zoomIn.setStartOffset(offset);
+        zoomOut.setStartOffset(offset);
+        zoomIn.setFillEnabled(true);
+        zoomOut.setFillEnabled(true);
+        zoomIn.setFillAfter(true);
+        zoomOut.setFillAfter(true);
 
-            Interpolator bounceInterpolator = new BounceInterpolator();
-            zoomIn.setInterpolator(bounceInterpolator);
-            zoomOut.setInterpolator(bounceInterpolator);
+        Interpolator bounceInterpolator = new BounceInterpolator();
+        zoomIn.setInterpolator(bounceInterpolator);
+        zoomOut.setInterpolator(bounceInterpolator);
 
-            Animation moveUp = new TranslateAnimation(0,0,0,-30);
-            moveUp.setFillAfter(true); moveUp.setFillAfter(true);
-            moveUp.setDuration(800); moveUp.setStartOffset(offset);
+        Animation moveUp = new TranslateAnimation(0, 0, 0, -30);
+        moveUp.setFillAfter(true);
+        moveUp.setFillAfter(true);
+        moveUp.setDuration(800);
+        moveUp.setStartOffset(offset);
 
-            findViewById(R.id.mypic).startAnimation(zoomOut);
-            findViewById(R.id.yourpic).startAnimation(zoomIn);
-            findViewById(R.id.textSwitcherlayout).startAnimation(moveUp);
+        findViewById(R.id.mypic).startAnimation(zoomOut);
+        findViewById(R.id.yourpic).startAnimation(zoomIn);
+        findViewById(R.id.textSwitcherlayout).startAnimation(moveUp);
 
 
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(4000);
-                    } catch (InterruptedException e) {
-                    }
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Do some stuff
-
-                            allAvailable++;
-                            animateNameAndLevel();
-
-                        }
-                    });
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(4000);
+                } catch (InterruptedException e) {
                 }
-            };
-            thread.start();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do some stuff
+
+                        allAvailable++;
+                        animateNameAndLevel();
+
+                    }
+                });
+            }
+        };
+        thread.start();
 
 //                final String senderId = getIntent().getStringExtra("sender_id");
 //                final Boolean isBot = getIntent().getBooleanExtra("is_bot", false);
 
 
+        if (isBot) {
 
-            if ( isBot ) {
+            JSONObject sendjsonObject = new JSONObject();
+            sendjsonObject.put("fromUser", CommonUtils.userId);
+            sendjsonObject.put("toUser", senderId);
+            System.out.println(sendjsonObject.toString());
+            new BackgroundURLRequest().execute("start_game_with_bot/", sendjsonObject.toString());
 
-                JSONObject sendjsonObject = new JSONObject();
-                sendjsonObject.put("fromUser", CommonUtils.userId );
-                sendjsonObject.put("toUser", senderId);
-                System.out.println(sendjsonObject.toString());
-                new BackgroundURLRequest().execute("start_game_with_bot/", sendjsonObject.toString());
+        }
+        // say the opponent left after 20 secs
+        final long startTime = System.currentTimeMillis();
+        CommonUtils.startingGameTimer = new Timer();
+        CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                CommonUtils.taskThread = Thread.currentThread();
+                NewQuickGame.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
+                                && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
+                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                            startActivity(CommonUtils.startGameIntent);
+                        } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
+                            Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
+                            t.show();
+                            final Intent intent = new Intent(NewQuickGame.this, HomeActivity.class);
+                            CommonUtils.waitingFor = null;
+                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                            startActivity(intent);
+                        }
+                    }
+                });
 
             }
-            // say the opponent left after 20 secs
-            final long startTime = System.currentTimeMillis();
-            CommonUtils.startingGameTimer = new Timer();
-            CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    CommonUtils.taskThread = Thread.currentThread();
-                    NewQuickGame.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
-                                    && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
-                                CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
-                                startActivity(CommonUtils.startGameIntent);
-                            } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
-                                Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
-                                t.show();
-                                final Intent intent = new Intent(NewQuickGame.this, HomeActivity.class);
-                                CommonUtils.waitingFor = null;
-                                CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
-                                startActivity(intent);
-                            }
-                        }
-                    });
-
-                }
-            }, new Long(0), new Long(1000));
+        }, new Long(0), new Long(1000));
 
 
     }
-
 
     private void animateNameAndLevel() {
 
         System.out.println("Calling animate and level");
 
         // this check is not required. Just for extension.
-        if ( allAvailable != 1 ) return;
+        if (allAvailable != 1) return;
 
         Interpolator decelerate = new DecelerateInterpolator();
         Interpolator accelerate = new AccelerateInterpolator();
         Animation compressIn = new ScaleAnimation(1.0f, 0f, 1.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         Animation compressOut = new ScaleAnimation(0f, 1.0f, 1.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        compressIn.setDuration(500); compressIn.setInterpolator(decelerate);
-        compressOut.setDuration(500); compressOut.setInterpolator(accelerate);
+        compressIn.setDuration(500);
+        compressIn.setInterpolator(decelerate);
+        compressOut.setDuration(500);
+        compressOut.setInterpolator(accelerate);
 //                                compressIn.setStartOffset(3200);
         compressOut.setStartOffset(500);
 //                                mSwitcher.setOutAnimation(compressIn);
@@ -328,7 +368,8 @@ public class NewQuickGame extends NetworkActivity {
 
         Animation moveLeft = new TranslateAnimation(-600, 0, 0, 0);
         Animation moveRight = new TranslateAnimation(600, 0, 0, 0);
-        moveLeft.setDuration(500); moveRight.setDuration(500);
+        moveLeft.setDuration(500);
+        moveRight.setDuration(500);
         findViewById(R.id.barLeftrel).startAnimation(moveLeft);
         findViewById(R.id.barRightrel).startAnimation(moveRight);
 
@@ -339,7 +380,7 @@ public class NewQuickGame extends NetworkActivity {
 
     @Override
     public void onBackPressed() {
-        if ( CommonUtils.onStartingGame ) {
+        if (CommonUtils.onStartingGame) {
             new MaterialDialog.Builder(this)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
@@ -365,39 +406,6 @@ public class NewQuickGame extends NetworkActivity {
         }
     }
 
-    private BroadcastReceiver mGameStarting = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            System.out.println("hello!");
-            String sender_id = intent.getStringExtra("sender_id");
-            String sender_name = intent.getStringExtra("sender_name");
-            int sender_score = intent.getIntExtra("sender_score", 0);
-            onGameStarted( sender_id, sender_name, sender_score, intent.getBooleanExtra("is_bot", false) );
-        }
-    };
-
-    private BroadcastReceiver mDetailsFetched = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String userid = intent.getStringExtra("userid");
-            String username = intent.getStringExtra("username");
-            int score = intent.getIntExtra("score", 0);
-            System.out.println(userid + " " + username);
-            if ( userid.equals(CommonUtils.waitingFor) ) {
-                TextView yournameTextView = ((TextView)findViewById(R.id.yourname));
-                TextView yourlevelTextView = ((TextView)findViewById(R.id.yourlevel));
-
-                yournameTextView.setText(username);
-                yourlevelTextView.setText(String.valueOf(score) + " XP");
-                allAvailable++;
-                animateNameAndLevel();
-            }
-        }
-    };
-
     @Override
     protected void onDestroy() {
         new BackgroundURLRequest().execute("remove_me_from_pool/", CommonUtils.userId);
@@ -416,7 +424,6 @@ public class NewQuickGame extends NetworkActivity {
         super.onPostCreate(savedInstanceState);
 
     }
-
 
 
 }

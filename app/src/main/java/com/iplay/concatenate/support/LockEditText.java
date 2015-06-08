@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.support;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,15 +12,13 @@ import android.widget.EditText;
  */
 public class LockEditText extends EditText {
     /* Must use this constructor in order for the layout files to instantiate the class properly */
-    public LockEditText(Context context, AttributeSet attrs)
-    {
+    public LockEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         // TODO Auto-generated constructor stub
     }
 
     @Override
-    public boolean onKeyPreIme (int keyCode, KeyEvent event)
-    {
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         // Return true if I handle the event:
         // In my case i want the keyboard to not be dismissible so i simply return true
         // Other people might want to handle the event differently

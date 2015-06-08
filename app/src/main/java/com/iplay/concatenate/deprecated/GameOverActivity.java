@@ -1,10 +1,14 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.deprecated;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.iplay.concatenate.HomeActivity;
+import com.iplay.concatenate.R;
+import com.iplay.concatenate.support.NetworkActivity;
 
 
 @Deprecated
@@ -37,8 +41,8 @@ public class GameOverActivity extends NetworkActivity {
         int myScore = getIntent().getIntExtra("my_score", 0);
         int yourScore = getIntent().getIntExtra("your_score", 0);
 
-        if ( myScore > yourScore ) winOrLose.setText("You win :D");
-        else if ( myScore < yourScore ) winOrLose.setText("You lose :(");
+        if (myScore > yourScore) winOrLose.setText("You win :D");
+        else if (myScore < yourScore) winOrLose.setText("You lose :(");
         else winOrLose.setText("Its a draw :|");
 
         finalScore.setText("Your score: " + String.valueOf(myScore));
@@ -61,7 +65,6 @@ public class GameOverActivity extends NetworkActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
     }
-
 
 
     @Override

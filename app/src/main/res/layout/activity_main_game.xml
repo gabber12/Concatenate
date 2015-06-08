@@ -99,12 +99,12 @@
                                 <!--android:layout_centerInParent="true"-->
                                 <!--android:src="@drawable/circlepic"/>-->
 
-                            <com.iplay.concatenate.CircularProfilePicView
+                            <com.iplay.concatenate.support.CircularProfilePicView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
                                 android:layout_centerInParent="true"
                                 android:id ="@+id/mypic"
-                                ></com.iplay.concatenate.CircularProfilePicView>
+                                ></com.iplay.concatenate.support.CircularProfilePicView>
 
                             <!--<com.pnikosis.materialishprogress.ProgressWheel-->
                                 <!--android:id="@+id/myProgressBarTimeout"-->
@@ -151,12 +151,12 @@
                             android:layout_height="wrap_content" android:layout_width="wrap_content"
                             android:layout_alignParentLeft="true" >
 
-                            <com.iplay.concatenate.CircularProfilePicView
+                            <com.iplay.concatenate.support.CircularProfilePicView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
                                 android:layout_centerInParent="true"
                                 android:id ="@+id/yourpic"
-                                ></com.iplay.concatenate.CircularProfilePicView>
+                                ></com.iplay.concatenate.support.CircularProfilePicView>
 
                             <!--<ImageView-->
                                 <!--android:id="@+id/yourpic"-->
@@ -241,7 +241,7 @@
             </LinearLayout>
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_height="wrap_content" android:orientation="horizontal"
+                android:layout_height="50dp" android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:layout_marginTop="25dp"
@@ -276,7 +276,7 @@
             android:layout_marginRight="25dp"
             android:layout_marginLeft="25dp"
             android:id="@+id/LinearLayout01">
-            <com.iplay.concatenate.LockEditText
+            <com.iplay.concatenate.support.LockEditText
                 android:id="@+id/enter_word"
                 android:layout_height="46dp"
                 android:layout_width="fill_parent"
@@ -286,7 +286,7 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="30dp"
                 android:inputType="textVisiblePassword">
-            </com.iplay.concatenate.LockEditText>
+            </com.iplay.concatenate.support.LockEditText>
             <ImageView
                 android:padding="5dp"
                 android:layout_width="25dp"

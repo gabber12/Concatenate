@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context="com.iplay.concatenate.HostGameActivity">
+    tools:context="com.iplay.concatenate.deprecated.HostGameActivity">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -20,11 +20,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true">
-        <com.iplay.concatenate.CircularProfilePicView
+        <com.iplay.concatenate.support.CircularProfilePicView
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerInParent="true"
-            android:id="@+id/ppic"></com.iplay.concatenate.CircularProfilePicView>
+            android:id="@+id/ppic"></com.iplay.concatenate.support.CircularProfilePicView>
         <com.pnikosis.materialishprogress.ProgressWheel
             android:id="@+id/progress_wheel"
             android:layout_width="225dp"

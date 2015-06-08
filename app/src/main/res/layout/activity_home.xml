@@ -101,7 +101,7 @@
 
     </io.codetail.widget.RevealFrameLayout>
 
-    <com.iplay.concatenate.CircularProfilePicView
+    <com.iplay.concatenate.support.CircularProfilePicView
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_marginLeft="14dp"
@@ -109,7 +109,7 @@
         android:id ="@+id/profile_pic_user"
 
         android:layout_gravity="top|left"
-        ></com.iplay.concatenate.CircularProfilePicView>
+        ></com.iplay.concatenate.support.CircularProfilePicView>
 
     <carbon.widget.ImageActionButton
         android:layout_width="85dp"

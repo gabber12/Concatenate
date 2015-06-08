@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.support;
 
 import com.iplay.concatenate.common.CommonUtils;
 
@@ -20,17 +20,16 @@ import ibt.ortc.extensibility.OrtcFactory;
  */
 public class ORTCUtil {
     private static final boolean defaultNeedsAuthentication = false;
-
+    private static final int RESULT_SETTINGS = 1;
     private static OrtcClient client = null;
     private static int reconnectingTries = 0;
-    private static final int RESULT_SETTINGS = 1;
-
     private static String server;
     private static String appKey;
     private static String privateKey;
     private static String authToken;
     private static String connectionMetadata;
     private static boolean isCluster = true;
+
     public static void init() {
         server = "http://ortc-developers.realtime.co/server/2.1/";
         appKey = "NMRZDS";
@@ -41,9 +40,9 @@ public class ORTCUtil {
     }
 
     public static OrtcClient getClient() {
-        if(client != null) return client;
+        if (client != null) return client;
 
-        if ( CommonUtils.userId == null ) {
+        if (CommonUtils.userId == null) {
             System.out.println("FB user id not available yet. Returning null client.");
             return null;
         }
@@ -146,8 +145,7 @@ public class ORTCUtil {
                 permissions.put("test", ChannelPermissions.Write);
 
                 if (!Ortc.saveAuthentication(server, isCluster, authToken, false, appKey, 14000, privateKey, permissions)) {
-                }
-                else {
+                } else {
                 }
             } catch (Exception e) {
             }
@@ -155,8 +153,7 @@ public class ORTCUtil {
 
         if (isCluster) {
             client.setClusterUrl(server);
-        }
-        else {
+        } else {
             client.setUrl(server);
         }
 

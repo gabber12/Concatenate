@@ -84,13 +84,13 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 />
-    <com.iplay.concatenate.CircularProfilePicView
+    <com.iplay.concatenate.support.CircularProfilePicView
         android:layout_width="170dp"
         android:layout_height="170dp"
         android:layout_centerHorizontal="true"
         android:id ="@+id/profile_pic_ac"
         android:layout_gravity="center"
-        ></com.iplay.concatenate.CircularProfilePicView>
+        ></com.iplay.concatenate.support.CircularProfilePicView>
 
             </FrameLayout>
 

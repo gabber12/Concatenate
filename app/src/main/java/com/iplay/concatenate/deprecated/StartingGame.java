@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.deprecated;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +7,11 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.iplay.concatenate.HomeActivity;
+import com.iplay.concatenate.R;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.NetworkActivity;
 
 import org.json.simple.JSONObject;
 
@@ -30,43 +33,41 @@ public class StartingGame extends NetworkActivity {
         setContentView(R.layout.activity_starting_game);
 
 
-
-
         final String senderId = getIntent().getStringExtra("sender_id");
         final Boolean isBot = getIntent().getBooleanExtra("is_bot", false);
 
         CommonUtils.waitingFor = senderId;
 
-        if ( isBot ) {
+        if (isBot) {
 
             JSONObject sendjsonObject = new JSONObject();
-            sendjsonObject.put("fromUser", CommonUtils.userId );
+            sendjsonObject.put("fromUser", CommonUtils.userId);
             sendjsonObject.put("toUser", senderId);
             System.out.println(sendjsonObject.toString());
             new BackgroundURLRequest().execute("start_game_with_bot/", sendjsonObject.toString());
 
         }
 //        else {
-            // say the opponent left after 15 secs
-            CommonUtils.startingGameTimer = new Timer();
-            CommonUtils.startingGameTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                        CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+        // say the opponent left after 15 secs
+        CommonUtils.startingGameTimer = new Timer();
+        CommonUtils.startingGameTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                CommonUtils.disableTimer(CommonUtils.startingGameTimer);
 
-                        if ( CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 20*1000  ) {
-                            startActivity(CommonUtils.startGameIntent);
-                            CommonUtils.waitingFor = null;
-                        } else {
-                            Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
-                            t.show();
-                            final Intent intent = new Intent(StartingGame.this, HomeActivity.class);
-                            startActivity(intent);
-                            CommonUtils.waitingFor = null;
-                        }
-                        CommonUtils.startGameIntent = null;
+                if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 20 * 1000) {
+                    startActivity(CommonUtils.startGameIntent);
+                    CommonUtils.waitingFor = null;
+                } else {
+                    Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
+                    t.show();
+                    final Intent intent = new Intent(StartingGame.this, HomeActivity.class);
+                    startActivity(intent);
+                    CommonUtils.waitingFor = null;
                 }
-            }, 15000);
+                CommonUtils.startGameIntent = null;
+            }
+        }, 15000);
 //        }
 
     }

@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.CircularProfilePicView;
 
 import carbon.widget.ImageActionButton;
 import io.codetail.animation.SupportAnimator;
@@ -27,26 +28,32 @@ import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
 
 
-
 public class HomeActivity extends FragmentActivity {
 
 
     public Boolean trans;
     public Boolean trans1;
+    RevealFrameLayout transitionView1;
+    RevealFrameLayout transitionView;
+    View transitionViewContainer;
+    View transitionViewContainer1;
+    ImageActionButton iab;
+    CircularProfilePicView iab1;
+    MaterialDialog md = null;
+    ConnectivityReciever cr = null;
 
-    public void radialTransitionShow(final View fragment, final View viewButton , final View otherButton, final View container) {
+    public void radialTransitionShow(final View fragment, final View viewButton, final View otherButton, final View container) {
         final int cx = (viewButton.getLeft() + viewButton.getRight()) / 2;
         final int cy = (viewButton.getTop() + viewButton.getBottom()) / 2;
 
 
         // get the final radius for the clipping circle
-        final int finalRadius = (int)Math.sqrt(fragment.getWidth() * fragment.getWidth() + fragment.getHeight() * fragment.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
+        final int finalRadius = (int) Math.sqrt(fragment.getWidth() * fragment.getWidth() + fragment.getHeight() * fragment.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
 
         fragment.setVisibility(View.VISIBLE);
 
         System.out.println(fragment.getParent());
-        SupportAnimator animator = ViewAnimationUtils.createCircularReveal(container,  cx, cy, 0, finalRadius);
-
+        SupportAnimator animator = ViewAnimationUtils.createCircularReveal(container, cx, cy, 0, finalRadius);
 
 
         animator.addListener(new SupportAnimator.AnimatorListener() {
@@ -81,7 +88,6 @@ public class HomeActivity extends FragmentActivity {
         });
 
 
-
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.setDuration(800);
         animator.start();
@@ -92,7 +98,7 @@ public class HomeActivity extends FragmentActivity {
         final int cy = (viewButton.getTop() + viewButton.getBottom()) / 2;
 
         // get the final radius for the clipping circle
-        final int finalRadius = (int)Math.sqrt(fragment.getWidth() * fragment.getWidth() + fragment.getHeight() * fragment.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
+        final int finalRadius = (int) Math.sqrt(fragment.getWidth() * fragment.getWidth() + fragment.getHeight() * fragment.getHeight()); //Math.max(myView.getWidth(), myView.getHeight());
 
         SupportAnimator animator =
                 ViewAnimationUtils.createCircularReveal(container, cx, cy, finalRadius, 0);
@@ -151,62 +157,24 @@ public class HomeActivity extends FragmentActivity {
         });
 
 
-
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.setDuration(800);
         animator.start();
 
     }
-    RevealFrameLayout transitionView1;
-    RevealFrameLayout transitionView;
-    View transitionViewContainer;
-    View transitionViewContainer1;
 
-    ImageActionButton iab ;
-
-
-    CircularProfilePicView iab1;
-    MaterialDialog md = null;
-
-    class ConnectivityReciever extends BroadcastReceiver {
-        @Override
-        public void onReceive(final Context context, Intent intent) {
-
-            Log.d("app", "Network connectivity change");
-            if(!CommonUtils.isOnline(context) ){
-                System.out.println("Network not Available");
-                if(md == null)
-
-                    md = new MaterialDialog.Builder(context)
-                            .callback(new MaterialDialog.ButtonCallback() {
-
-                            })
-                            .title("No Internet Connection Available")
-                            .titleGravity(GravityEnum.CENTER)
-                            .content("Please Check your Internet Connection")
-                            .progress(true, 1)
-                            .theme(Theme.LIGHT).cancelable(false)
-                            .show();
-            } else if(md != null) {
-                System.out.println("Network Available");
-                md.dismiss();
-                md = null;
-
-            }
-
-        }
-    }
-    ConnectivityReciever cr = null;
     @Override
     protected void onPause() {
         super.onPause();
-        if(cr != null)
+        if (cr != null)
             super.unregisterReceiver(cr);
     }
-    protected  void onResume() {
+
+    protected void onResume() {
         super.onResume();
         super.registerReceiver(cr, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -214,11 +182,11 @@ public class HomeActivity extends FragmentActivity {
         setContentView(R.layout.activity_home);
         cr = new ConnectivityReciever();
 
-        ((TextView)findViewById(R.id.home_title)).setTypeface(CommonUtils.FreightSansFont);
+        ((TextView) findViewById(R.id.home_title)).setTypeface(CommonUtils.FreightSansFont);
 
         SharedPreferences settings = getSharedPreferences(CommonUtils.PREFS, 0);
         int score = settings.getInt("score", CommonUtils.score);
-        if(score >= CommonUtils.score) {
+        if (score >= CommonUtils.score) {
             CommonUtils.setScore(score, getApplicationContext());
             CommonUtils.score = score;
         }
@@ -237,11 +205,10 @@ public class HomeActivity extends FragmentActivity {
         transitionView.setVisibility(View.INVISIBLE);
         transitionView1.setVisibility(View.INVISIBLE);
 
-        iab = (ImageActionButton)findViewById(R.id.leaderboard);
+        iab = (ImageActionButton) findViewById(R.id.leaderboard);
 
 
-        iab1 = (CircularProfilePicView)findViewById(R.id.profile_pic_user);
-
+        iab1 = (CircularProfilePicView) findViewById(R.id.profile_pic_user);
 
 
         findViewById(R.id.leaderboard).setOnClickListener(new View.OnClickListener() {
@@ -260,7 +227,7 @@ public class HomeActivity extends FragmentActivity {
         findViewById(R.id.profile_pic_user).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(trans1) {
+                if (trans1) {
                     radialTransitionShow(transitionView1, iab1, iab, transitionViewContainer1);
                 } else {
                     radialTransitionHide(transitionView1, iab1, iab, transitionViewContainer1);
@@ -274,21 +241,21 @@ public class HomeActivity extends FragmentActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                System.out.println(event.getX()+" " +event.getY());
-                System.out.println(v.getX()+" " +v.getY());
-                System.out.println(v.getWidth()+" " +v.getHeight());
+                System.out.println(event.getX() + " " + event.getY());
+                System.out.println(v.getX() + " " + v.getY());
+                System.out.println(v.getWidth() + " " + v.getHeight());
                 //CIRCLE :      (x-a)^2 + (y-b)^2 = r^2
                 float centerX, centerY, touchX, touchY, radius;
-                centerX = v.getWidth()/2;
-                centerY = v.getHeight()/2;
-                System.out.println(centerX+" " +centerY);
+                centerX = v.getWidth() / 2;
+                centerY = v.getHeight() / 2;
+                System.out.println(centerX + " " + centerY);
 
                 touchX = event.getX();
                 touchY = event.getY();
                 radius = centerX;
-                System.out.println("centerX = "+centerX+", centerY = "+centerY);
-                System.out.println("touchX = "+touchX+", touchY = "+touchY);
-                System.out.println("radius = "+radius);
+                System.out.println("centerX = " + centerX + ", centerY = " + centerY);
+                System.out.println("touchX = " + touchX + ", touchY = " + touchY);
+                System.out.println("radius = " + radius);
                 if (Math.pow(touchX - centerX, 2)
                         + Math.pow(touchY - centerY, 2) < Math.pow(radius, 2)) {
                     System.out.println("Inside Circle");
@@ -310,7 +277,7 @@ public class HomeActivity extends FragmentActivity {
         joinButton.setOnTouchListener(genListener);
         leaderboardButton.setOnTouchListener(genListener);
 
-        CircularProfilePicView profile_pic = ((CircularProfilePicView)findViewById(R.id.profile_pic_user));
+        CircularProfilePicView profile_pic = ((CircularProfilePicView) findViewById(R.id.profile_pic_user));
         profile_pic.setProfileId(CommonUtils.userId);
 //        profile_pic.setProfileId("1403774539942585");
 
@@ -330,7 +297,6 @@ public class HomeActivity extends FragmentActivity {
 //        rippleDrawable.setAlpha(0);
 
 
-
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -345,7 +311,7 @@ public class HomeActivity extends FragmentActivity {
             }
         });
 
-        hostButton.setOnClickListener( new View.OnClickListener() {
+        hostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), InviteFriends.class);
@@ -353,8 +319,8 @@ public class HomeActivity extends FragmentActivity {
                 startActivity(in);
             }
         });
-		
-		findViewById(R.id.quick_game).setOnClickListener(new View.OnClickListener() {
+
+        findViewById(R.id.quick_game).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), NewQuickGame.class);
@@ -366,11 +332,6 @@ public class HomeActivity extends FragmentActivity {
 
     }
 
-
-
-
-
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -380,15 +341,12 @@ public class HomeActivity extends FragmentActivity {
         // are available.
 
 
-
-
-
     }
 
     @Override
     public void onBackPressed() {
-        if(!trans || !trans1) {
-            if(!trans) {
+        if (!trans || !trans1) {
+            if (!trans) {
                 radialTransitionHide(transitionView, iab, iab1, transitionViewContainer);
                 trans = !trans;
             } else {
@@ -396,7 +354,7 @@ public class HomeActivity extends FragmentActivity {
                 trans1 = !trans1;
             }
 
-            return ;
+            return;
         }
         new MaterialDialog.Builder(this)
                 .callback(new MaterialDialog.ButtonCallback() {
@@ -427,7 +385,7 @@ public class HomeActivity extends FragmentActivity {
 //                }).create().show();
     }
 
-    public void myfunc_leaderboard(View v){
+    public void myfunc_leaderboard(View v) {
 
 //        Bundle params = new Bundle();
 //        params.putString("message", "I challenge you for a Concaty showdown!");
@@ -437,8 +395,42 @@ public class HomeActivity extends FragmentActivity {
 //        System.out.print("Hello");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (md != null) {
+            md.cancel();
+        }
+    }
 
+    class ConnectivityReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
 
+            Log.d("app", "Network connectivity change");
+            if (!CommonUtils.isOnline(context)) {
+                System.out.println("Network not Available");
+                if (md == null)
+
+                    md = new MaterialDialog.Builder(context)
+                            .callback(new MaterialDialog.ButtonCallback() {
+
+                            })
+                            .title("No Internet Connection Available")
+                            .titleGravity(GravityEnum.CENTER)
+                            .content("Please Check your Internet Connection")
+                            .progress(true, 1)
+                            .theme(Theme.LIGHT).cancelable(false)
+                            .show();
+            } else if (md != null) {
+                System.out.println("Network Available");
+                md.dismiss();
+                md = null;
+
+            }
+
+        }
+    }
 
     public class ResizeAnimation extends Animation {
         final int startWidth;
@@ -475,13 +467,5 @@ public class HomeActivity extends FragmentActivity {
             return true;
         }
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(md != null) {
-            md.cancel();
-        }
     }
 }

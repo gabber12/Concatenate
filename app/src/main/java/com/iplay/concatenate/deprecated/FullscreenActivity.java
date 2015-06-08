@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.deprecated;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,9 +16,15 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.iplay.concatenate.HomeActivity;
+import com.iplay.concatenate.R;
+import com.iplay.concatenate.SubscribeCallbackHandler;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.common.UserInfoFetcher;
+import com.iplay.concatenate.support.ListAdapterUtil;
+import com.iplay.concatenate.support.NetworkActivity;
+import com.iplay.concatenate.support.ORTCUtil;
 
 import java.util.Arrays;
 
@@ -29,17 +35,16 @@ import ibt.ortc.extensibility.OrtcClient;
 @Deprecated
 public class FullscreenActivity extends NetworkActivity {
 
-    private AccessToken token;
-
-    private LoginButton loginButton;
     public static final boolean IS_SOCIAL = true;
-
+    private AccessToken token;
+    private LoginButton loginButton;
     private UiLifecycleHelper fbUiLifecycleHelper;
 
     public UiLifecycleHelper getFbUiLifecycleHelper() {
         return fbUiLifecycleHelper;
     }
-//    @Override
+
+    //    @Override
 //    protected void onResume() {
 //        super.onResume();
 //        if(token != null) {
@@ -48,7 +53,7 @@ public class FullscreenActivity extends NetworkActivity {
 //        }
 //    }
     @Override
-    protected void onSaveInstanceState(Bundle outState){
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         fbUiLifecycleHelper.onSaveInstanceState(outState);
     }
@@ -69,9 +74,9 @@ public class FullscreenActivity extends NetworkActivity {
                 // Add code here to accommodate session changes
                 System.out.println("Hello-----------=");
                 if (exception != null) {
-                    Log.e("Error", "Error loggin in "+exception.getStackTrace());
+                    Log.e("Error", "Error loggin in " + exception.getStackTrace());
                 }
-                if(state.isOpened()) {
+                if (state.isOpened()) {
                     System.out.println("session" + session.getAccessToken());
                     Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 
@@ -82,22 +87,22 @@ public class FullscreenActivity extends NetworkActivity {
                                 try {
 
                                     System.out.println("Graph Inner Json" + user.getInnerJSONObject().get("id"));
-                                    final String userId = (String)user.getInnerJSONObject().get("id");
+                                    final String userId = (String) user.getInnerJSONObject().get("id");
                                     CommonUtils.userId = userId;
                                     CommonUtils.name = user.getName();
                                     new BackgroundURLRequest().execute("subscribe_user/", userId);
 
-                                    CommonUtils.fetchFriendScore(null,true);
+                                    CommonUtils.fetchFriendScore(null, true);
                                     OrtcClient cli = ORTCUtil.getClient();
 
                                     cli.onConnected = new OnConnected() {
-                                                  @Override
-                                                  public void run(OrtcClient ortcClient) {
+                                        @Override
+                                        public void run(OrtcClient ortcClient) {
                                             System.out.println("Connected to ORTC");
                                             ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
                                                     new SubscribeCallbackHandler(getApplicationContext()));
-                                }
-                            };
+                                        }
+                                    };
 
                                     ORTCUtil.connect();
 
@@ -109,21 +114,20 @@ public class FullscreenActivity extends NetworkActivity {
                                         @Override
                                         public void onReceive(Context context, Intent intent) {
                                             Log.v("Info", "Brodcast Recienved for user Info");
-                                            if (CommonUtils.imageResponse != null){
+                                            if (CommonUtils.imageResponse != null) {
                                                 Log.v("Info loaded", "Image loaded");
                                             }
-                                            if(CommonUtils.friendsMap.size() > 0) {
+                                            if (CommonUtils.friendsMap.size() > 0) {
                                                 Log.v("Info loaded", "Friend List loaded");
                                             }
-                                            if(CommonUtils.name != null) {
-                                                Log.v("Info loaded", "Name loaded "+CommonUtils.name);
+                                            if (CommonUtils.name != null) {
+                                                Log.v("Info loaded", "Name loaded " + CommonUtils.name);
                                             }
                                         }
                                     }, ifl);
 
 
-
-                                } catch(Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -131,7 +135,6 @@ public class FullscreenActivity extends NetworkActivity {
 
 
                     });
-
 
 
                 }
@@ -156,11 +159,11 @@ public class FullscreenActivity extends NetworkActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         fbUiLifecycleHelper.onResume();
         Session session = Session.getActiveSession();
-        if( session.isOpened() ) {
+        if (session.isOpened()) {
             Intent in = new Intent(getApplicationContext(), HomeActivity.class);
             in.putExtra("userId", CommonUtils.userId);
             startActivity(in);
