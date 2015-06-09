@@ -71,7 +71,7 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
-    public static final int MAX_MOVES = 7;
+    public static final int MAX_MOVES = 10;
     public static int currentMyScore = 0, currentYourScore = 0;
     public static int myMoves, yourMoves;
     public static int myTotalTime, yourTotalTime;
@@ -83,6 +83,7 @@ public class MainGameActivity extends NetworkActivity {
     Typeface myTypeface = null, myTypefaceLight = null, myTypefaceMedium = null;
     private LockEditText enterWord;
     private ImageView submitButton;
+    private carbon.widget.ProgressBar yourGameProgress, myGameProgress;
     private LinearLayout wordsLayout;
     private String lastWord = "DUMMY";
     private String against;
@@ -170,6 +171,11 @@ public class MainGameActivity extends NetworkActivity {
 
         mpb = (ProgressBar) findViewById(R.id.myProgressBarTimeout);
         ypb = (ProgressBar) findViewById(R.id.yourProgressBarTimeout);
+
+        yourGameProgress = (carbon.widget.ProgressBar) findViewById(R.id.yourGameProgress);
+        myGameProgress = (carbon.widget.ProgressBar) findViewById(R.id.myGameProgress);
+        yourGameProgress.setProgress(0);
+        myGameProgress.setProgress(0);
 
         ((CircularProfilePicView) findViewById(R.id.mypic)).setProfileId(CommonUtils.userId);
 
@@ -569,6 +575,13 @@ public class MainGameActivity extends NetworkActivity {
 
     private void changeEnterWordBox() {
         enterWord.setText("");
+
+        float yourCompleted = yourMoves;
+        yourCompleted /= MAX_MOVES;
+        yourGameProgress.setProgress(1.0f-yourCompleted);
+        float myCompleted = myMoves;
+        myCompleted /= MAX_MOVES;
+        myGameProgress.setProgress(myCompleted);
 
         if (gameInPlay && CommonUtils.userId.equals(userTurn)) {
 //            myMoves++;

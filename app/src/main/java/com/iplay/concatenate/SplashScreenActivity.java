@@ -277,7 +277,7 @@ public class SplashScreenActivity extends NetworkActivity {
             System.out.println("hello");
         }
         if (CommonUtils.uif == null) CommonUtils.uif = new UserInfoFetcher(getApplicationContext());
-        if (CommonUtils.uif.count >= 4) {
+        if (CommonUtils.uif.count == 5) {
             Intent in = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(in);
         } else {
