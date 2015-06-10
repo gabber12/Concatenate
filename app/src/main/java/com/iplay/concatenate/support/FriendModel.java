@@ -1,12 +1,29 @@
-package com.iplay.concatenate;
-
-import java.util.Comparator;
+package com.iplay.concatenate.support;
 
 /**
  * Created by gabber12 on 18/04/15.
  */
-public class FriendModel  implements Comparable{
+public class FriendModel implements Comparable {
     public int Score;
+    public String Name;
+    public String id;
+
+    public FriendModel() {
+        Score = 0;
+        id = "";
+        Name = "";
+    }
+
+    public FriendModel(String name, String id) {
+        Name = name;
+        this.id = id;
+    }
+
+    public FriendModel(String name, String id, int score) {
+        Score = score;
+        Name = name;
+        this.id = id;
+    }
 
     public int getScore() {
         return Score;
@@ -15,24 +32,12 @@ public class FriendModel  implements Comparable{
     public void setScore(int score) {
         Score = score;
     }
-    public FriendModel() { Score = 0; id = ""; Name= "";}
-    public FriendModel(String name, String id) {
-        Name = name;
-        this.id = id;
-    }
-
-    public FriendModel( String name, String id, int score) {
-        Score = score;
-        Name = name;
-        this.id = id;
-    }
 
     @Override
     public String toString() {
 
         return Name;
     }
-    public String Name;
 
     public String getId() {
         return id;
@@ -50,12 +55,8 @@ public class FriendModel  implements Comparable{
         Name = name;
     }
 
-    public String id;
-
-
-
     @Override
     public int compareTo(Object another) {
-        return ((FriendModel)another).getScore() - getScore();
+        return ((FriendModel) another).getScore() - getScore();
     }
 }

@@ -1,10 +1,13 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.deprecated;
 
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.iplay.concatenate.HomeActivity;
+import com.iplay.concatenate.R;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.NetworkActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;

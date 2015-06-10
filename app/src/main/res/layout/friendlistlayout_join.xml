@@ -14,13 +14,13 @@
 
     >
 
-    <com.iplay.concatenate.CircularProfilePicView
+    <com.iplay.concatenate.support.CircularProfilePicView
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:id="@+id/profile_pic"></com.iplay.concatenate.CircularProfilePicView>
+        android:id="@+id/profile_pic"></com.iplay.concatenate.support.CircularProfilePicView>
 
     <carbon.widget.LinearLayout
         android:layout_width="fill_parent"

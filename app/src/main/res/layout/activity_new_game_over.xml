@@ -57,7 +57,7 @@
                     android:layout_toRightOf="@+id/myaccuracyimg"
                     android:textSize="15sp"
                     android:text="Accuracy: 64.28%"
-                    android:textColor="#FD7E00"/>
+                    android:textColor="#FFC419"/>
 
 
                 <TextView
@@ -67,7 +67,7 @@
                     android:layout_alignParentRight="true"
                     android:textSize="15sp"
                     android:text="Avg Time: 10.13s"
-                    android:textColor="#FD7E00"/>
+                    android:textColor="#FFC419"/>
 
                 <ImageView
                     android:id="@+id/myavgtimeimg"
@@ -98,14 +98,14 @@
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content">
 
-                    <com.iplay.concatenate.CircularProfilePicView
+                    <com.iplay.concatenate.support.CircularProfilePicView
                         android:layout_width="180dp"
                         android:layout_height="180dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center_horizontal"
                         android:id ="@+id/mypicfb"
-                        ></com.iplay.concatenate.CircularProfilePicView>
+                        ></com.iplay.concatenate.support.CircularProfilePicView>
 
                 </FrameLayout>
 
@@ -148,13 +148,13 @@
             <!--android:layout_gravity="center_horizontal"-->
             <!--android:src="@drawable/circlepic"/>-->
 
-            <com.iplay.concatenate.CircularProfilePicView
+            <com.iplay.concatenate.support.CircularProfilePicView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:id ="@+id/yourpicfb"
-                ></com.iplay.concatenate.CircularProfilePicView>
+                ></com.iplay.concatenate.support.CircularProfilePicView>
 
         </RelativeLayout>
 

@@ -6,6 +6,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.InviteModel;
+import com.iplay.concatenate.support.ListAdapterUtil;
+import com.iplay.concatenate.support.ORTCUtil;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -22,9 +25,11 @@ import ibt.ortc.extensibility.OrtcClient;
  */
 public class SubscribeCallbackHandler implements OnMessage {
     private Context ctx;
+
     public SubscribeCallbackHandler(Context ctx) {
         this.ctx = ctx;
     }
+
     @Override
     public void run(OrtcClient sender, String channel, String message) {
         ConcurrentLinkedQueue<InviteModel> joinGame = ListAdapterUtil.getQueue();
@@ -39,13 +44,13 @@ public class SubscribeCallbackHandler implements OnMessage {
             final JSONObject jsonObject = (JSONObject) jsonParser.parse(messageReceived);
 
             // Handle all the cases here!
-            switch (((int)(long)jsonObject.get("typeFlag"))) {
+            switch (((int) (long) jsonObject.get("typeFlag"))) {
 
                 case 1:
                     Intent intent = new Intent("invite_received");
-                    intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
-                    InviteModel newRequest = new InviteModel((String)jsonObject.get("fromUser"),"Accept the challenge?");
-                    newRequest.setName(CommonUtils.friendsMap.get((String)jsonObject.get("fromUser")).getName());
+                    intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
+                    InviteModel newRequest = new InviteModel((String) jsonObject.get("fromUser"), "Accept the challenge?");
+                    newRequest.setName(CommonUtils.friendsMap.get((String) jsonObject.get("fromUser")).getName());
                     ListAdapterUtil.getQueue().add(newRequest);
                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     // remove the request after 30 secs
@@ -55,15 +60,15 @@ public class SubscribeCallbackHandler implements OnMessage {
                         @Override
                         public void run() {
                             buttonTimer.cancel();
-                            ListAdapterUtil.removeInviteById( (String) jsonObject.get("fromUser") );
+                            ListAdapterUtil.removeInviteById((String) jsonObject.get("fromUser"));
                             Intent intent = new Intent("invite_received"); // but it is cancelled here. update req. rename?
-                            intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
+                            intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
                             LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                         }
                     }, 30000);
                     break;
                 case 2:
-                    if ( CommonUtils.onHostGame && CommonUtils.waitingFor != null && CommonUtils.waitingFor.equals((String)jsonObject.get("fromUser")) ) {
+                    if (CommonUtils.onHostGame && CommonUtils.waitingFor != null && CommonUtils.waitingFor.equals((String) jsonObject.get("fromUser"))) {
 
                         try {
                             JSONObject sendjsonObject = new JSONObject();
@@ -72,7 +77,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                             sendjsonObject.put("toUser", CommonUtils.waitingFor);
                             System.out.println(sendjsonObject.toString());
                             ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(CommonUtils.waitingFor), sendjsonObject.toString());
-                        } catch ( Exception e ) {
+                        } catch (Exception e) {
                             Log.e("json", "Error while encoding json for server");
                         }
 
@@ -80,26 +85,26 @@ public class SubscribeCallbackHandler implements OnMessage {
 
 //                        intent = new Intent(ctx, StartingGame.class);
                         intent = new Intent("starting_game");
-                        intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
+                        intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
 //                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        ctx.startActivity(intent);
                         LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     }
                     break;
                 case 3:
-                    ListAdapterUtil.removeInviteById( (String) jsonObject.get("fromUser") );
+                    ListAdapterUtil.removeInviteById((String) jsonObject.get("fromUser"));
                     intent = new Intent("invite_received"); // but it is cancelled here. update req. rename?
-                    intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
+                    intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     break;
                 case 4:
                     String against = (String) jsonObject.get("fromUser");
-                    if ( against.equals(CommonUtils.userId) )
+                    if (against.equals(CommonUtils.userId))
                         against = (String) jsonObject.get("toUser");
-                    if ( CommonUtils.waitingFor != null && CommonUtils.waitingFor.equals(against) ) {
+                    if (CommonUtils.waitingFor != null && CommonUtils.waitingFor.equals(against)) {
                         CommonUtils.waitingFor = null;
                         String gameWord = (String) jsonObject.get("gameWord");
-                        int gameId = (int)(long) jsonObject.get("gameId");
+                        int gameId = (int) (long) jsonObject.get("gameId");
                         String userTurn = (String) jsonObject.get("userTurn");
                         Boolean isBot = (Boolean) jsonObject.get("isBot");
                         Intent in = new Intent(ctx, MainGameActivity.class);
@@ -116,23 +121,23 @@ public class SubscribeCallbackHandler implements OnMessage {
                     break;
                 case 5:
                     intent = new Intent("gameword_received");
-                    intent.putExtra("sender_id", (String)jsonObject.get("fromUser") );
-                    intent.putExtra("game_id", (int)(long) jsonObject.get("gameId") );
-                    intent.putExtra("game_word", (String)jsonObject.get("gameWord") );
-                    intent.putExtra("your_score", (int)(long)jsonObject.get("myScore") ); // senders my score = your score.. here.
+                    intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
+                    intent.putExtra("game_id", (int) (long) jsonObject.get("gameId"));
+                    intent.putExtra("game_word", (String) jsonObject.get("gameWord"));
+                    intent.putExtra("your_score", (int) (long) jsonObject.get("myScore")); // senders my score = your score.. here.
                     LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     break;
                 case 6:
-                    if ( CommonUtils.onMainGame ) {
+                    if (CommonUtils.onMainGame) {
                         CommonUtils.disableTimer(CommonUtils.mainGameTimer);
                         Intent in = new Intent(ctx, NewGameOverActivity.class);
-                        in.putExtra("surrender", (String)jsonObject.get("surrender"));
+                        in.putExtra("surrender", (String) jsonObject.get("surrender"));
                         in.putExtra("server_request", true);
                         in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         ctx.startActivity(in);
-                    } else if ( CommonUtils.onGameOver ) {
+                    } else if (CommonUtils.onGameOver) {
                         intent = new Intent("gameover_received");
-                        intent.putExtra("surrender", (String)jsonObject.get("surrender"));
+                        intent.putExtra("surrender", (String) jsonObject.get("surrender"));
                         LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
                     }
                     break;
@@ -140,7 +145,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                     // Ignoring the word timed out request - server should handle this
                     break;
                 case 8:
-                    if ( CommonUtils.onQuickGame ) {
+                    if (CommonUtils.onQuickGame) {
                         if (CommonUtils.quickGameTimer != null) {
                             CommonUtils.disableTimer(CommonUtils.quickGameTimer);
                             try {
@@ -159,7 +164,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                             intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
                             intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
                             intent.putExtra("sender_name", (String) jsonObject.get("fromUserName"));
-                            intent.putExtra("sender_score", (int)(long) jsonObject.get("fromUserScore"));
+                            intent.putExtra("sender_score", (int) (long) jsonObject.get("fromUserScore"));
                             LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
 //                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                            ctx.startActivity(intent);
@@ -169,7 +174,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                             intent.putExtra("sender_id", (String) jsonObject.get("fromUser"));
                             intent.putExtra("is_bot", (Boolean) jsonObject.get("isBot"));
                             intent.putExtra("sender_name", (String) jsonObject.get("fromUserName"));
-                            intent.putExtra("sender_score", (int)(long) jsonObject.get("fromUserScore"));
+                            intent.putExtra("sender_score", (int) (long) jsonObject.get("fromUserScore"));
 //                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                            ctx.startActivity(intent);
                             LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
@@ -179,12 +184,11 @@ public class SubscribeCallbackHandler implements OnMessage {
                     break;
 
             }
-        } catch ( Exception pe ) {
+        } catch (Exception pe) {
             System.out.println("Error while parsing: " + pe.getMessage());
         }
         System.out.println("Message received");
     }
-
 
 
 }

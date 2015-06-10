@@ -17,8 +17,13 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
 import com.facebook.widget.WebDialog;
-import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.CircularProfilePicView;
+import com.iplay.concatenate.support.DataListener;
+import com.iplay.concatenate.support.FriendListAdapter;
+import com.iplay.concatenate.support.FriendModel;
+import com.iplay.concatenate.support.NetworkActivity;
+import com.iplay.concatenate.support.ORTCUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,18 +36,18 @@ import java.util.Timer;
 import ibt.ortc.extensibility.OrtcClient;
 
 
-
-public class InviteFriends extends NetworkActivity implements DataListener{
+public class InviteFriends extends NetworkActivity implements DataListener {
 
     public FriendListAdapter fla;
+    public List<FriendModel> friends;
     private WebDialog dialog;
-    public List<FriendModel>friends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_invite_friends);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ((TextView) findViewById(R.id.host_title)).setTypeface(CommonUtils.FreightSansFont);
 
@@ -55,11 +60,11 @@ public class InviteFriends extends NetworkActivity implements DataListener{
         final Activity that = this;
         final Context ctx = getApplicationContext();
         if (CommonUtils.friendsMap != null)
-        for (Map.Entry<String, FriendModel> friend: CommonUtils.friendsMap.entrySet()) {
-            FriendModel f = friend.getValue();
-            if(!f.getId().equalsIgnoreCase(CommonUtils.userId))
-                friends.add(new FriendModel(f.getName(), f.getId(), f.getScore()));
-        }
+            for (Map.Entry<String, FriendModel> friend : CommonUtils.friendsMap.entrySet()) {
+                FriendModel f = friend.getValue();
+                if (!f.getId().equalsIgnoreCase(CommonUtils.userId))
+                    friends.add(new FriendModel(f.getName(), f.getId(), f.getScore()));
+            }
 
 
         CommonUtils.addAsSubscriber(this);
@@ -69,10 +74,7 @@ public class InviteFriends extends NetworkActivity implements DataListener{
         fla.notifyDataSetChanged();
 
 
-
-
-
-        ((EditText)findViewById(R.id.inputSearch)).addTextChangedListener(new TextWatcher() {
+        ((EditText) findViewById(R.id.inputSearch)).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -91,7 +93,7 @@ public class InviteFriends extends NetworkActivity implements DataListener{
         });
     }
 
-    private void showDialogWithoutNotificationBar(String action, Bundle params){
+    private void showDialogWithoutNotificationBar(String action, Bundle params) {
         System.out.println(Session.getActiveSession().getAccessToken());
         dialog = new WebDialog.Builder(InviteFriends.this, Session.getActiveSession(), action, params).
                 setOnCompleteListener(new WebDialog.OnCompleteListener() {
@@ -100,7 +102,7 @@ public class InviteFriends extends NetworkActivity implements DataListener{
                         if (error != null && !(error instanceof FacebookOperationCanceledException)) {
 
                         }
-                        if(values != null) {
+                        if (values != null) {
                             System.out.println("to=>," + values.toString());
 
                             final String opponentId = values.getString("to[0]");
@@ -108,32 +110,40 @@ public class InviteFriends extends NetworkActivity implements DataListener{
 
                             final OrtcClient client = ORTCUtil.getClient();
 
-                            // TODO: Can be optimized via callback
-                            while ( true ) {
-                                if ( client.getIsConnected() )
-                                    break;
-                                try {
-                                    Thread.sleep(1 * 1000);
-                                } catch ( InterruptedException e ) {
-                                    System.out.println("error in check connected thread: " + e);
-                                }
-                            }
+                            Thread thread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
 
-                            try {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("typeFlag", 1);
-                                jsonObject.put("toUser", opponentId);
-                                jsonObject.put("fromUser", CommonUtils.userId);
-                                client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
-                            } catch (JSONException je) {
-                                System.out.println("Unable to encode json: " + je.getMessage());
-                            }
-                            CommonUtils.waitingFor = opponentId;
-                            CommonUtils.hostGameTimer = new Timer();
-                            Intent in = new Intent(getApplicationContext(), NewHostGameActivity.class);
-                            in.putExtra("id", opponentId);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
-                            startActivity(in);
+                                    while (true) {
+                                        if (client.getIsConnected())
+                                            break;
+                                        try {
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            System.out.println("error in check connected thread: " + e);
+                                        }
+                                    }
+
+                                    try {
+                                        JSONObject jsonObject = new JSONObject();
+                                        jsonObject.put("typeFlag", 1);
+                                        jsonObject.put("toUser", opponentId);
+                                        jsonObject.put("fromUser", CommonUtils.userId);
+                                        client.send(CommonUtils.getChannelNameFromUserID(opponentId), jsonObject.toString());
+                                    } catch (JSONException je) {
+                                        System.out.println("Unable to encode json: " + je.getMessage());
+                                    }
+                                    CommonUtils.waitingFor = opponentId;
+                                    CommonUtils.hostGameTimer = new Timer();
+                                    Intent in = new Intent(getApplicationContext(), NewHostGameActivity.class);
+                                    in.putExtra("id", opponentId);
+                                    overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                                    startActivity(in);
+
+                                }
+                            });
+                            thread.start();
+
                         }
 
                     }
@@ -144,13 +154,11 @@ public class InviteFriends extends NetworkActivity implements DataListener{
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-
         dialog.show();
 
 
-
-
     }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -172,11 +180,12 @@ public class InviteFriends extends NetworkActivity implements DataListener{
 //            }
 //        });
     }
-    public void myfunc_invite(View v){
+
+    public void myfunc_invite(View v) {
 
         Bundle params = new Bundle();
         params.putString("message", "I challenge you for a Concaty showdown!");
-        params.putString("to",((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId());
+        params.putString("to", ((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId());
         params.putInt("max_recipients", 1);
         showDialogWithoutNotificationBar("apprequests", params);
         System.out.print("Hello");
@@ -192,7 +201,7 @@ public class InviteFriends extends NetworkActivity implements DataListener{
     @Override
     public void onResume() {
         super.onResume();
-        EditText editText = ((EditText)findViewById(R.id.inputSearch));
+        EditText editText = ((EditText) findViewById(R.id.inputSearch));
 //        editText.clearFocus();
         editText.setFocusableInTouchMode(false);
         editText.setFocusable(false);
@@ -202,13 +211,13 @@ public class InviteFriends extends NetworkActivity implements DataListener{
 
     @Override
     public void dataSetAvailable() {
-        if(friends.size() == 0)
-        for (Map.Entry<String, FriendModel> friend: CommonUtils.friendsMap.entrySet()) {
-            FriendModel f = friend.getValue();
-            if(!f.getId().equalsIgnoreCase(CommonUtils.userId))
-                friends.add(new FriendModel(f.getName(), f.getId(), f.getScore()));
-        }
-        if(fla != null)
+        if (friends.size() == 0)
+            for (Map.Entry<String, FriendModel> friend : CommonUtils.friendsMap.entrySet()) {
+                FriendModel f = friend.getValue();
+                if (!f.getId().equalsIgnoreCase(CommonUtils.userId))
+                    friends.add(new FriendModel(f.getName(), f.getId(), f.getScore()));
+            }
+        if (fla != null)
             fla.notifyDataSetChanged();
     }
 }

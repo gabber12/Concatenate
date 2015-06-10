@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.support;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,13 +7,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.iplay.concatenate.R;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class MyAdapter extends BaseAdapter {
     private ConcurrentLinkedQueue<InviteModel> mData;
     private LayoutInflater mInflater;
-    public MyAdapter(Context mContext,  ConcurrentLinkedQueue<InviteModel> data) {
+
+    public MyAdapter(Context mContext, ConcurrentLinkedQueue<InviteModel> data) {
         mData = data;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -48,11 +51,11 @@ public class MyAdapter extends BaseAdapter {
         } else {
             result = convertView;
         }
-        System.out.println("==----"+getItem(position).getName());
+        System.out.println("==----" + getItem(position).getName());
         // TODO replace findViewById by ViewHolder
         ((CircularProfilePicView) result.findViewById(R.id.profile_pic)).setProfileId(getItem(position).getId());
         ((TextView) result.findViewById(R.id.profile_name)).setText(getItem(position).getName());
-        ((TextView) result.findViewById(R.id.profile_score)).setText("Score "+getItem(position).getScore());
+        ((TextView) result.findViewById(R.id.profile_score)).setText("Score " + getItem(position).getScore());
 
         return result;
     }

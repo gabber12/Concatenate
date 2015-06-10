@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -29,6 +30,8 @@ import com.facebook.widget.LoginButton;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.common.UserInfoFetcher;
+import com.iplay.concatenate.support.NetworkActivity;
+import com.iplay.concatenate.support.ORTCUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -42,23 +45,24 @@ import ibt.ortc.extensibility.OrtcClient;
 
 public class SplashScreenActivity extends NetworkActivity {
 
+    UserInfoFetcher uif;
     private AccessToken token;
     private LoginButton loginButton;
     private UiLifecycleHelper fbUiLifecycleHelper;
+    private long startTime;
+    private Animation scale;
+    private ImageView background_image;
 
     public UiLifecycleHelper getFbUiLifecycleHelper() {
         return fbUiLifecycleHelper;
     }
-    UserInfoFetcher uif;
+
     BroadcastReceiver rec;
     @Override
-    protected void onSaveInstanceState(Bundle outState){
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         fbUiLifecycleHelper.onSaveInstanceState(outState);
     }
-
-    private long startTime;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,7 @@ public class SplashScreenActivity extends NetworkActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         CommonUtils.FreightSansFont = Typeface.createFromAsset(getAssets(), "FreightSans-BoldSC.ttf");
         uif = new UserInfoFetcher(getApplicationContext());
@@ -82,11 +87,11 @@ public class SplashScreenActivity extends NetworkActivity {
         startTime = System.currentTimeMillis();
 
 
-        ImageView background_image = (ImageView) findViewById(R.id.splash_logo);
-        Animation scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(3000);
+        background_image = (ImageView) findViewById(R.id.splash_logo);
+        scale = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        scale.setDuration(4000);
 
-        ((Button)loginButton).setOnClickListener(new View.OnClickListener() {
+        ((Button) loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setClickable(false);
@@ -107,7 +112,7 @@ public class SplashScreenActivity extends NetworkActivity {
                 // start the animation to fullscreen if not logged in otherwise just start your caching.
 
                 uif.dataSetAvailable();
-                if(!Session.getActiveSession().isOpened())
+                if (!Session.getActiveSession().isOpened())
                     animateToShowLogin();
 
 
@@ -122,8 +127,8 @@ public class SplashScreenActivity extends NetworkActivity {
         });
 
         background_image.startAnimation(scale);
+
 //        background_image.setColorFilter(Color.argb(255, 255, 255, 255));
-        cacheData();
 
     }
 
@@ -143,7 +148,7 @@ public class SplashScreenActivity extends NetworkActivity {
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
         loginLayout.startAnimation(anim);
 
-        Animation animlogo = new TranslateAnimation(0, 0, 0, -1*CommonUtils.getPixelsfromDP(getApplicationContext(), 100f));
+        Animation animlogo = new TranslateAnimation(0, 0, 0, -1 * CommonUtils.getPixelsfromDP(getApplicationContext(), 100f));
         animlogo.setDuration(1000);
         animlogo.setFillAfter(true);
         animlogo.setFillEnabled(true);
@@ -165,22 +170,22 @@ public class SplashScreenActivity extends NetworkActivity {
 
                 long currentTime = System.currentTimeMillis();
 
-                if ( CommonUtils.words == null ) {
+                if (CommonUtils.words == null) {
                     CommonUtils.words = new HashSet<String>();
                     InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.dict);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                     try {
                         String line = reader.readLine();
                         while (line != null) {
-                            CommonUtils.words.add( line.toUpperCase() );
+                            CommonUtils.words.add(line.toUpperCase());
                             line = reader.readLine();
                         }
-                    } catch ( Exception e) {
+                    } catch (Exception e) {
                         System.out.println("error while reading from dictionary of words.");
                     }
                 }
 
-                System.out.println("Time - " + (System.currentTimeMillis() - currentTime)/1000);
+                System.out.println("Time for dictionary - " + (System.currentTimeMillis() - currentTime) / 1000);
 
             }
         });
@@ -209,7 +214,7 @@ public class SplashScreenActivity extends NetworkActivity {
                 // Add code here to accommodate session changes
 
                 if (exception != null) {
-                    Log.e("Error", "Error loggin in "+exception.getStackTrace());
+                    Log.e("Error", "Error loggin in " + exception.getStackTrace());
                 }
                 if(state.isOpened() &&  CommonUtils.userId == "") {
                     System.out.println("session" + session.getAccessToken());
@@ -290,11 +295,11 @@ public class SplashScreenActivity extends NetworkActivity {
 
     }
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         fbUiLifecycleHelper.onResume();
         Session session = Session.getActiveSession();
-        if(session.isClosed()) {
+        if (session.isClosed()) {
             System.out.println("hello");
         }
 //        if(CommonUtils.uif == null) CommonUtils.uif = new UserInfoFetcher(getApplicationContext());

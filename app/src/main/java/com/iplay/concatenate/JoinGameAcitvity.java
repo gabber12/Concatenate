@@ -8,10 +8,17 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.CircularProfilePicView;
+import com.iplay.concatenate.support.InviteModel;
+import com.iplay.concatenate.support.ListAdapterUtil;
+import com.iplay.concatenate.support.MyAdapter;
+import com.iplay.concatenate.support.NetworkActivity;
+import com.iplay.concatenate.support.ORTCUtil;
 
 import org.json.simple.JSONObject;
 
@@ -20,37 +27,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import ibt.ortc.extensibility.OrtcClient;
 
 
-
-
 public class JoinGameAcitvity extends NetworkActivity {
 
     public MyAdapter ma;
-
-
-
-    private JoinGameAcitvity that;
     ListView inviteView;
     ConcurrentLinkedQueue<InviteModel> inviteModels;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        that = this;
-        super.onCreate(savedInstanceState);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("invite_received"));
-
-        setContentView(R.layout.activity_join_game_acitvity);
-
-        ((TextView)findViewById(R.id.join_title)).setTypeface(CommonUtils.FreightSansFont);
-
-        //Add id to channel
-
-        final OrtcClient client = ORTCUtil.getClient();
-
-
-        inviteView = (ListView)findViewById(R.id.invitesView);
-
-
-    }
-
+    private JoinGameAcitvity that;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -62,18 +44,39 @@ public class JoinGameAcitvity extends NetworkActivity {
     };
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        that = this;
+        super.onCreate(savedInstanceState);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("invite_received"));
+
+        setContentView(R.layout.activity_join_game_acitvity);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        ((TextView) findViewById(R.id.join_title)).setTypeface(CommonUtils.FreightSansFont);
+
+        //Add id to channel
+
+        final OrtcClient client = ORTCUtil.getClient();
+
+
+        inviteView = (ListView) findViewById(R.id.invitesView);
+
+
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         inviteModels = ListAdapterUtil.getQueue();
 
-        ListView inviteView =(ListView) findViewById(R.id.invitesView);
+        ListView inviteView = (ListView) findViewById(R.id.invitesView);
         try {
             ma = ListAdapterUtil.getAdapter(getApplicationContext());
             inviteView.setAdapter(ma);
 
             ma.notifyDataSetChanged();
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         // Trigger the initial hide() shortly after the activity has been
@@ -81,8 +84,8 @@ public class JoinGameAcitvity extends NetworkActivity {
         // are available.
     }
 
-    public void myfunc_join(View v){
-        String senderId = ((CircularProfilePicView)v.findViewById(R.id.profile_pic)).getProfileId();
+    public void myfunc_join(View v) {
+        String senderId = ((CircularProfilePicView) v.findViewById(R.id.profile_pic)).getProfileId();
         OrtcClient client = ORTCUtil.getClient();
         try {
             Intent intent = new Intent(that, NewJoinGameActivity.class);
@@ -94,7 +97,7 @@ public class JoinGameAcitvity extends NetworkActivity {
             jsonObject.put("toUser", senderId);
             System.out.println(jsonObject.toString());
             client.send(CommonUtils.getChannelNameFromUserID(senderId), jsonObject.toString());
-            ListAdapterUtil.removeInviteById( senderId );
+            ListAdapterUtil.removeInviteById(senderId);
             ma.notifyDataSetChanged();
             overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(intent);

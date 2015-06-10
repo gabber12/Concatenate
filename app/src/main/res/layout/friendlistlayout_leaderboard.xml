@@ -13,15 +13,6 @@
     >
     <!--android:background="@color/carbon_background_light"-->
 
-    <com.iplay.concatenate.CircularProfilePicView
-        android:layout_width="50dp"
-        android:visibility="gone"
-        android:layout_height="50dp"
-        android:layout_marginLeft="20dp"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:id="@+id/profile_pic"></com.iplay.concatenate.CircularProfilePicView>
-
     <carbon.widget.LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="match_parent"

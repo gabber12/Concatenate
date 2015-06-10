@@ -15,25 +15,26 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.facebook.Session;
-import com.facebook.widget.LoginButton;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.CircularProfilePicView;
 
 
 public class ProfileActivity extends Fragment {
-//    public String url;
+    //    public String url;
     View myFragment;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myFragment = inflater.inflate(R.layout.activity_profile, container, false);
         super.onCreate(savedInstanceState);
 
-        ((TextView)myFragment.findViewById(R.id.profile_heading)).setTypeface(CommonUtils.FreightSansFont);
+        ((TextView) myFragment.findViewById(R.id.profile_heading)).setTypeface(CommonUtils.FreightSansFont);
 
 
-                ((TextView)myFragment.findViewById(R.id.profile_name)).setText(CommonUtils.name);
-        ((TextView)myFragment.findViewById(R.id.profile_score)).setText(CommonUtils.score + " XP");
-        ((CircularProfilePicView)myFragment.findViewById(R.id.profile_pic_ac)).setProfileId(CommonUtils.userId);
-        Button btn = (Button)myFragment.findViewById(R.id.logout_button);
+        ((TextView) myFragment.findViewById(R.id.profile_name)).setText(CommonUtils.name);
+        ((TextView) myFragment.findViewById(R.id.profile_score)).setText(CommonUtils.score + " XP");
+        ((CircularProfilePicView) myFragment.findViewById(R.id.profile_pic_ac)).setProfileId(CommonUtils.userId);
+        Button btn = (Button) myFragment.findViewById(R.id.logout_button);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

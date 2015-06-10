@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInstaller;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -23,12 +22,12 @@ import android.widget.ViewSwitcher;
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.WebDialog;
 import com.iplay.concatenate.common.BackgroundURLRequest;
 import com.iplay.concatenate.common.CommonUtils;
+import com.iplay.concatenate.support.CircularProfilePicView;
+import com.iplay.concatenate.support.NetworkActivity;
 
 import org.json.simple.JSONObject;
 
@@ -38,10 +37,18 @@ import java.util.TimerTask;
 
 public class NewGameOverActivity extends NetworkActivity {
 
+    TextSwitcher mSwitcher;
     private int allAvailable;
     private String surrender = null;
-    TextSwitcher mSwitcher;
+    private BroadcastReceiver mReceivedGameOver = new BroadcastReceiver() {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!intent.getStringExtra("surrender").equals(""))
+                surrender = intent.getStringExtra("surrender");
+            animateShowScore();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,7 @@ public class NewGameOverActivity extends NetworkActivity {
         CommonUtils.onGameOver = true;
 
         setContentView(R.layout.activity_new_game_over);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceivedGameOver, new IntentFilter("gameover_received"));
 
@@ -84,25 +92,25 @@ public class NewGameOverActivity extends NetworkActivity {
             }
         });
 
-        Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
+        Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
         fadeIn.setDuration(500);
-        Animation fadeOut = new AlphaAnimation(1.0f,0.0f);
-        fadeOut.setDuration(500); fadeOut.setStartOffset(500);
+        Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+        fadeOut.setDuration(500);
+        fadeOut.setStartOffset(500);
 
         mSwitcher.setInAnimation(fadeIn);
         mSwitcher.setOutAnimation(fadeOut);
 
         boolean fromServer = getIntent().getBooleanExtra("server_request", false);
-        if ( fromServer ) {
+        if (fromServer) {
             surrender = getIntent().getStringExtra("surrender");
             animateShowScore();
         }
 
-        ((CircularProfilePicView)findViewById(R.id.mypicfb)).setProfileId(CommonUtils.userId);
-        ((CircularProfilePicView)findViewById(R.id.yourpicfb)).setProfileId(CommonUtils.againstId);
+        ((CircularProfilePicView) findViewById(R.id.mypicfb)).setProfileId(CommonUtils.userId);
+        ((CircularProfilePicView) findViewById(R.id.yourpicfb)).setProfileId(CommonUtils.againstId);
 
         mSwitcher.setText("FETCHING SCORE...");
-
 
 
         Timer gameOverTimer = new Timer();
@@ -124,7 +132,7 @@ public class NewGameOverActivity extends NetworkActivity {
 
     private void animateShowScore() {
         allAvailable++;
-        if ( allAvailable == 2 ) {
+        if (allAvailable == 2) {
 
             int myScore = MainGameActivity.currentMyScore;
             int yourScore = MainGameActivity.currentYourScore;
@@ -133,15 +141,14 @@ public class NewGameOverActivity extends NetworkActivity {
             float avgTime = getAvgTime(MainGameActivity.myTotalTime, Math.min(MainGameActivity.myMoves, MainGameActivity.MAX_MOVES));
 
             mSwitcher.clearAnimation();
-            Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(),0);
-            fadeOutCustom.setDuration((long)(mSwitcher.getAlpha()*500));
+            Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(), 0);
+            fadeOutCustom.setDuration((long) (mSwitcher.getAlpha() * 500));
             mSwitcher.setOutAnimation(fadeOutCustom);
-            if ( surrender != null ) {
-                if ( surrender.equals(CommonUtils.userId) ) {
+            if (surrender != null) {
+                if (surrender.equals(CommonUtils.userId)) {
                     mSwitcher.setText("YOU SURRENDERED");
                     myScore = 0;
-                }
-                else {
+                } else {
                     mSwitcher.setText("OPPONENT SURRENDERED");
                     yourScore = 0;
                 }
@@ -159,20 +166,21 @@ public class NewGameOverActivity extends NetworkActivity {
             new BackgroundURLRequest().execute("update_score_for_bot/", sendjsonObject.toString());
 
 
-            ((TextView)(findViewById(R.id.myname))).setText(CommonUtils.name);
-            ((TextView)(findViewById(R.id.mylevel))).setText("Score - " + myScore);
-            ((TextView)(findViewById(R.id.myaccuracy))).setText("Accuracy: " + String.format("%.2f",accuracy) + "%");
-            ((TextView)(findViewById(R.id.myavgtime))).setText("Avg Time: " + String.format("%.2f",avgTime) + "s");
+            ((TextView) (findViewById(R.id.myname))).setText(CommonUtils.name);
+            ((TextView) (findViewById(R.id.mylevel))).setText("Score - " + myScore);
+            ((TextView) (findViewById(R.id.myaccuracy))).setText("Accuracy: " + String.format("%.2f", accuracy) + "%");
+            ((TextView) (findViewById(R.id.myavgtime))).setText("Avg Time: " + String.format("%.2f", avgTime) + "s");
 
-            ((TextView)(findViewById(R.id.yourname))).setText(CommonUtils.againstUserName);
-            ((TextView)(findViewById(R.id.yourlevel))).setText("Score - " + yourScore);
+            ((TextView) (findViewById(R.id.yourname))).setText(CommonUtils.againstUserName);
+            ((TextView) (findViewById(R.id.yourlevel))).setText("Score - " + yourScore);
 
             findViewById(R.id.yourinfolayout).setVisibility(View.VISIBLE);
             findViewById(R.id.myinfolayout).setVisibility(View.VISIBLE);
 
             Animation moveLeft = new TranslateAnimation(-600, 0, 0, 0);
             Animation moveRight = new TranslateAnimation(600, 0, 0, 0);
-            moveLeft.setDuration(500); moveRight.setDuration(500);
+            moveLeft.setDuration(500);
+            moveRight.setDuration(500);
             moveLeft.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -188,19 +196,25 @@ public class NewGameOverActivity extends NetworkActivity {
                     findViewById(R.id.share_button).setVisibility(View.VISIBLE);
                     findViewById(R.id.main_menu_button).setVisibility(View.VISIBLE);
 
-                    Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
-                    fadeIn.setDuration(500); fadeIn.setStartOffset(500);
-                    fadeIn.setFillEnabled(true); fadeIn.setFillAfter(true);
+                    Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
+                    fadeIn.setDuration(500);
+                    fadeIn.setStartOffset(500);
+                    fadeIn.setFillEnabled(true);
+                    fadeIn.setFillAfter(true);
                     findViewById(R.id.metrics_layout).startAnimation(fadeIn);
 
-                    Animation fadeIn2 = new AlphaAnimation(0.0f,1.0f);
-                    fadeIn2.setDuration(500); fadeIn2.setStartOffset(900);
-                    fadeIn2.setFillEnabled(true); fadeIn2.setFillAfter(true);
+                    Animation fadeIn2 = new AlphaAnimation(0.0f, 1.0f);
+                    fadeIn2.setDuration(500);
+                    fadeIn2.setStartOffset(900);
+                    fadeIn2.setFillEnabled(true);
+                    fadeIn2.setFillAfter(true);
                     findViewById(R.id.share_button).startAnimation(fadeIn2);
 
-                    Animation fadeIn3 = new AlphaAnimation(0.0f,1.0f);
-                    fadeIn3.setDuration(500); fadeIn3.setStartOffset(1400);
-                    fadeIn3.setFillEnabled(true); fadeIn3.setFillAfter(true);
+                    Animation fadeIn3 = new AlphaAnimation(0.0f, 1.0f);
+                    fadeIn3.setDuration(500);
+                    fadeIn3.setStartOffset(1400);
+                    fadeIn3.setFillEnabled(true);
+                    fadeIn3.setFillAfter(true);
                     findViewById(R.id.main_menu_button).startAnimation(fadeIn3);
 
                 }
@@ -232,15 +246,14 @@ public class NewGameOverActivity extends NetworkActivity {
     }
 
     float getAccuracy(int total, float right) {
-        if ( total == 0 ) return 0.0f;
-        return (float)((right/total)*100.0);
+        if (total == 0) return 0.0f;
+        return (float) ((right / total) * 100.0);
     }
 
     float getAvgTime(float total, int attempts) {
-        if ( attempts == 0 ) return 0.0f;
-        return (float)((total/attempts)/1000.0);
+        if (attempts == 0) return 0.0f;
+        return (float) ((total / attempts) / 1000.0);
     }
-
 
     void sendBrag() {
 
@@ -266,7 +279,7 @@ public class NewGameOverActivity extends NetworkActivity {
 
             // Show the Native Share dialog
 
-            (CommonUtils.getFbUiLifecycleHelper()   ).trackPendingDialogCall(shareDialog.present());
+            (CommonUtils.getFbUiLifecycleHelper()).trackPendingDialogCall(shareDialog.present());
         } else {
 
             // Prepare the web dialog parameters
@@ -281,7 +294,8 @@ public class NewGameOverActivity extends NetworkActivity {
             showDialogWithoutNotificationBar("feed", params);
         }
     }
-    private void showDialogWithoutNotificationBar(String action , Bundle params){
+
+    private void showDialogWithoutNotificationBar(String action, Bundle params) {
 
         WebDialog dialog = new WebDialog.Builder(this, Session.getActiveSession(), action, params).
                 setOnCompleteListener(new WebDialog.OnCompleteListener() {
@@ -299,24 +313,14 @@ public class NewGameOverActivity extends NetworkActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-
         dialog.show();
     }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
     }
-
-    private BroadcastReceiver mReceivedGameOver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if ( !intent.getStringExtra("surrender").equals("") )
-                surrender = intent.getStringExtra("surrender");
-            animateShowScore();
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -324,6 +328,7 @@ public class NewGameOverActivity extends NetworkActivity {
         Intent in = new Intent(this, HomeActivity.class);
         overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
         startActivity(in);
+        this.finish();
     }
 
 }

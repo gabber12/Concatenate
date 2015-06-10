@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.support;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -10,6 +10,7 @@ import android.util.Log;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.iplay.concatenate.HomeActivity;
 import com.iplay.concatenate.common.CommonUtils;
 
 /**
@@ -18,6 +19,7 @@ import com.iplay.concatenate.common.CommonUtils;
 public class NetworkActivity extends Activity {
     MaterialDialog md;
     ConnectivityReciever cr = null;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -29,24 +31,26 @@ public class NetworkActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(cr != null)
-        super.unregisterReceiver(cr);
+        if (cr != null)
+            super.unregisterReceiver(cr);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(md != null) {
+        if (md != null) {
             md.cancel();
         }
     }
-    class ConnectivityReciever extends  BroadcastReceiver {
+
+    class ConnectivityReciever extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, Intent intent) {
 
             Log.d("app", "Network connectivity change");
-            if(!CommonUtils.isOnline(context) ){
+            if (!CommonUtils.isOnline(context)) {
                 System.out.println("Network not Available");
-                if(md == null)
+                if (md == null)
 
                     md = new MaterialDialog.Builder(context)
                             .callback(new MaterialDialog.ButtonCallback() {
@@ -58,7 +62,7 @@ public class NetworkActivity extends Activity {
                             .progress(true, 1)
                             .theme(Theme.LIGHT).cancelable(false)
                             .show();
-            } else if(md != null) {
+            } else if (md != null) {
                 System.out.println("Network Available");
                 md.dismiss();
                 md = null;
@@ -67,5 +71,7 @@ public class NetworkActivity extends Activity {
             }
 
         }
-    };
+    }
+
+    ;
 }

@@ -1,4 +1,4 @@
-package com.iplay.concatenate;
+package com.iplay.concatenate.support;
 
 /**
  * Created by gabber12 on 11/04/15.
@@ -41,23 +41,9 @@ import java.net.URISyntaxException;
 public class CircularProfilePicView extends FrameLayout {
 
     /**
-     * Callback interface that will be called when a network or other error is encountered
-     * while retrieving profile pictures.
-     */
-    public interface OnErrorListener {
-        /**
-         * Called when a network or other error is encountered.
-         *
-         * @param error a FacebookException representing the error that was encountered.
-         */
-        void onError(FacebookException error);
-    }
-
-    /**
      * Tag used when logging calls are made by CircularProfilePicView
      */
     public static final String TAG = CircularProfilePicView.class.getSimpleName();
-
     /**
      * Indicates that the specific size of the View will be set via layout params.
      * CircularProfilePicView will default to NORMAL X NORMAL, if the layout params set on
@@ -66,7 +52,7 @@ public class CircularProfilePicView extends FrameLayout {
      * Corresponds with the preset_size Xml attribute that can be set on CircularProfilePicView.
      */
     public static final int CUSTOM = -1;
-
+    private int presetSizeType = CUSTOM;
     /**
      * Indicates that the profile image should fit in a SMALL X SMALL space, regardless
      * of whether the cropped or un-cropped version is chosen.
@@ -93,6 +79,7 @@ public class CircularProfilePicView extends FrameLayout {
 
     private static final int MIN_SIZE = 1;
     private static final boolean IS_CROPPED_DEFAULT_VALUE = true;
+    private boolean isCropped = IS_CROPPED_DEFAULT_VALUE;
     private static final String SUPER_STATE_KEY = "CircularProfilePicView_superState";
     private static final String PROFILE_ID_KEY = "CircularProfilePicView_profileId";
     private static final String PRESET_SIZE_KEY = "CircularProfilePicView_presetSize";
@@ -101,18 +88,14 @@ public class CircularProfilePicView extends FrameLayout {
     private static final String BITMAP_WIDTH_KEY = "CircularProfilePicView_width";
     private static final String BITMAP_HEIGHT_KEY = "CircularProfilePicView_height";
     private static final String PENDING_REFRESH_KEY = "CircularProfilePicView_refresh";
-
     private String profileId;
     private int queryHeight = ImageRequest.UNSPECIFIED_DIMENSION;
     private int queryWidth = ImageRequest.UNSPECIFIED_DIMENSION;
-    private boolean isCropped = IS_CROPPED_DEFAULT_VALUE;
     private Bitmap imageContents;
     private ImageView image;
-    private int presetSizeType = CUSTOM;
     private ImageRequest lastRequest;
     private OnErrorListener onErrorListener;
     private Bitmap customizedDefaultProfilePicture = null;
-
     /**
      * Constructor
      *
@@ -148,6 +131,34 @@ public class CircularProfilePicView extends FrameLayout {
         super(context, attrs, defStyle);
         initialize(context);
         parseAttributes(attrs);
+    }
+
+    public static Bitmap getRoundedBitmap(Bitmap bitmap) {
+        Bitmap output;
+        try {
+            output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                    .getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(output);
+
+            final int color = 0xff424242;
+            final Paint paint = new Paint();
+            final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            final RectF rectF = new RectF(rect);
+
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawOval(rectF, paint);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
+        } catch (OutOfMemoryError oom) {
+            System.out.println("CAught out of memory.. Retrying!");
+            System.gc();
+            return getRoundedBitmap(bitmap);
+        }
+
+        return output;
     }
 
     /**
@@ -432,14 +443,14 @@ public class CircularProfilePicView extends FrameLayout {
                     getContext(),
                     ImageRequest.getProfilePictureUrl(profileId, queryWidth, queryHeight));
 
-            if(profileId.equalsIgnoreCase(CommonUtils.userId)) {
-                processResponse(CommonUtils.imageResponse,true);
-                return ;
+            if (profileId.equalsIgnoreCase(CommonUtils.userId)) {
+                processResponse(CommonUtils.imageResponse, true);
+                return;
             }
 
-            if ( profileId.equalsIgnoreCase(CommonUtils.waitingForPicId) ) {
-                processResponse(CommonUtils.waitingForPic,true);
-                return ;
+            if (profileId.equalsIgnoreCase(CommonUtils.waitingForPicId)) {
+                processResponse(CommonUtils.waitingForPic, true);
+                return;
             }
 
             ImageRequest request = requestBuilder.setAllowCachedRedirects(allowCachedResponse)
@@ -448,7 +459,7 @@ public class CircularProfilePicView extends FrameLayout {
                             new ImageRequest.Callback() {
                                 @Override
                                 public void onCompleted(ImageResponse response) {
-                                    processResponse(response,false);
+                                    processResponse(response, false);
                                 }
                             }
                     )
@@ -468,7 +479,7 @@ public class CircularProfilePicView extends FrameLayout {
         }
     }
 
-    private void processResponse(ImageResponse response,boolean checkNotNeeded) {
+    private void processResponse(ImageResponse response, boolean checkNotNeeded) {
         // First check if the response is for the right request. We may have:
         // 1. Sent a new request, thus super-ceding this one.
         // 2. Detached this view, in which case the response should be discarded.
@@ -550,31 +561,16 @@ public class CircularProfilePicView extends FrameLayout {
         return getResources().getDimensionPixelSize(dimensionId);
     }
 
-    public static Bitmap getRoundedBitmap(Bitmap bitmap) {
-        Bitmap output;
-        try {
-            output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
-                    .getHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(output);
-
-            final int color = 0xff424242;
-            final Paint paint = new Paint();
-            final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-            final RectF rectF = new RectF(rect);
-
-            paint.setAntiAlias(true);
-            canvas.drawARGB(0, 0, 0, 0);
-            paint.setColor(color);
-            canvas.drawOval(rectF, paint);
-
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bitmap, rect, rect, paint);
-        } catch (OutOfMemoryError oom) {
-            System.out.println("CAught out of memory.. Retrying!");
-            System.gc();
-            return getRoundedBitmap(bitmap);
-        }
-
-        return output;
+    /**
+     * Callback interface that will be called when a network or other error is encountered
+     * while retrieving profile pictures.
+     */
+    public interface OnErrorListener {
+        /**
+         * Called when a network or other error is encountered.
+         *
+         * @param error a FacebookException representing the error that was encountered.
+         */
+        void onError(FacebookException error);
     }
 }
