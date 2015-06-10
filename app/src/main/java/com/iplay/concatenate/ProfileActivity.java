@@ -1,6 +1,7 @@
 package com.iplay.concatenate;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -41,9 +42,17 @@ public class ProfileActivity extends Fragment {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
                                 Session.getActiveSession().closeAndClearTokenInformation();
+                                SharedPreferences settings = getActivity().getSharedPreferences(CommonUtils.PREFS, 0);
+                                SharedPreferences.Editor edit  = settings.edit();
+                                edit.remove("userId");
+                                edit.remove("name");
+                                edit.commit();
+
+
                                 Intent in = new Intent(getActivity(), SplashScreenActivity.class);
                                 startActivity(in);
                                 getActivity().finish();
+
 
                             }
                         })
