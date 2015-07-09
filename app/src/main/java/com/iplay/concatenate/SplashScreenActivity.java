@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -68,6 +69,7 @@ public class SplashScreenActivity extends NetworkActivity {
         return fbUiLifecycleHelper;
     }
 
+    BroadcastReceiver rec;
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -109,8 +111,10 @@ public class SplashScreenActivity extends NetworkActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         CommonUtils.FreightSansFont = Typeface.createFromAsset(getAssets(), "FreightSans-BoldSC.ttf");
-
+        uif = new UserInfoFetcher(getApplicationContext());
+        CommonUtils.uif = uif;
         setupFacebook();
+
         fbUiLifecycleHelper.onCreate(savedInstanceState);
         CommonUtils.setFbUiLifecycleHelper(fbUiLifecycleHelper);
         loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -133,8 +137,7 @@ public class SplashScreenActivity extends NetworkActivity {
             }
         });
 
-        uif = new UserInfoFetcher(getApplicationContext());
-        CommonUtils.uif = uif;
+
         scale.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -162,6 +165,7 @@ public class SplashScreenActivity extends NetworkActivity {
         });
 
         background_image.startAnimation(scale);
+        cacheData();
 
 //        background_image.setColorFilter(Color.argb(255, 255, 255, 255));
 
@@ -238,6 +242,7 @@ public class SplashScreenActivity extends NetworkActivity {
                     }
                 }
 
+//                uif.dataSetAvailable();
                 System.out.println("Time for dictionary - " + (System.currentTimeMillis() - currentTime) / 1000);
 
             }
@@ -247,16 +252,29 @@ public class SplashScreenActivity extends NetworkActivity {
     }
 
     private void setupFacebook() {
+        SharedPreferences settings = getSharedPreferences(CommonUtils.PREFS, 0);
+        CommonUtils.userId = settings.getString("userId", "");
+        if(!("".equals(CommonUtils.userId))) {
+            CommonUtils.name = settings.getString("name", "");
+            afterFacebokLogin(CommonUtils.userId);
+            fbUiLifecycleHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
+                @Override
+                public void call(Session session, SessionState state, Exception exception) {
+
+                }
+            });
+            return ;
+        }
+        CommonUtils.userId="";
         fbUiLifecycleHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
                 // Add code here to accommodate session changes
 
                 if (exception != null) {
-                    exception.printStackTrace();
-                    Log.e("Error", "error loggin in");
+                    Log.e("Error", "Error loggin in " + exception.getStackTrace());
                 }
-                if (state.isOpened()) {
+                if(state.isOpened() &&  CommonUtils.userId == "") {
                     System.out.println("session" + session.getAccessToken());
                     Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 
@@ -270,41 +288,12 @@ public class SplashScreenActivity extends NetworkActivity {
                                     final String userId = (String) user.getInnerJSONObject().get("id");
                                     CommonUtils.userId = userId;
                                     CommonUtils.name = user.getName();
-                                    new BackgroundURLRequest().execute("subscribe_user/", userId);
-
-                                    OrtcClient cli = ORTCUtil.getClient();
-
-                                    cli.onConnected = new OnConnected() {
-                                        @Override
-                                        public void run(OrtcClient ortcClient) {
-                                            System.out.println("Fetch ortc - " + System.currentTimeMillis());
-                                            System.out.println("Connected to ORTC");
-                                            ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
-                                                    new SubscribeCallbackHandler(getApplicationContext()));
-                                        }
-                                    };
-
-                                    ORTCUtil.connect();
-                                    uif.dataSetAvailable();
-
-
-                                    uif.fetchUserInfo();
-                                    IntentFilter ifl = new IntentFilter();
-                                    ifl.addAction("data_loaded");
-                                    LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-                                        @Override
-                                        public void onReceive(Context context, Intent intent) {
-
-                                            System.out.println("Total time -- " + (System.currentTimeMillis() - startTime) / 1000.0);
-
-                                            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
-                                            in.putExtra("userId", CommonUtils.userId);
-                                            startActivity(in);
-                                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
-                                            SplashScreenActivity.this.finish();
-                                        }
-                                    }, ifl);
-
+                                    SharedPreferences settings = getSharedPreferences(CommonUtils.PREFS, 0);
+                                    SharedPreferences.Editor edit = settings.edit();
+                                    edit.putString("userId", userId);
+                                    edit.putString("name", user.getName());
+                                    edit.commit();
+                                    afterFacebokLogin(userId);
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -316,6 +305,7 @@ public class SplashScreenActivity extends NetworkActivity {
                     });
 
 
+
                 } else {
                     // TODO: Set this on canceling fb dialog or failure to connect
 //                    loginButton.setBackgroundResource(R.drawable.profile_login);
@@ -324,7 +314,44 @@ public class SplashScreenActivity extends NetworkActivity {
             }
         });
     }
+    public void afterFacebokLogin(String userId) {
+        new BackgroundURLRequest().execute("subscribe_user/", userId);
 
+        OrtcClient cli = ORTCUtil.getClient();
+
+        cli.onConnected = new OnConnected() {
+            @Override
+            public void run(OrtcClient ortcClient) {
+                System.out.println("Fetch ortc - " + System.currentTimeMillis());
+                System.out.println("Connected to ORTC");
+                ortcClient.subscribe(CommonUtils.getChannelNameFromUserID(CommonUtils.userId), true,
+                        new SubscribeCallbackHandler(getApplicationContext()));
+            }
+        };
+
+        ORTCUtil.connect();
+        uif.dataSetAvailable();
+
+
+        uif.fetchUserInfo();
+        IntentFilter ifl = new IntentFilter();
+        ifl.addAction("data_loaded");
+        rec = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                System.out.println("Total time -- " + (System.currentTimeMillis() - startTime)/1000.0);
+
+                Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+                in.putExtra("userId", CommonUtils.userId);
+                startActivity(in);
+                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                SplashScreenActivity.this.finish();
+            }
+        };
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(rec, ifl);
+
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -333,13 +360,14 @@ public class SplashScreenActivity extends NetworkActivity {
         if (session.isClosed()) {
             System.out.println("hello");
         }
-        if (CommonUtils.uif == null) CommonUtils.uif = new UserInfoFetcher(getApplicationContext());
-        if (CommonUtils.uif.count == 5) {
-            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
-            startActivity(in);
-        } else {
-            cacheData();
-        }
+//        if(CommonUtils.uif == null) CommonUtils.uif = new UserInfoFetcher(getApplicationContext());
+//        if(CommonUtils.uif.count >= 4){
+//            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+//            startActivity(in);
+//        } else {
+//            CommonUtils.uif.count = 1;
+//            CommonUtils.uif.fetchUserInfo();
+//        }
 
 
     }
@@ -349,7 +377,12 @@ public class SplashScreenActivity extends NetworkActivity {
         super.onActivityResult(requestCode, resultCode, data);
         fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(rec);
 
+    }
 }
 
 

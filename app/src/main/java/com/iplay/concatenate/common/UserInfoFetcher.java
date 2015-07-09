@@ -108,12 +108,13 @@ public class UserInfoFetcher implements DataListener {
     @Override
     public void dataSetAvailable() {
         count++;
-        Log.e("Info", "Data set Available: " + count);
-        if (count == 5) {
+        System.out.println("count of data set: " + count);
+        if(count == 5) {
             Log.e("Info", "Data set Available INN");
             Intent intent = new Intent("data_loaded");
 
             LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
         }
+
     }
 }
