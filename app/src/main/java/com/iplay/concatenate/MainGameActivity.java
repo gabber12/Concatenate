@@ -323,9 +323,9 @@ public class MainGameActivity extends NetworkActivity {
         String str = enterWord.getText().toString();
         int maxMatch = getMaxMatch(str, lastWord);
 
-        if (!CommonUtils.words.contains(str) || maxMatch == 0 || str.equals(lastWord)) {
+        if ( !CommonUtils.words.contains(str) || maxMatch == 0 || str.equals(lastWord)) {
             System.out.println(maxMatch);
-            System.out.println(CommonUtils.words.contains(str));
+//            System.out.println(CommonUtils.words.contains(str));
             shakeWord();
         } else {
             myRightAttempts++;
@@ -602,7 +602,7 @@ public class MainGameActivity extends NetworkActivity {
                 view.setBackground(getResources().getDrawable(background));
             }
         } catch (OutOfMemoryError e) {
-            System.out.println("CAught out of memory.. Retrying!");
+            System.out.println("Caught out of memory.. Retrying!");
             System.gc();
             setBackgroundBox(view, background);
         }

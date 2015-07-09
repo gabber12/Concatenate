@@ -4,9 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -32,9 +37,16 @@ import com.iplay.concatenate.common.UserInfoFetcher;
 import com.iplay.concatenate.support.NetworkActivity;
 import com.iplay.concatenate.support.ORTCUtil;
 
+import org.ardverk.collection.PatriciaTrie;
+import org.ardverk.collection.StringKeyAnalyzer;
+import org.ardverk.collection.Trie;
+
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -68,6 +80,32 @@ public class SplashScreenActivity extends NetworkActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
+        // Get Key Hash
+//        PackageInfo info;
+//        try {
+//            info = getPackageManager().getPackageInfo("com.iplay.concatenate", PackageManager.GET_SIGNATURES);
+//            for (Signature signature : info.signatures) {
+//                MessageDigest md;
+//                md = MessageDigest.getInstance("SHA");
+//                md.update(signature.toByteArray());
+//                String something = new String(Base64.encode(md.digest(), 0));
+//                //String something = new String(Base64.encodeBytes(md.digest()));
+//                Log.e("hash key", something);
+//            }
+//        } catch (PackageManager.NameNotFoundException e1) {
+//            Log.e("name not found", e1.toString());
+//        } catch (NoSuchAlgorithmException e) {
+//            Log.e("no such an algorithm", e.toString());
+//        } catch (Exception e) {
+//            Log.e("exception", e.toString());
+//        }
+
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        System.out.println("dpheight" + " " + dpHeight + " " + dpWidth);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         CommonUtils.FreightSansFont = Typeface.createFromAsset(getAssets(), "FreightSans-BoldSC.ttf");
@@ -76,9 +114,9 @@ public class SplashScreenActivity extends NetworkActivity {
         fbUiLifecycleHelper.onCreate(savedInstanceState);
         CommonUtils.setFbUiLifecycleHelper(fbUiLifecycleHelper);
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setPublishPermissions(Arrays.asList("user_friends", "publish_actions"));
-        loginButton.setBackgroundResource(R.drawable.profile_login);
-        loginButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        loginButton.setPublishPermissions(Arrays.asList("publish_actions"));
+//        loginButton.setBackgroundResource(R.drawable.profile_login);
+//        loginButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
         startTime = System.currentTimeMillis();
 
@@ -91,7 +129,7 @@ public class SplashScreenActivity extends NetworkActivity {
             @Override
             public void onClick(View v) {
                 v.setClickable(false);
-                v.setBackgroundResource(R.drawable.profile_logging);
+//                v.setBackgroundResource(R.drawable.profile_logging);
             }
         });
 
@@ -165,20 +203,38 @@ public class SplashScreenActivity extends NetworkActivity {
             @Override
             public void run() {
 
+
+
                 long currentTime = System.currentTimeMillis();
 
                 if (CommonUtils.words == null) {
-                    CommonUtils.words = new HashSet<String>();
-                    InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.dict);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    try {
-                        String line = reader.readLine();
-                        while (line != null) {
-                            CommonUtils.words.add(line.toUpperCase());
-                            line = reader.readLine();
+                    CommonUtils.words = new HashSet<>();
+
+                    int TOTAL_FILES = 1;
+
+                    for ( int i = 1; i <= TOTAL_FILES; ++i ) {
+                        System.out.println("Read: dict" + i);
+                        System.gc();
+                        InputStream inputStream = getApplicationContext().getResources().openRawResource(
+                                getResources().getIdentifier("raw/dict",
+                                        "raw", getPackageName()) );
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                        try {
+                            String line = reader.readLine();
+                            while (line != null) {
+                                 CommonUtils.words.add(line.toUpperCase());
+//                                CommonUtils.wordTrie.put(line.toUpperCase(),true);
+                                line = reader.readLine();
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error while reading from dictionary of words.");
                         }
-                    } catch (Exception e) {
-                        System.out.println("error while reading from dictionary of words.");
+                        try {
+                            reader.close();
+                            inputStream.close();
+                        } catch ( IOException e ) {
+                            System.out.println("Error while closing input stream for dict" + i);
+                        }
                     }
                 }
 
@@ -197,7 +253,8 @@ public class SplashScreenActivity extends NetworkActivity {
                 // Add code here to accommodate session changes
 
                 if (exception != null) {
-                    Log.e("Error", "Error loggin in " + exception.getStackTrace());
+                    exception.printStackTrace();
+                    Log.e("Error", "error loggin in");
                 }
                 if (state.isOpened()) {
                     System.out.println("session" + session.getAccessToken());

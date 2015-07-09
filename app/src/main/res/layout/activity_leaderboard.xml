@@ -20,11 +20,22 @@
         android:background="@drawable/splash_background"
         >
 
-        <ImageView
+        <!--ImageView
             android:layout_width="123dp"
             android:layout_height="146dp"
             android:src="@drawable/hof_logo"
             android:id="@+id/leader_logo"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"/ -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CONCATY"
+            android:textSize="23sp"
+            android:textColor="#ED1C24"
+            android:id="@+id/leader_logo"
+            android:layout_marginTop="15dp"
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"/>
 
@@ -40,9 +51,10 @@
 
         <ImageView
             android:layout_width="180dp"
-            android:layout_height="105dp"
+            android:layout_height="95dp"
             android:src="@drawable/leader_cup"
             android:id="@+id/leader_cup"
+            android:layout_marginBottom="5dp"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"/>
 

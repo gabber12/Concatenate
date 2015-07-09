@@ -21,7 +21,7 @@
             android:layout_height="150dp"
             android:visibility="gone"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/profile_red_back">
+            android:background="@drawable/profile_red_back_small">
 
             <com.facebook.widget.LoginButton
                 android:id="@+id/login_button"
@@ -29,8 +29,8 @@
                 android:layout_centerInParent="true"
                 android:layout_height="52dp"
                 android:layout_gravity="center_horizontal"
-                fb:logout_text=""
-                fb:login_text=""
+                fb:logout_text="Logging in.."
+                fb:login_text="Log in"
                 android:layout_marginTop="120dp"
                 android:layout_marginBottom="120dp" />
 

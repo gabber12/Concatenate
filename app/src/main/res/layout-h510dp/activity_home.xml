@@ -8,7 +8,7 @@
     android:background="@drawable/home_back"
     tools:context="com.iplay.concatenate.HomeActivity"
 
->
+    >
 
     <TextView
         android:id="@+id/home_title"
@@ -22,54 +22,54 @@
         android:textSize="20sp" />
 
 
-        <carbon.widget.RelativeLayout
+    <carbon.widget.RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-            android:layout_marginTop="80dp"
-            android:id="@+id/home">
+        android:layout_marginTop="80dp"
+        android:id="@+id/home">
 
-            <carbon.widget.ImageActionButton
-                android:layout_width="125dp"
-                android:layout_height="125dp"
-                android:clickable="true"
-                android:src="@drawable/home_quick_copy"
-                android:id="@+id/quick_game"
-                app:carbon_touchMargin="6dp"
-                app:carbon_rippleStyle="borderless"
-                app:carbon_rippleColor="@color/touchcolor"
-                android:scaleType="centerCrop"
-                android:layout_centerInParent="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="30dp"
-                />
+        <carbon.widget.ImageActionButton
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:clickable="true"
+            android:src="@drawable/home_quick_copy"
+            android:id="@+id/quick_game"
+            app:carbon_touchMargin="6dp"
+            app:carbon_rippleStyle="borderless"
+            app:carbon_rippleColor="@color/touchcolor"
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="30dp"
+            />
 
-            <carbon.widget.ImageActionButton
-                android:layout_width="125dp"
-                android:clickable="true"
-                android:layout_height="125dp"
-                android:src="@drawable/home_join_copy"
-                android:id="@+id/join_game"
-                app:carbon_rippleColor="@color/touchcolor"
-                app:carbon_rippleStyle="borderless"
-                android:background="@null"
-                android:scaleType="centerCrop"
-                android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="30dp"
-                />
+        <carbon.widget.ImageActionButton
+            android:layout_width="125dp"
+            android:clickable="true"
+            android:layout_height="125dp"
+            android:src="@drawable/home_join_copy"
+            android:id="@+id/join_game"
+            app:carbon_rippleColor="@color/touchcolor"
+            app:carbon_rippleStyle="borderless"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="30dp"
+            />
 
-            <carbon.widget.ImageActionButton
-                android:layout_width="125dp"
-                android:clickable="true"
-                android:layout_height="125dp"
-                android:src="@drawable/home_host_copy"
-                android:id="@+id/host_game"
-                app:carbon_rippleColor="@color/touchcolor"
-                android:scaleType="centerCrop"
-                app:carbon_rippleStyle="borderless"
-                android:layout_centerInParent="true"
-                />
-        </carbon.widget.RelativeLayout>
+        <carbon.widget.ImageActionButton
+            android:layout_width="125dp"
+            android:clickable="true"
+            android:layout_height="125dp"
+            android:src="@drawable/home_host_copy"
+            android:id="@+id/host_game"
+            app:carbon_rippleColor="@color/touchcolor"
+            android:scaleType="centerCrop"
+            app:carbon_rippleStyle="borderless"
+            android:layout_centerInParent="true"
+            />
+    </carbon.widget.RelativeLayout>
 
 
     <io.codetail.widget.RevealFrameLayout

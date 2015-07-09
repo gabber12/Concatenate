@@ -29,8 +29,8 @@
             android:id="@+id/home">
 
             <carbon.widget.ImageActionButton
-                android:layout_width="125dp"
-                android:layout_height="125dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:clickable="true"
                 android:src="@drawable/home_quick_copy"
                 android:id="@+id/quick_game"
@@ -44,9 +44,9 @@
                 />
 
             <carbon.widget.ImageActionButton
-                android:layout_width="125dp"
+                android:layout_width="140dp"
                 android:clickable="true"
-                android:layout_height="125dp"
+                android:layout_height="140dp"
                 android:src="@drawable/home_join_copy"
                 android:id="@+id/join_game"
                 app:carbon_rippleColor="@color/touchcolor"
@@ -59,9 +59,9 @@
                 />
 
             <carbon.widget.ImageActionButton
-                android:layout_width="125dp"
+                android:layout_width="140dp"
                 android:clickable="true"
-                android:layout_height="125dp"
+                android:layout_height="140dp"
                 android:src="@drawable/home_host_copy"
                 android:id="@+id/host_game"
                 app:carbon_rippleColor="@color/touchcolor"

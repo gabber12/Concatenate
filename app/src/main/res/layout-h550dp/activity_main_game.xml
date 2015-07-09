@@ -20,7 +20,7 @@
             android:id="@+id/upper_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_alignParentTop="true"
             android:orientation="vertical"
             android:gravity="center"
@@ -291,7 +291,7 @@
                 android:layout_height="50dp" android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:gravity="center"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="15dp"
                 android:id="@+id/LinearLayoutWords">
                 <!--<TextView-->
                     <!--android:layout_height="35dp"-->
@@ -319,9 +319,9 @@
             android:layout_height="wrap_content" android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_below="@+id/upper_container"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginLeft="25dp"
             android:id="@+id/LinearLayout01">
             <com.iplay.concatenate.support.LockEditText
                 android:id="@+id/enter_word"
@@ -351,7 +351,7 @@
             android:id="@+id/submit"
             android:src="@drawable/game_send"
             android:layout_centerInParent="true"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="20dp"
             />
 
         <!--<Button android:text="Say it !"-->

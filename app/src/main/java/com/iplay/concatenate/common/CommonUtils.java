@@ -26,6 +26,9 @@ import com.iplay.concatenate.R;
 import com.iplay.concatenate.support.DataListener;
 import com.iplay.concatenate.support.FriendModel;
 
+import org.ardverk.collection.PatriciaTrie;
+import org.ardverk.collection.StringKeyAnalyzer;
+import org.ardverk.collection.Trie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,6 +75,7 @@ public class CommonUtils {
     public static Typeface FreightSansFont = null;
     public static Thread taskThread;
     public static Set<String> words = null;
+//    public static Trie<String, Boolean> wordTrie = null;
     public static String PREFS = "pref";
     public static ImageResponse waitingForPic = null;
     public static String waitingForPicId = "";
