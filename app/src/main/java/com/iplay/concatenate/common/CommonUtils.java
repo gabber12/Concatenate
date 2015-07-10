@@ -52,6 +52,8 @@ public class CommonUtils {
     public static String userId = null;
     public static String waitingFor = null;
 
+    public static boolean informationLoaded = false;
+
     public static boolean onQuickGame = false;
     public static boolean onStartingGame = false;
     public static boolean onHostGame = false;
@@ -73,7 +75,8 @@ public class CommonUtils {
     public static int againstUserScore;
     public static Map<String, FriendModel> friendsMap = null;
     public static Typeface FreightSansFont = null;
-    public static Thread taskThread;
+    public static Thread taskThread = null;
+    public static Thread taskThread2 = null;
     public static Set<String> words = null;
 //    public static Trie<String, Boolean> wordTrie = null;
     public static String PREFS = "pref";
@@ -108,12 +111,16 @@ public class CommonUtils {
     }
 
     public static void disableTimer(Timer t) {
+        System.out.println("calling disable timer with object: " + t);
         if (t != null) {
             t.cancel();
             t.purge();
             t = null;
             if (taskThread != null) {
                 taskThread.interrupt();
+            }
+            if ( taskThread2 != null ) {
+                taskThread2.interrupt();
             }
         }
     }
@@ -161,7 +168,6 @@ public class CommonUtils {
                                 GraphObject graphObject = response.getGraphObject();
                                 JSONArray dataArray = (JSONArray) graphObject.getProperty("data");
 
-                                final ArrayList<Integer> scoreboardEntriesList = new ArrayList<Integer>();
                                 System.out.println("Number of players: " + dataArray.length());
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject oneData = dataArray.optJSONObject(i);
@@ -216,7 +222,6 @@ public class CommonUtils {
                                 GraphObject graphObject = response.getGraphObject();
                                 JSONArray dataArray = (JSONArray) graphObject.getProperty("data");
 
-                                final ArrayList<Integer> scoreboardEntriesList = new ArrayList<Integer>();
                                 System.out.println("Details fetched for player score");
                                 System.out.println("Number of players: " + dataArray.length());
                                 for (int i = 0; i < dataArray.length(); i++) {

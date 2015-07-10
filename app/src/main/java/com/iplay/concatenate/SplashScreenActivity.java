@@ -73,7 +73,8 @@ public class SplashScreenActivity extends NetworkActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        fbUiLifecycleHelper.onSaveInstanceState(outState);
+        if ( fbUiLifecycleHelper != null )
+            fbUiLifecycleHelper.onSaveInstanceState(outState);
     }
 
     @Override
@@ -110,13 +111,19 @@ public class SplashScreenActivity extends NetworkActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
+
         CommonUtils.FreightSansFont = Typeface.createFromAsset(getAssets(), "FreightSans-BoldSC.ttf");
         uif = new UserInfoFetcher(getApplicationContext());
         CommonUtils.uif = uif;
         setupFacebook();
 
-        fbUiLifecycleHelper.onCreate(savedInstanceState);
-        CommonUtils.setFbUiLifecycleHelper(fbUiLifecycleHelper);
+        boolean show_animation = getIntent().getBooleanExtra("show_animation", true);
+
+        if ( fbUiLifecycleHelper != null ) {
+            fbUiLifecycleHelper.onCreate(savedInstanceState);
+            CommonUtils.setFbUiLifecycleHelper(fbUiLifecycleHelper);
+        }
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setPublishPermissions(Arrays.asList("publish_actions"));
 //        loginButton.setBackgroundResource(R.drawable.profile_login);
@@ -155,7 +162,7 @@ public class SplashScreenActivity extends NetworkActivity {
 
 
 //                Intent intent = new Intent(SplashScreenActivity.this, FullscreenActivity.class);
-//                SplashScreenActivity.this.startActivity(intent);
+//                SplashScreenActivity.this.startActivity(intent);splash_
             }
 
             @Override
@@ -164,7 +171,13 @@ public class SplashScreenActivity extends NetworkActivity {
             }
         });
 
-        background_image.startAnimation(scale);
+//        if ( show_animation )
+            background_image.startAnimation(scale);
+//        else {
+//            uif.dataSetAvailable();
+//            if (!Session.getActiveSession().isOpened())
+//                animateToShowLogin();
+//        }
         cacheData();
 
 //        background_image.setColorFilter(Color.argb(255, 255, 255, 255));
@@ -252,8 +265,11 @@ public class SplashScreenActivity extends NetworkActivity {
     }
 
     private void setupFacebook() {
+        if ( !CommonUtils.isOnline(getApplicationContext()) )
+            return;
         SharedPreferences settings = getSharedPreferences(CommonUtils.PREFS, 0);
         CommonUtils.userId = settings.getString("userId", "");
+        System.out.println("userid from prefs: '" + CommonUtils.userId + "'");
         if(!("".equals(CommonUtils.userId))) {
             CommonUtils.name = settings.getString("name", "");
             afterFacebokLogin(CommonUtils.userId);
@@ -265,7 +281,6 @@ public class SplashScreenActivity extends NetworkActivity {
             });
             return ;
         }
-        CommonUtils.userId="";
         fbUiLifecycleHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
@@ -274,7 +289,7 @@ public class SplashScreenActivity extends NetworkActivity {
                 if (exception != null) {
                     Log.e("Error", "Error loggin in " + exception.getStackTrace());
                 }
-                if(state.isOpened() &&  CommonUtils.userId == "") {
+                if ( state.isOpened() && CommonUtils.userId.equals("") ) {
                     System.out.println("session" + session.getAccessToken());
                     Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 
@@ -340,12 +355,13 @@ public class SplashScreenActivity extends NetworkActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                System.out.println("Total time -- " + (System.currentTimeMillis() - startTime)/1000.0);
+                System.out.println("Total time -- " + (System.currentTimeMillis() - startTime) / 1000.0);
 
                 Intent in = new Intent(getApplicationContext(), HomeActivity.class);
                 in.putExtra("userId", CommonUtils.userId);
+                CommonUtils.informationLoaded = true;
                 startActivity(in);
-                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+                overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                 SplashScreenActivity.this.finish();
             }
         };
@@ -355,7 +371,8 @@ public class SplashScreenActivity extends NetworkActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fbUiLifecycleHelper.onResume();
+        if ( fbUiLifecycleHelper != null )
+            fbUiLifecycleHelper.onResume();
         Session session = Session.getActiveSession();
         if (session.isClosed()) {
             System.out.println("hello");
@@ -375,13 +392,13 @@ public class SplashScreenActivity extends NetworkActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
+        if ( fbUiLifecycleHelper != null )
+            fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(rec);
-
     }
 }
 

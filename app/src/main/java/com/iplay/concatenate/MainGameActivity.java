@@ -71,7 +71,7 @@ import java.util.TimerTask;
 
 public class MainGameActivity extends NetworkActivity {
 
-    public static final int MAX_MOVES = 10;
+    public static final int MAX_MOVES = 5;
     public static int currentMyScore = 0, currentYourScore = 0;
     public static int myMoves, yourMoves;
     public static int myTotalTime, yourTotalTime;
@@ -472,24 +472,27 @@ public class MainGameActivity extends NetworkActivity {
 
     private void overTheGameAndShowScore(String surrender) {
 
-        try {
-            org.json.JSONObject jsonObject = new org.json.JSONObject();
-            jsonObject.put("typeFlag", 7);
-            jsonObject.put("toUser", against);
-            jsonObject.put("fromUser", CommonUtils.userId);
-            jsonObject.put("gameId", gameId);
-            jsonObject.put("userTurn", userTurn);
-            jsonObject.put("surrender", surrender);
-            ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
-        } catch (JSONException je) {
-            System.out.println("Unable to encode json: " + je.getMessage());
-        }
+        if ( !CommonUtils.onGameOver ) {
 
-        CommonUtils.disableTimer(CommonUtils.mainGameTimer);
-        CommonUtils.onMainGame = false;
-        Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
-        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
-        startActivity(in);
+            try {
+                org.json.JSONObject jsonObject = new org.json.JSONObject();
+                jsonObject.put("typeFlag", 7);
+                jsonObject.put("toUser", against);
+                jsonObject.put("fromUser", CommonUtils.userId);
+                jsonObject.put("gameId", gameId);
+                jsonObject.put("userTurn", userTurn);
+                jsonObject.put("surrender", surrender);
+                ORTCUtil.getClient().send(CommonUtils.getChannelNameFromUserID(against), jsonObject.toString());
+            } catch (JSONException je) {
+                System.out.println("Unable to encode json: " + je.getMessage());
+            }
+
+            CommonUtils.disableTimer(CommonUtils.mainGameTimer);
+            CommonUtils.onMainGame = false;
+            Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
+            startActivity(in);
+            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
+        }
 
     }
 
@@ -962,8 +965,8 @@ public class MainGameActivity extends NetworkActivity {
                         }
                         CommonUtils.onMainGame = false;
                         Intent in = new Intent(MainGameActivity.this, NewGameOverActivity.class);
-                        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                         startActivity(in);
+                        overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
 //                        MainGameActivity.super.onBackPressed();
                     }
                 })

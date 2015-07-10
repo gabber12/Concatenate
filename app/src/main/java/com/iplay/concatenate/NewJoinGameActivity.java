@@ -47,6 +47,8 @@ public class NewJoinGameActivity extends NetworkActivity {
         }
     };
 
+    private String againstId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,10 +60,11 @@ public class NewJoinGameActivity extends NetworkActivity {
         String senderId = getIntent().getStringExtra("sender_id");
         System.out.println(senderId);
         CommonUtils.waitingFor = senderId;
+        againstId = senderId;
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("pic_loaded"));
-        CommonUtils.getPic(CommonUtils.waitingFor, getApplicationContext());
-        System.out.println("hfushd -- " + CommonUtils.waitingFor);
+        CommonUtils.getPic(againstId, getApplicationContext());
+        System.out.println("hfushd -- " + againstId);
 
     }
 
@@ -99,14 +102,14 @@ public class NewJoinGameActivity extends NetworkActivity {
                 TextView yournameTextView = ((TextView) findViewById(R.id.yourname));
                 TextView yourlevelTextView = ((TextView) findViewById(R.id.yourlevel));
 
-                System.out.println(CommonUtils.waitingFor);
+                System.out.println(againstId);
 
-                yournameTextView.setText(CommonUtils.getFriendById(CommonUtils.waitingFor).getName());
-                yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(CommonUtils.waitingFor).getScore()) + " XP");
-                ((CircularProfilePicView) findViewById(R.id.yourpic)).setProfileId(CommonUtils.waitingFor);
+                yournameTextView.setText(CommonUtils.getFriendById(againstId).getName());
+                yourlevelTextView.setText(String.valueOf(CommonUtils.getFriendById(againstId).getScore()) + " XP");
+                ((CircularProfilePicView) findViewById(R.id.yourpic)).setProfileId(againstId);
 
-                CommonUtils.againstUserName = CommonUtils.getFriendById(CommonUtils.waitingFor).getName();
-                CommonUtils.againstUserScore = CommonUtils.getFriendById(CommonUtils.waitingFor).getScore();
+                CommonUtils.againstUserName = CommonUtils.getFriendById(againstId).getName();
+                CommonUtils.againstUserScore = CommonUtils.getFriendById(againstId).getScore();
 
                 mSwitcher = (TextSwitcher) findViewById(R.id.textSwitcher);
 
@@ -145,7 +148,7 @@ public class NewJoinGameActivity extends NetworkActivity {
 
                 mSwitcher.setText("JOINING");
 
-                onGameStarted(CommonUtils.waitingFor, false);
+                onGameStarted(againstId, false);
 
             }
 
@@ -251,8 +254,6 @@ public class NewJoinGameActivity extends NetworkActivity {
 //                final String senderId = getIntent().getStringExtra("sender_id");
 //                final Boolean isBot = getIntent().getBooleanExtra("is_bot", false);
 
-        CommonUtils.waitingFor = senderId;
-
         if (isBot) {
 
             JSONObject sendjsonObject = new JSONObject();
@@ -264,6 +265,7 @@ public class NewJoinGameActivity extends NetworkActivity {
         }
         // say the opponent left after 20 secs
         final long startTime = System.currentTimeMillis();
+//        CommonUtils.disableTimer(CommonUtils.startingGameTimer);
         CommonUtils.startingGameTimer = new Timer();
         CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -273,19 +275,21 @@ public class NewJoinGameActivity extends NetworkActivity {
                     @Override
                     public void run() {
 
+                        CommonUtils.taskThread2 = Thread.currentThread();
+
                         if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
                                 && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
-                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(CommonUtils.startGameIntent);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
+                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
                         } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
                             Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
                             t.show();
                             final Intent intent = new Intent(NewJoinGameActivity.this, HomeActivity.class);
                             CommonUtils.waitingFor = null;
-                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
+                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
                         }
                     }
                 });
@@ -304,8 +308,8 @@ public class NewJoinGameActivity extends NetworkActivity {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             Intent in = new Intent(NewJoinGameActivity.this, HomeActivity.class);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(in);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                         }
                     })
                     .title("Leave Game")
@@ -319,8 +323,8 @@ public class NewJoinGameActivity extends NetworkActivity {
                     .show();
         } else {
             Intent in = new Intent(this, HomeActivity.class);
-            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(in);
+            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
         }
     }
 
@@ -330,6 +334,7 @@ public class NewJoinGameActivity extends NetworkActivity {
         CommonUtils.onStartingGame = false;
         CommonUtils.waitingFor = null;
         CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     @Override

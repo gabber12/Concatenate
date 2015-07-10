@@ -288,7 +288,7 @@ public class HomeActivity extends FragmentActivity {
 //            public void onClick(View v) {
 //                Intent in = new Intent(getApplicationContext(), LeaderboardActivity.class);
 //                startActivity(in);
-//                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+//                overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
 //
 //            }
 //        });
@@ -308,8 +308,8 @@ public class HomeActivity extends FragmentActivity {
 //                rippleDrawable.setAlpha(0);
 
                 Intent in = new Intent(getApplicationContext(), JoinGameAcitvity.class);
-                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 startActivity(in);
+                overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
             }
         });
 
@@ -317,8 +317,8 @@ public class HomeActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), InviteFriends.class);
-                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 startActivity(in);
+                overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
             }
         });
 
@@ -326,8 +326,8 @@ public class HomeActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), NewQuickGame.class);
-                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 startActivity(in);
+                overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
 
             }
         });

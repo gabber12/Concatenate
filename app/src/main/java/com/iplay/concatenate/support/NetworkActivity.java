@@ -11,6 +11,8 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.iplay.concatenate.HomeActivity;
+import com.iplay.concatenate.R;
+import com.iplay.concatenate.SplashScreenActivity;
 import com.iplay.concatenate.common.CommonUtils;
 
 /**
@@ -66,8 +68,18 @@ public class NetworkActivity extends Activity {
                 System.out.println("Network Available");
                 md.dismiss();
                 md = null;
-                Intent in = new Intent(context, HomeActivity.class);
-                context.startActivity(in);
+                Intent in = null;
+                if ( CommonUtils.informationLoaded ) {
+                    in = new Intent(context, HomeActivity.class);
+                    context.startActivity(in);
+                    overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
+                }
+                else{
+                    in = new Intent(context, SplashScreenActivity.class);
+                    in.putExtra("show_animation", false);
+                    context.startActivity(in);
+                    overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
+                }
             }
 
         }

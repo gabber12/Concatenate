@@ -144,7 +144,7 @@ public class NewGameOverActivity extends NetworkActivity {
             Animation fadeOutCustom = new AlphaAnimation(mSwitcher.getAlpha(), 0);
             fadeOutCustom.setDuration((long) (mSwitcher.getAlpha() * 500));
             mSwitcher.setOutAnimation(fadeOutCustom);
-            if (surrender != null) {
+            if (surrender != null && !surrender.equals("")) {
                 if (surrender.equals(CommonUtils.userId)) {
                     mSwitcher.setText("YOU SURRENDERED");
                     myScore = 0;
@@ -153,12 +153,13 @@ public class NewGameOverActivity extends NetworkActivity {
                     yourScore = 0;
                 }
             } else {
-                if (myScore > yourScore) mSwitcher.setText("YOU WIN");
-                else if (myScore < yourScore) mSwitcher.setText("YOU LOSE");
-                else mSwitcher.setText("ITS A DRAW");
+                if (myScore > yourScore) mSwitcher.setText("YAY, YOU WIN !");
+                else if (myScore < yourScore) mSwitcher.setText("OHH, YOU LOSE !");
+                else mSwitcher.setText("WHOA, ITS A DRAW !");
             }
 
             CommonUtils.setScore(myScore, getApplicationContext());
+
             // set score for bot also here
             JSONObject sendjsonObject = new JSONObject();
             sendjsonObject.put("id", CommonUtils.againstId);
@@ -326,9 +327,15 @@ public class NewGameOverActivity extends NetworkActivity {
     public void onBackPressed() {
         CommonUtils.onGameOver = false;
         Intent in = new Intent(this, HomeActivity.class);
-        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
         startActivity(in);
+        overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
         this.finish();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceivedGameOver);
     }
 
 }

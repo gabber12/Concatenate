@@ -324,16 +324,16 @@ public class NewQuickGame extends NetworkActivity {
                         if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
                                 && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(CommonUtils.startGameIntent);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                         } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
                             Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
                             t.show();
                             final Intent intent = new Intent(NewQuickGame.this, HomeActivity.class);
                             CommonUtils.waitingFor = null;
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                         }
                     }
                 });
@@ -393,8 +393,8 @@ public class NewQuickGame extends NetworkActivity {
                         public void onPositive(MaterialDialog dialog) {
                             closeTheState();
                             Intent in = new Intent(NewQuickGame.this, HomeActivity.class);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(in);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                         }
                     })
                     .title("Leave Game")
@@ -409,8 +409,8 @@ public class NewQuickGame extends NetworkActivity {
         } else {
             closeTheState();
             Intent in = new Intent(this, HomeActivity.class);
-            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(in);
+            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
         }
     }
 
@@ -420,6 +420,8 @@ public class NewQuickGame extends NetworkActivity {
         closeTheState();
         // Unregister since the activity is about to be closed.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mGameStarting);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDetailsFetched);
         super.onDestroy();
     }
 

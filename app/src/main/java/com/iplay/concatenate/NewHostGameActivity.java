@@ -187,8 +187,8 @@ public class NewHostGameActivity extends NetworkActivity {
                                     final Intent intent = new Intent(NewHostGameActivity.this, HomeActivity.class);
                                     CommonUtils.onHostGame = false;
                                     CommonUtils.disableTimer(CommonUtils.hostGameTimer);
-                                    overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                                     startActivity(intent);
+                                    overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                                 }
                             }
                         });
@@ -314,6 +314,7 @@ public class NewHostGameActivity extends NetworkActivity {
         }
         // say the opponent left after 20 secs
         final long startTime = System.currentTimeMillis();
+//        CommonUtils.disableTimer(CommonUtils.startingGameTimer);
         CommonUtils.startingGameTimer = new Timer();
         CommonUtils.startingGameTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -323,18 +324,20 @@ public class NewHostGameActivity extends NetworkActivity {
                     @Override
                     public void run() {
 
+                        CommonUtils.taskThread2 = Thread.currentThread();
+
                         if (CommonUtils.startGameIntent != null && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) <= 10 * 1000
                                 && System.currentTimeMillis() - CommonUtils.startGameIntent.getLongExtra("timestamp", System.currentTimeMillis()) >= 5 * 1000) {
-                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(CommonUtils.startGameIntent);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
+                            CommonUtils.disableTimer(CommonUtils.startingGameTimer);
                         } else if (System.currentTimeMillis() - startTime >= 20 * 1000) {
                             Toast t = Toast.makeText(getApplicationContext(), "Opponent has left :(", Toast.LENGTH_LONG);
                             t.show();
                             final Intent intent = new Intent(NewHostGameActivity.this, HomeActivity.class);
                             CommonUtils.waitingFor = null;
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                             CommonUtils.disableTimer(CommonUtils.startingGameTimer);
 
                         }
@@ -343,6 +346,7 @@ public class NewHostGameActivity extends NetworkActivity {
 
             }
         }, new Long(0), new Long(1000));
+        System.out.println("host game timer object: " + CommonUtils.startingGameTimer);
 
 
     }
@@ -355,8 +359,8 @@ public class NewHostGameActivity extends NetworkActivity {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             Intent in = new Intent(NewHostGameActivity.this, HomeActivity.class);
-                            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                             startActivity(in);
+                            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
                         }
                     })
                     .title("Leave Game")
@@ -370,8 +374,8 @@ public class NewHostGameActivity extends NetworkActivity {
                     .show();
         } else {
             Intent in = new Intent(this, HomeActivity.class);
-            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
             startActivity(in);
+            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
         }
     }
 
@@ -396,6 +400,8 @@ public class NewHostGameActivity extends NetworkActivity {
         CommonUtils.waitingFor = null;
         CommonUtils.disableTimer(CommonUtils.hostGameTimer);
         CommonUtils.disableTimer(CommonUtils.startingGameTimer);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mGameStarting);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     @Override

@@ -129,6 +129,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                     break;
                 case 6:
                     if (CommonUtils.onMainGame) {
+                        System.out.println("Finishing game when screen on main game");
                         CommonUtils.disableTimer(CommonUtils.mainGameTimer);
                         Intent in = new Intent(ctx, NewGameOverActivity.class);
                         in.putExtra("surrender", (String) jsonObject.get("surrender"));
@@ -136,6 +137,7 @@ public class SubscribeCallbackHandler implements OnMessage {
                         in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         ctx.startActivity(in);
                     } else if (CommonUtils.onGameOver) {
+                        System.out.println("Finishing game when screen on game over");
                         intent = new Intent("gameover_received");
                         intent.putExtra("surrender", (String) jsonObject.get("surrender"));
                         LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);

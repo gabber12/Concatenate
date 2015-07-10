@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.iplay.concatenate.common.CommonUtils;
 import com.iplay.concatenate.support.DataListener;
@@ -31,6 +32,10 @@ public class LeaderboardActivity extends Fragment implements DataListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myFragmentView = inflater.inflate(R.layout.activity_leaderboard, container, false);
+
+        ((TextView) myFragmentView.findViewById(R.id.leader_logo)).setTypeface(CommonUtils.FreightSansFont);
+        ((TextView) myFragmentView.findViewById(R.id.leader_title)).setTypeface(CommonUtils.FreightSansFont);
+
         friends = new ArrayList<FriendModel>();
         if (friends.size() == 0 && CommonUtils.friendsMap != null)
             for (Map.Entry<String, FriendModel> friend : CommonUtils.friendsMap.entrySet()) {

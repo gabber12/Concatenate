@@ -167,7 +167,7 @@ public class FullscreenActivity extends NetworkActivity {
             Intent in = new Intent(getApplicationContext(), HomeActivity.class);
             in.putExtra("userId", CommonUtils.userId);
             startActivity(in);
-            overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+            overridePendingTransition(R.anim.trans_fade_in, R.anim.trans_fade_out);
 
         }
 
